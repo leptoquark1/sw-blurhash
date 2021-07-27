@@ -1,0 +1,18 @@
+{
+  "ecBlurhash": {
+    "notification-center": {
+      "worker-listener": {
+        "hashGeneration": {
+          "title": "Blurhash generation",
+          "message": "No Blurhashes remaining. | One Blurhash remaining ... | {n} Blurhashes remaining ...",
+          "messageSuccess": "Blurhashes have been generated."
+        }
+      }
+    },
+    "extension": {
+      "sw-media-quickinfo": {
+        "blurredPreview": "Blurred Preview"
+      }
+    }
+  }
+}

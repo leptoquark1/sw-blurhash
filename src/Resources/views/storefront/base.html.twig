@@ -1,0 +1,29 @@
+{% sw_extends '@Storefront/storefront/base.html.twig' %}
+
+{% block base_noscript %}
+    {{ parent() }}
+
+    {% if ecbConfEqualsConst('integrationMode', 'VALUE_INTEGRATION_MODE_EMULATED') %}
+        <script>
+        {% if ecbConfig('isProductionMode') %}
+            MutationObserver=window.MutationObserver||window.WebKitMutationObserver;var observer=new MutationObserver(ecBlurhash.mutationHandler);observer.observe(document.body,{childList:!0,subtree:!0});document.addEventListener("readystatechange",(function(){"interactive"===document.readyState?ecBlurhash.onDomInteractive():"complete"===document.readyState&&ecBlurhash.onDomComplete()}));
+        {% else %}
+            MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+            var observer = new MutationObserver(ecBlurhash.mutationHandler);
+
+            observer.observe(document.body, {
+              childList: true,
+              subtree: true
+            });
+
+            document.addEventListener("readystatechange", function () {
+              if (document.readyState === 'interactive') {
+                ecBlurhash.onDomInteractive();
+              } else if (document.readyState === 'complete') {
+                ecBlurhash.onDomComplete();
+              }
+            });
+        {% endif %}
+        </script>
+    {% endif %}
+{% endblock %}

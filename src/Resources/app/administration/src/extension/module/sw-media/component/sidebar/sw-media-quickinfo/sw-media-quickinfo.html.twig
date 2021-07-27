@@ -1,0 +1,35 @@
+{% block sw_media_quickinfo_preview %}
+    {% parent %}
+
+    {% block sw_media_quickinfo_blurred_preview %}
+        <sw-media-collapse
+            v-if="item.hasFile && ecbBluredImage"
+            :expandOnLoading="false"
+            :title="$tc('sw-media.sidebar.sections.preview')"
+        >
+            {% block sw_media_quickinfo_blurred_preview_content %}
+                <template #content>
+                    <div>
+                        {% block sw_media_quickinfo_blurred_preview_item %}
+                            <img :src="ecbBluredImage" alt="Blurred version the original Image" class="hidden">
+                        {% endblock %}
+                    </div>
+                </template>
+            {% endblock %}
+        </sw-media-collapse>
+    {% endblock %}
+{% endblock %}
+
+{% block sw_media_quickinfo_metadata_content_base %}
+    {% parent %}
+
+    <sw-media-quickinfo-metadata-item
+        v-if="item.metaData.blurhash"
+        class="sw-media-quickinfo-metadata-blurhash"
+        label-name="Blurhash"
+    >
+        <span :title="item.metaData.blurhash">
+            <sw-icon color="green" name="small-default-checkmark-line-small"></sw-icon>
+        </span>
+    </sw-media-quickinfo-metadata-item>
+{% endblock %}
