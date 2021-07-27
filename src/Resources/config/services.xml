@@ -1,0 +1,82 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="env(APP_ENV)">prod</parameter>
+    </parameters>
+    <services>
+        <service id="EyeCook\BlurHash\Configuration\ConfigService">
+            <argument>%env(APP_ENV)%</argument>
+            <argument type="service" id="Shopware\Core\System\SystemConfig\SystemConfigService"/>
+        </service>
+
+        <service id="EyeCook\BlurHash\Hash\Media\MediaValidator">
+            <argument type="service" id="monolog.logger"/>
+            <argument type="service" id="EyeCook\BlurHash\Configuration\ConfigService"/>
+        </service>
+
+        <service id="EyeCook\BlurHash\Hash\Adapter\GdHashImageAdapter"/>
+        <service id="EyeCook\BlurHash\Hash\Adapter\HashImageAdapterInterface" alias="EyeCook\BlurHash\Hash\Adapter\GdHashImageAdapter"/>
+
+        <service id="EyeCook\BlurHash\Hash\HashGenerator" public="true">
+            <argument type="service" id="EyeCook\BlurHash\Configuration\ConfigService"/>
+            <argument type="service" id="EyeCook\BlurHash\Hash\Adapter\HashImageAdapterInterface"/>
+        </service>
+        <service id="EyeCook\BlurHash\Hash\HashGeneratorInterface" alias="EyeCook\BlurHash\Hash\HashGenerator"/>
+
+        <service id="EyeCook\BlurHash\Hash\Media\MediaHashIdFactory">
+            <argument type="service" id="EyeCook\BlurHash\Configuration\ConfigService"/>
+            <argument type="service" id="EyeCook\BlurHash\Hash\Media\MediaValidator"/>
+            <argument type="service" id="media.repository"/>
+        </service>
+
+        <service id="EyeCook\BlurHash\Hash\HashMediaService" public="true">
+            <argument type="service" id="EyeCook\BlurHash\Configuration\ConfigService"/>
+            <argument type="service" id="EyeCook\BlurHash\Hash\Media\MediaHashIdFactory"/>
+            <argument type="service" id="EyeCook\BlurHash\Hash\HashGeneratorInterface"/>
+            <argument type="service" id="Shopware\Core\Content\Media\Pathname\UrlGeneratorInterface"/>
+            <argument type="service" id="shopware.filesystem.public"/>
+            <argument type="service" id="shopware.filesystem.private"/>
+            <argument type="service" id="Doctrine\DBAL\Connection"/>
+        </service>
+
+        <service id="EyeCook\BlurHash\Message\GenerateHashHandler" public="true">
+            <argument type="service" id="EyeCook\BlurHash\Configuration\ConfigService"/>
+            <argument type="service" id="EyeCook\BlurHash\Hash\HashMediaService"/>
+            <argument type="service" id="media.repository"/>
+            <argument type="service" id="Shopware\Core\Framework\Adapter\Cache\CacheClearer"/>
+            <argument type="service" id="monolog.logger"/>
+
+            <tag name="messenger.message_handler"/>
+        </service>
+
+        <service id="EyeCook\BlurHash\Message\DelegateMessagesHandler" public="true">
+            <argument type="service" id="messenger.bus.shopware"/>
+
+            <tag name="messenger.message_handler"/>
+        </service>
+
+        <service id="EyeCook\BlurHash\Command\AbstractCommand" abstract="true">
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+            <call method="setConfigService">
+                <argument type="service" id="EyeCook\BlurHash\Configuration\ConfigService"/>
+            </call>
+        </service>
+
+        <service id="EyeCook\BlurHash\Command\GenerateCommand" parent="EyeCook\BlurHash\Command\AbstractCommand">
+            <argument type="service" id="messenger.bus.shopware"/>
+            <argument type="service" id="media.repository"/>
+            <argument type="service" id="media_folder.repository"/>
+
+            <tag name="console.command"/>
+        </service>
+
+        <service id="EyeCook\BlurHash\Configuration\Twig\ConfigTwigExtension">
+            <argument type="service" id="EyeCook\BlurHash\Configuration\ConfigService"/>
+            <tag name="twig.extension"/>
+        </service>
+    </services>
+</container>

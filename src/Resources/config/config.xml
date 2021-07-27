@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/platform/master/src/Core/System/SystemConfig/Schema/config.xsd">
+
+    <card>
+            <title>Decoding</title>
+
+            <input-field type="single-select">
+                <name>integrationMode</name>
+                <label>Integration mode (Storefront)</label>
+                <label lang="de-DE">Integration (Storefront)</label>
+                <helpText>For more information on this configuration, see the plug-in's README file.</helpText>
+                <helpText lang="de-DE">Genauere Informationen zu dieser Konfiguration findest du in der README des Plugins.</helpText>
+                <options>
+                    <option>
+                        <id>emulated</id>
+                        <name>Emulated</name>
+                        <name lang="de-DE">Emuliert</name>
+                    </option>
+                </options>
+                <defaultValue>emulated</defaultValue>
+            </input-field>
+    </card>
+
+    <card>
+        <title>Inclusions / Exclusion</title>
+        <title lang="de-DE">Einschlüsse / Ausschlüsse</title>
+
+        <input-field type="bool">
+            <name>includePrivate</name>
+            <label>Include protected Images</label>
+            <label lang="de-DE">Geschützte Bilder berücksichtigen</label>
+            <helpText>Protected images are those that are not accessible to everyone through a public URL</helpText>
+            <helpText lang="de-DE">Geschützte Bilder sind solche, die nicht über eine öffentliche URL für jedermann erreichbar sind.</helpText>
+            <defaultValue>true</defaultValue>
+        </input-field>
+
+        <component name="sw-entity-multi-id-select">
+            <name>excludedFolders</name>
+            <entity>media_folder</entity>
+            <label>Excluded Folders</label>
+            <label lang="de-DE">Ausgeschlossene Ordner</label>
+            <placeholder>Choose to exclude a Folder...</placeholder>
+            <placeholder lang="de-DE">Wähle Ordner zum ignorieren ...</placeholder>
+            <helpText>Images in these folders are ignored.</helpText>
+            <helpText lang="de-DE">Bilder in diesen Ordnern werden nicht berücksichtigt.</helpText>
+        </component>
+
+        <component name="sw-entity-multi-id-select">
+            <name>excludedTags</name>
+            <entity>tag</entity>
+            <label>Excluded Tags</label>
+            <label lang="de-DE">Ausgeschlossene Tags</label>
+            <placeholder>Choose to exclude a Tag...</placeholder>
+            <placeholder lang="de-DE">Wähle Tags zum ignorieren...</placeholder>
+            <helpText>Images with these Tags are ignored.</helpText>
+            <helpText lang="de-DE">Bilder mit diesen Tags werden nicht berücksichtigt.</helpText>
+        </component>
+    </card>
+
+    <card>
+        <title>Performance</title>
+        <title lang="de-DE">Performance</title>
+
+        <input-field type="int">
+            <name>thumbnailThresholdHeight</name>
+            <label>Max. Height (Thumbnail-Threshold)</label>
+            <label lang="de-DE">Maximale Höhe (Fallback Thumbnail)</label>
+            <placeholder>(Default, 1080px)</placeholder>
+            <placeholder lang="de-DE">(Standard, 1080px)</placeholder>
+            <helpText>If this value is exceeded, a thumbnail is used instead of the original image.</helpText>
+            <helpText lang="de-DE">Wird dieser Wert überschritten, dann wird ein Thumbnail anstatt des original Bildes verwendet.</helpText>
+        </input-field>
+
+        <input-field type="int">
+            <name>thumbnailThresholdWidth</name>
+            <label>Max. Width (Thumbnail-Threshold)</label>
+            <label lang="de-DE">Maximale Breite (Fallback Thumbnail)</label>
+            <placeholder>(Default, 1920px)</placeholder>
+            <placeholder lang="de-DE">(Standard, 1920px)</placeholder>
+            <helpText>If this value is exceeded, a thumbnail is used instead of the original image.</helpText>
+            <helpText lang="de-DE">Wird dieser Wert überschritten, dann wird ein Thumbnail anstatt des original Bildes verwendet.</helpText>
+        </input-field>
+    </card>
+
+    <card>
+        <title>Encoding</title>
+
+        <input-field type="bool">
+            <name>manualMode</name>
+            <label>Manual Mode</label>
+            <label lang="de-DE">Handbetrieb</label>
+            <helpText>In manual mode, you have sole control of the images that are processed with Blurhash. More information in the README.</helpText>
+            <helpText lang="de-DE">Im manuellen Modus hast allein du die Kontrolle über die Bilder welche mit Blurhash verarbeitet werden. Was das bedeutet, kannst du in der README nachlesen.</helpText>
+        </input-field>
+
+        <input-field type="int">
+            <name>componentsX</name>
+            <label>Number of vertical components (X-Components)</label>
+            <label lang="de-DE">Anzahl vertikaler Komponenten (X Komponenten)</label>
+            <defaultValue>4</defaultValue>
+            <helpText>The higher the value, the finer the spectrum. Only unsigned integers between 1-9 are allowed here.</helpText>
+            <helpText lang="de-DE">Um so höher der Wert, um so feiner das Spektrum. Nur ganze Zahlen zwischen 1-9 sind hier erlaubt.</helpText>
+        </input-field>
+
+        <input-field type="int">
+            <name>componentsY</name>
+            <label>Number of horizontal components (Y-Components)</label>
+            <label lang="de-DE">Anzahl horizontaler Komponenten (Y Komponenten)</label>
+            <defaultValue>3</defaultValue>
+            <helpText>The higher the value, the finer the spectrum. Only unsigned integers between 1-9 are allowed here</helpText>
+            <helpText lang="de-DE">Um so höher der Wert, um so feiner das Spektrum. Nur ganze Zahlen zwischen 1-9 sind hier erlaubt</helpText>
+        </input-field>
+    </card>
+</config>

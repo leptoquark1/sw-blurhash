@@ -1,0 +1,19 @@
+{% sw_extends '@Storefront/storefront/layout/meta.html.twig' %}
+
+{% block layout_head_stylesheet %}
+    {{ parent() }}
+
+    {% if ecbConfig('isProductionMode') %}
+        <script src="{{ asset('bundles/ecblurhash/blurhash.min.js', 'asset') }}"></script>
+    {% else %}
+        <script src="{{ asset('bundles/ecblurhash/blurhash.js', 'asset') }}"></script>
+    {% endif %}
+
+    {% if ecbConfEqualsConst('integrationMode', 'VALUE_INTEGRATION_MODE_EMULATED') %}
+        {% if ecbConfig('isProductionMode') %}
+            <script src="{{ asset('bundles/ecblurhash/emulated.integration.min.js', 'asset') }}"></script>
+        {% else %}
+            <script src="{{ asset('bundles/ecblurhash/emulated.integration.js', 'asset') }}"></script>
+        {% endif %}
+    {% endif %}
+{% endblock %}
