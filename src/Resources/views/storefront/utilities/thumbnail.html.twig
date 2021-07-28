@@ -1,9 +1,16 @@
-{% sw_extends '@Storefront/storefront/utilities/thumbnail.html.twig' %}
-
-{% if ecbConfEqualsConst('integrationMode', 'VALUE_INTEGRATION_MODE_EMULATED') and media.metaData.blurhash %}
+{% if media.metaData.blurhash %}
     {% set attributes = attributes|merge({
         'data-blurhash': media.metaData.blurhash,
         'data-ow': media.metaData.hashOriginWidth,
         'data-oh': media.metaData.hashOriginHeight,
+        'loading': 'lazy',
     }) %}
+
+    {% set load = false %} {# All images are handled lazy #}
 {% endif %}
+
+{% block thumbnail_content %}
+    <div class="ecb-img-wrapper">
+        {% include '@Storefront/storefront/utilities/thumbnail.html.twig' %}
+    </div>
+{% endblock %}
