@@ -172,4 +172,92 @@ window.Blurhash = {
     }, type || 'image/jpeg', quality || 1);
   }
 };
+
+window.ecbUtils = {
+  getViewport: function () {
+    return {
+      height: window.innerHeight || document.documentElement.clientHeight,
+      width: window.innerWidth || document.documentElement.clientWidth
+    };
+  },
+  getNodeAttribute: function (node, attrName) {
+    var attr = node.attributes.getNamedItem(attrName);
+    return attr ? attr.value : null;
+  },
+  decodeHashForNode: function (attr, pseudoImage , cb) {
+    pseudoImage = pseudoImage ? pseudoImage : attr.node;
+
+    setTimeout(function () {
+      if (pseudoImage.complete === false) {
+        var pixels = Blurhash.decodeBlurhash(attr.hash, attr.width, attr.height);
+
+        Blurhash.onPixelsToBlobSrc(function (src) {
+          pseudoImage.complete === true ? cb(null) : cb(src);
+        }, pixels, attr.width, attr.height);
+      } else {
+        cb(null);
+      }
+    }, 200);
+  },
+  extractNode: function (node) {
+    var hash = ecbUtils.getNodeAttribute(node, 'data-blurhash');
+
+    if (!hash || ecbUtils.isImageCached(node.src)) {
+      return null;
+    }
+
+    var width = Number(ecbUtils.getNodeAttribute(node, 'data-ow'));
+    var height = Number(ecbUtils.getNodeAttribute(node,'data-oh'));
+    var srcset = ecbUtils.getNodeAttribute(node, 'srcset') || ecbUtils.getNodeAttribute(node, 'data-srcset');
+
+    if (isNaN(width) || width === 0 || isNaN(height) || height === 0) {
+      return null;
+    }
+
+    return { hash: hash, width: width, height: height, srcset: srcset, node: node }
+  },
+  isAncestorsVisible: function (node) {
+    var isVisible = true;
+
+    do {
+      var styles = getComputedStyle(node);
+      isVisible = !(Number(styles.opacity) === 0 || styles.display === 'none');
+      node = node.parentElement;
+    } while (node !== null && isVisible === true);
+
+    return isVisible;
+  },
+  isImageCached: function (src) {
+    var img = new Image();
+    img.src = src;
+    var complete = img.complete;
+    img.src = '';
+    return complete;
+  },
+  isInViewport: function (node) {
+    var rect = node.getBoundingClientRect();
+    var viewport = ecbUtils.getViewport();
+
+    return (
+      rect.top > 0 && rect.bottom > 0 // Full height visible
+      || (rect.bottom - viewport.height > 0 && rect.top < 0) // Larger than vertical viewport
+      || (rect.top - viewport.height) * -1 > 0 && rect.bottom - viewport.height > 0 // Only top visible
+      || (rect.bottom - viewport.height) * -1 > 0 && rect.top + viewport.height < 0 // Only bottom visible
+      // TODO horizontal viewport check
+    );
+  },
+  placeholders: {},
+  placeholderBase64: function (width, height) {
+    var key = width + '_' + height;
+
+    if (ecbUtils.placeholders[key]) {
+      return ecbUtils.placeholders[key];
+    }
+
+    var canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    return ecbUtils.placeholders[key] = canvas.toDataURL('image/webp', 1);
+  }
+}
 <!-- prettier-ignore-end -->
