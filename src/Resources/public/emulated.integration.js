@@ -100,7 +100,6 @@ window.ecBlurhash = {
     setTimeout(function () {
       attr.node.onload = ecBlurhash.onPlaceholderImageLoad(attr);
       attr.node.src = ecbUtils.placeholderBase64(attr.width, attr.height);
-      attr.node.style.backgroundImage = 'url("data:image/svg+xml;utf8,' + ecbSpinnerSvg + '")';
     }, 1);
   },
 
