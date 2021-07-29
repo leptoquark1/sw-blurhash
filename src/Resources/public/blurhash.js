@@ -1,173 +1,139 @@
-// noinspection ES6ConvertVarToLetConst
 <!-- prettier-ignore-start -->
 window.Blurhash = {
   _internal: {
     utils: {
-      sRGBToLinear: function (value) {
-        var v = value / 255;
-        if (v <= 0.04045) {
-          return v / 12.92;
-        } else {
-          return Math.pow((v + 0.055) / 1.055, 2.4);
-        }
+      D: 3294.6,
+      E: 269.025,
+      PI: Math.PI,
+      PI2: Math.PI * 2,
+      sRGBToLinear: function(value) {
+        return value > 10.31475 ? Math.pow(value / Blurhash._internal.utils.E + 0.052132, 2.4) : value / Blurhash._internal.utils.D;
       },
-      linearTosRGB: function (value) {
-        var v = Math.max(0, Math.min(1, value));
-        if (v <= 0.0031308) {
-          return Math.round(v * 12.92 * 255 + 0.5);
-        } else {
-          return Math.round((1.055 * Math.pow(v, 1 / 2.4) - 0.055) * 255 + 0.5);
-        }
+      linearTosRGB: function(v) {
+        return ~~(v > 0.00001227 ? Blurhash._internal.utils.E * Math.pow(v, 0.416666) - 13.025 : v * Blurhash._internal.utils.D + 1);
       },
-      sign: function (n) {
-        return (n < 0 ? -1 : 1);
+      sign: function sign(n) {
+        return n < 0 ? -1 : 1;
       },
-      signPow: function (val, exp) {
+      signPow: function(val, exp) {
         return Blurhash._internal.utils.sign(val) * Math.pow(Math.abs(val), exp);
       },
+      signSqr: function(x) {
+        return (x < 0 ? -1 : 1) * x * x;
+      },
+      fastCos: function(x) {
+        x += Blurhash._internal.utils.PI / 2;
+        while (x > Blurhash._internal.utils.PI) {
+          x -= Blurhash._internal.utils.PI2;
+        }
+        var cos = 1.27323954 * x - 0.405284735 * Blurhash._internal.utils.signSqr(x);
+        return 0.225 * (Blurhash._internal.utils.signSqr(cos) - cos) + cos;
+      }
     },
     base83: {
-      digitCharacters: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '#', '$', '%', '*', '+', ',', '-', '.', ':', ';', '=', '?', '@', '[', ']', '^', '_', '{', '|', '}', '~'],
-      decode83: function (str) {
+      digit: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz#$%*+,-.:;=?@[]^_{|}~',
+      decode83: function decode83(str, start, end) {
         var value = 0;
-        for (var i = 0; i < str.length; i++) {
-          var c = str[i];
-          var digit = Blurhash._internal.base83.digitCharacters.indexOf(c);
-          value = value * 83 + digit;
+        while (start < end) {
+          value *= 83;
+          value += Blurhash._internal.base83.digit.indexOf(str[start++]);
         }
         return value;
       }
-    },
-    decode: {
-      decodeDC: function (value) {
-        var intR = value >> 16;
-        var intG = (value >> 8) & 255;
-        var intB = value & 255;
-        return [
-          Blurhash._internal.utils.sRGBToLinear(intR),
-          Blurhash._internal.utils.sRGBToLinear(intG),
-          Blurhash._internal.utils.sRGBToLinear(intB)
-        ];
-      },
-      decodeAC: function (value, maximumValue) {
-        var quantR = Math.floor(value / (19 * 19));
-        var quantG = Math.floor(value / 19) % 19;
-        var quantB = value % 19;
-        return [
-          Blurhash._internal.utils.signPow((quantR - 9) / 9, 2.0) * maximumValue,
-          Blurhash._internal.utils.signPow((quantG - 9) / 9, 2.0) * maximumValue,
-          Blurhash._internal.utils.signPow((quantB - 9) / 9, 2.0) * maximumValue
-        ];
-      },
-      validateBlurhash: function (blurhash) {
-        if (!blurhash || blurhash.length < 6) {
-          throw new Error('The blurhash string must be at least 6 characters');
-        }
-
-        var sizeFlag = Blurhash._internal.base83.decode83(blurhash[0]);
-
-        var numY = Math.floor(sizeFlag / 9) + 1;
-        var numX = sizeFlag % 9 + 1;
-
-        if (blurhash.length !== 4 + 2 * numX * numY) {
-          throw new Error("blurhash length mismatch: was ".concat(blurhash.length, " but it should be ").concat(4 + 2 * numX * numY));
-        }
-      }
     }
   },
-  isValid: function (blurhash) {
-    try {
-      Blurhash._internal.decode.validateBlurhash(blurhash);
-    } catch (error) {
-      return {
-        result: false,
-        errorReason: error.message
-      };
-    }
+  decodeBlurhash: function decodeBlurhash(blurHash, width, height, punch) {
+    var sizeFlag = Blurhash._internal.base83.decode83(blurHash, 0, 1);
 
-    return {
-      result: true
-    };
-  },
-  decodeBlurhash: function (blurhash, width, height, punch) {
-    Blurhash._internal.decode.validateBlurhash(blurhash);
-
-    punch = punch | 1;
-
-    var sizeFlag = Blurhash._internal.base83.decode83(blurhash[0]);
-    var numY = Math.floor(sizeFlag / 9) + 1;
     var numX = sizeFlag % 9 + 1;
+    var numY = ~~(sizeFlag / 9) + 1;
+    var size = numX * numY;
+    var maximumValue = (Blurhash._internal.base83.decode83(blurHash, 1, 2) + 1) / 13446 * (punch | 1);
+    var colors = new Float64Array(size * 3);
 
-    var quantisedMaximumValue = Blurhash._internal.base83.decode83(blurhash[1]);
-    var maximumValue = (quantisedMaximumValue + 1) / 166;
+    var value = Blurhash._internal.base83.decode83(blurHash, 2, 6);
 
-    var colors = new Array(numX * numY);
+    colors[0] = Blurhash._internal.utils.sRGBToLinear(value >> 16);
+    colors[1] = Blurhash._internal.utils.sRGBToLinear(value >> 8 & 255);
+    colors[2] = Blurhash._internal.utils.sRGBToLinear(value & 255);
+    var i = 0,
+        j = 0,
+        x = 0,
+        y = 0,
+        r = 0,
+        g = 0,
+        b = 0,
+        basis = 0,
+        basisY = 0,
+        colorIndex = 0,
+        pixelIndex = 0,
+        yh = 0,
+        xw = 0;
 
-    for (var i = 0; i < colors.length; i++) {
-      var value;
-      if (i === 0) {
-        value = Blurhash._internal.base83.decode83(blurhash.substring(2, 6));
-        colors[i] = Blurhash._internal.decode.decodeDC(value);
-      } else {
-        value = Blurhash._internal.base83.decode83(blurhash.substring(4 + i * 2, 6 + i * 2));
-        colors[i] = Blurhash._internal.decode.decodeAC(value, maximumValue * punch);
-      }
+    for (i = 1; i < size; i++) {
+      value = Blurhash._internal.base83.decode83(blurHash, 4 + i * 2, 6 + i * 2);
+      colors[i * 3] = Blurhash._internal.utils.signSqr(~~(value / (19 * 19)) - 9) * maximumValue;
+      colors[i * 3 + 1] = Blurhash._internal.utils.signSqr(~~(value / 19) % 19 - 9) * maximumValue;
+      colors[i * 3 + 2] = Blurhash._internal.utils.signSqr(value % 19 - 9) * maximumValue;
     }
 
     var bytesPerRow = width * 4;
     var pixels = new Uint8ClampedArray(bytesPerRow * height);
 
-    for (var y = 0; y < height; y++) {
-      for (var x = 0; x < width; x++) {
-        var r = 0;
-        var g = 0;
-        var b = 0;
+    for (y = 0; y < height; y++) {
+      yh = Blurhash._internal.utils.PI * y / height;
 
-        for (var j = 0; j < numY; j++) {
-          for (var k = 0; k < numX; k++) {
-            var basis =
-              Math.cos(Math.PI * x * k / width) *
-              Math.cos(Math.PI * y * j / height);
-            var color = colors[k + j * numX];
-            r += color[0] * basis;
-            g += color[1] * basis;
-            b += color[2] * basis;
+      for (x = 0; x < width; x++) {
+        r = 0;
+        g = 0;
+        b = 0;
+        xw = Blurhash._internal.utils.PI * x / width;
+
+        for (j = 0; j < numY; j++) {
+          basisY = Blurhash._internal.utils.fastCos(yh * j);
+
+          for (i = 0; i < numX; i++) {
+            basis = Blurhash._internal.utils.fastCos(xw * i) * basisY;
+            colorIndex = (i + j * numX) * 3;
+            r += colors[colorIndex] * basis;
+            g += colors[colorIndex + 1] * basis;
+            b += colors[colorIndex + 2] * basis;
           }
         }
 
-        var intR = Blurhash._internal.utils.linearTosRGB(r);
-        var intG = Blurhash._internal.utils.linearTosRGB(g);
-        var intB = Blurhash._internal.utils.linearTosRGB(b);
-
-        pixels[4 * x + 0 + y * bytesPerRow] = intR;
-        pixels[4 * x + 1 + y * bytesPerRow] = intG;
-        pixels[4 * x + 2 + y * bytesPerRow] = intB;
-        pixels[4 * x + 3 + y * bytesPerRow] = 255; // alpha
+        pixelIndex = 4 * x + y * bytesPerRow;
+        pixels[pixelIndex] = Blurhash._internal.utils.linearTosRGB(r);
+        pixels[pixelIndex + 1] = Blurhash._internal.utils.linearTosRGB(g);
+        pixels[pixelIndex + 2] = Blurhash._internal.utils.linearTosRGB(b);
+        pixels[pixelIndex + 3] = 255; // alpha
       }
     }
+
     return pixels;
   },
-  pixelsToCanvas: function (pixels, width, height) {
-    const canvas = document.createElement('canvas');
+  pixelsToCanvas: function(pixels, width, height) {
+    var canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
-    const ctx = canvas.getContext('2d');
-    const imageData = new ImageData(pixels, width, height);
+    var ctx = canvas.getContext('2d');
+    var imageData = new ImageData(pixels, width, height);
     ctx.putImageData(imageData, 0, 0);
     return canvas;
   },
-  pixelsToBase64: function (pixels, width, height, quality, type) {
-    const canvas = Blurhash.pixelsToCanvas(pixels, width, height);
+  pixelsToBase64: function(pixels, width, height, quality, type) {
+    var canvas = Blurhash.pixelsToCanvas(pixels, width, height);
     return canvas.toDataURL(type || 'image/jpeg', quality || 1);
   },
-  onPixelsToBlobSrc: function (cb, pixels, width, height, quality, type) {
-    const canvas = Blurhash.pixelsToCanvas(pixels, width, height);
+  onPixelsToBlobSrc: function(cb, pixels, width, height, quality, type) {
+    var canvas = Blurhash.pixelsToCanvas(pixels, width, height);
     canvas.toBlob(function (blob) {
       var newImg = document.createElement('img'),
-        url = URL.createObjectURL(blob);
+          url = URL.createObjectURL(blob);
+
       newImg.onload = function () {
         URL.revokeObjectURL(url);
       };
+
       cb(url);
     }, type || 'image/jpeg', quality || 1);
   }
@@ -184,7 +150,7 @@ window.ecbUtils = {
     var attr = node.attributes.getNamedItem(attrName);
     return attr ? attr.value : null;
   },
-  decodeHashForNode: function (attr, pseudoImage , cb) {
+  decodeHashForNode: function (attr, pseudoImage, cb) {
     pseudoImage = pseudoImage ? pseudoImage : attr.node;
 
     setTimeout(function () {
@@ -207,7 +173,7 @@ window.ecbUtils = {
     }
 
     var width = Number(ecbUtils.getNodeAttribute(node, 'data-ow'));
-    var height = Number(ecbUtils.getNodeAttribute(node,'data-oh'));
+    var height = Number(ecbUtils.getNodeAttribute(node, 'data-oh'));
     var srcset = ecbUtils.getNodeAttribute(node, 'srcset') || ecbUtils.getNodeAttribute(node, 'data-srcset');
 
     if (isNaN(width) || width === 0 || isNaN(height) || height === 0) {
