@@ -140,6 +140,12 @@ window.Blurhash = {
 };
 
 window.ecbUtils = {
+  nestedCallback: function (original, next) {
+    return function () {
+      original.call(this);
+      next.call(this);
+    }
+  },
   getViewport: function () {
     return {
       height: window.innerHeight || document.documentElement.clientHeight,
