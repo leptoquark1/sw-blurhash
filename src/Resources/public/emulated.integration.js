@@ -99,21 +99,36 @@ window.ecBlurhash = {
     }
   },
 
+  onOriginSrcLoaded: function (attr) {
+    attr.node.srcset = attr.srcset;
+    attr.node.src = ecbUtils.getNodeAttribute(attr.node, 'data-src');
+    attr.node.removeAttribute('data-srcset');
+  },
+
   outsourceLoadingImage: function (attr) {
-    if (ecBlurhash.loadingImages.hasOwnProperty(attr.hash)) {
-      return ecBlurhash.loadingImages[attr.hash];
+    var key = attr.srcset;
+    if (ecBlurhash.loadingImages.hasOwnProperty(key)) {
+      var prevImg = ecBlurhash.loadingImages[key];
+
+      if (prevImg.complete) {
+        ecBlurhash.onOriginSrcLoaded(attr);
+      } else {
+        prevImg.onload = ecbUtils.nestedCallback(prevImg.onload, function () {
+          ecBlurhash.onOriginSrcLoaded(attr);
+        });
+      }
+
+      return prevImg;
     }
 
     var img = new Image();
     img.onload = function () {
       img.onload = null;
-      attr.node.srcset = attr.srcset;
-      attr.node.src = ecbUtils.getNodeAttribute(attr.node, 'data-src');
-      attr.node.removeAttribute('data-srcset');
+      ecBlurhash.onOriginSrcLoaded(attr);
     }
     img.srcset = attr.srcset;
 
-    return ecBlurhash.loadingImages[attr.hash] = img;
+    return ecBlurhash.loadingImages[key] = img;
   },
 
   prepareNodeForBlurhash: function (attr, src) {
