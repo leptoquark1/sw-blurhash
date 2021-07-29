@@ -2,6 +2,8 @@ window.ecBlurhash = {
   imageNodes: [],
   imageNodesPostponed: [],
   loadingImages: {},
+  decoded: {},
+  cbOnDecode: {},
 
   addImageNode: function (nodeAttr) {
     if (document.readyState === 'interactive') {
@@ -16,19 +18,45 @@ window.ecBlurhash = {
     ecBlurhash.imageNodesPostponed.unshift(nodeAttr);
   },
 
+  addCbOnDecode(hash, cb) {
+    if (Array.isArray(ecBlurhash.cbOnDecode[hash]) === false) {
+      ecBlurhash.cbOnDecode[hash] = [];
+    }
+    ecBlurhash.cbOnDecode[hash].push(cb)
+  },
+
   decodeHashForImage: function (attr) {
     var pseudoImg = ecBlurhash.outsourceLoadingImage(attr);
+    var decoded = ecBlurhash.decoded[attr.hash];
+    var onDecode = ecBlurhash.onDecode(attr);
 
-    ecbUtils.decodeHashForNode(attr, pseudoImg, function (src) {
-      if (src === null) {
-         if (!!ecbUtils.getNodeAttribute(attr.node, 'data-blurhash')) {
-           ecBlurhash.onFinalImageLoad(attr).call(attr.node);
-         }
-        return;
+    if ((decoded === null || typeof decoded === 'string')) {
+      onDecode(decoded);
+    } else if (decoded === true) {
+      ecBlurhash.addCbOnDecode(attr.hash, onDecode);
+    } else {
+      ecBlurhash.decoded[attr.hash] = true;
+      ecbUtils.decodeHashForNode(attr, pseudoImg, onDecode);
+    }
+  },
+
+  onDecode: function(attr) {
+    return function(src) {
+      if (ecBlurhash.decoded[attr.hash] === true) {
+        ecBlurhash.decoded[attr.hash] = src;
+
+        var cbs = ecBlurhash.cbOnDecode[attr.hash] || [];
+        while (cbs.length) {
+          cbs.pop()(src);
+        }
       }
 
-      ecBlurhash.prepareNodeForBlurhash(attr, src);
-    });
+      if (src !== null) {
+        ecBlurhash.prepareNodeForBlurhash(attr, src);
+      } else if (!!ecbUtils.getNodeAttribute(attr.node, 'data-blurhash')) {
+         ecBlurhash.onFinalImageLoad(attr).call(attr.node);
+      }
+    }
   },
 
   onPlaceholderImageLoad: function (attr) {
