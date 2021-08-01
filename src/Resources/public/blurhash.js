@@ -217,19 +217,6 @@ window.ecbUtils = {
       || (rect.bottom - viewport.height) * -1 > 0 && rect.top + viewport.height < 0 // Only bottom visible
       // TODO horizontal viewport check
     );
-  },
-  placeholders: {},
-  placeholderBase64: function (width, height) {
-    var key = width + '_' + height;
-
-    if (ecbUtils.placeholders[key]) {
-      return ecbUtils.placeholders[key];
-    }
-
-    var canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    return ecbUtils.placeholders[key] = canvas.toDataURL('image/webp', 1);
   }
 }
 <!-- prettier-ignore-end -->

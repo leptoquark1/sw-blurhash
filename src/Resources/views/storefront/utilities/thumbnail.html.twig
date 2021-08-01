@@ -4,6 +4,7 @@
         'data-ow': media.metaData.hashOriginWidth,
         'data-oh': media.metaData.hashOriginHeight,
         'loading': 'lazy',
+        'src': 'data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' height=\'' ~ media.metaData.hashOriginHeight ~ '\' width=\'' ~ media.metaData.hashOriginWidth ~ '\'></svg>'
     }) %}
 
     {% set load = false %} {# All images are handled lazy #}
