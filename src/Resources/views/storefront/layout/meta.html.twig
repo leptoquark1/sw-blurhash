@@ -3,6 +3,8 @@
 {% block layout_head_stylesheet %}
     {{ parent() }}
 
+    <link rel="preload" as="image" href="{{ asset('bundles/ecblurhash/storefront/assets/images/ecb-spinner.svg') }}">
+
     {% if ecbConfig('isProductionMode') %}
         <script src="{{ asset('bundles/ecblurhash/blurhash.min.js', 'asset') }}"></script>
     {% else %}

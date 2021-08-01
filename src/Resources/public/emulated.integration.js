@@ -59,25 +59,9 @@ window.ecBlurhash = {
     }
   },
 
-  onPlaceholderImageLoad: function (attr) {
-    return function () {
-      this.setAttribute('data-ecb-p', '1');
-      this.onload = ecBlurhash.onFinalImageLoad(attr);
-
-      if (ecbUtils.isAncestorsVisible(attr.node) && ecbUtils.isInViewport(attr.node)) {
-        ecBlurhash.addImageNode(attr);
-        // Preload the image (but not by the original element)
-        ecBlurhash.outsourceLoadingImage(attr);
-      } else {
-        // Postpone all other images
-        ecBlurhash.addPostponedImageNode(attr);
-      }
-    }
-  },
-
   onBlurhashImageLoad: function (attr) {
     return function () {
-      this.setAttribute('data-ecb-p', '2');
+      this.setAttribute('data-ecb-bh', '1');
       this.onload = ecBlurhash.onFinalImageLoad(attr);
 
       if (!this.srcset) {
@@ -91,8 +75,7 @@ window.ecBlurhash = {
       this.onload = null;
 
       attr.node.parentElement.classList.remove('ecb-loading');
-      attr.node.style.backgroundImage = null;
-      this.removeAttribute('data-ecb-p');
+      this.removeAttribute('data-ecb-bh');
       this.removeAttribute('data-blurhash');
       this.removeAttribute('data-ow');
       this.removeAttribute('data-oh');
@@ -132,25 +115,27 @@ window.ecBlurhash = {
   },
 
   prepareNodeForBlurhash: function (attr, src) {
-    setTimeout(function () {
-      attr.node.onload = ecBlurhash.onBlurhashImageLoad(attr);
-      attr.node.src = src;
-      attr.node.parentElement.classList.add('ecb-loading');
-    }, 1);
-  },
-
-  prepareNodeForPlaceholder: function (attr) {
-    setTimeout(function () {
-      attr.node.onload = ecBlurhash.onPlaceholderImageLoad(attr);
-      attr.node.src = ecbUtils.placeholderBase64(attr.width, attr.height);
-    }, 1);
+    attr.node.onload = ecBlurhash.onBlurhashImageLoad(attr);
+    attr.node.src = src;
+    attr.node.parentElement.classList.add('ecb-loading');
   },
 
   prepareNode: function (node) {
     var attr = ecbUtils.extractNode(node);
     if (!attr || !attr.hash) return;
 
-    ecBlurhash.prepareNodeForPlaceholder(attr);
+    attr.node.onload = function () {
+      this.onload = ecBlurhash.onFinalImageLoad(attr);
+    }
+
+    if (ecbUtils.isAncestorsVisible(attr.node) && ecbUtils.isInViewport(attr.node)) {
+      ecBlurhash.addImageNode(attr);
+      // Preload the image (but not by the original element)
+      ecBlurhash.outsourceLoadingImage(attr);
+    } else {
+      // Postpone all other images
+      ecBlurhash.addPostponedImageNode(attr);
+    }
   },
 
   mutationHandler: function (mutations) {
