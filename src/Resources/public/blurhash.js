@@ -173,8 +173,9 @@ window.ecbUtils = {
   },
   extractNode: function (node) {
     var hash = ecbUtils.getNodeAttribute(node, 'data-blurhash');
+    var src = ecbUtils.getNodeAttribute(node, 'data-src');
 
-    if (!hash || ecbUtils.isImageCached(node.src)) {
+    if (!hash) {
       return null;
     }
 
@@ -183,6 +184,7 @@ window.ecbUtils = {
     var srcset = ecbUtils.getNodeAttribute(node, 'srcset') || ecbUtils.getNodeAttribute(node, 'data-srcset');
 
     if (isNaN(width) || width === 0 || isNaN(height) || height === 0) {
+      if (src) { node.src = src; }
       return null;
     }
 
