@@ -42,9 +42,6 @@ class MediaValidator {
         $this->excludedTags = $this->config->getExcludedFolders();
     }
 
-    /**
-     * @throws \Exception
-     */
     public function validate(MediaEntity $media): bool
     {
         try {

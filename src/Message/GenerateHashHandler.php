@@ -44,18 +44,19 @@ class GenerateHashHandler extends AbstractMessageHandler
 
     public static function getHandledMessages(): iterable
     {
-        return [
-            GenerateHashMessage::class,
-        ];
+        return [GenerateHashMessage::class];
     }
 
     public function handle($message): void
     {
-        if (!$this->config->isPluginManualMode() || !$this->isMessageValid($message)) {
+        if ($this->config->isPluginManualMode() || $this->isMessageValid($message) === false) {
             return;
         }
 
-        $this->handleMessage($message->getMediaIds(), $message->readContext());
+        $generator = $this->handleMessage($message->getMediaIds(), $message->readContext());
+        while ($generator->valid()) {
+            $generator->next();
+        }
     }
 
     public function handleIterative($message): ?\Generator
@@ -63,10 +64,11 @@ class GenerateHashHandler extends AbstractMessageHandler
         if (!$this->isMessageValid($message)) {
             return null;
         }
-        return $this->handleMessage($message->getMediaIds(), $message->readContext(), true);
+
+        return $this->handleMessage($message->getMediaIds(), $message->readContext());
     }
 
-    protected function handleMessage(array $givenMediaIds, Context $context, bool $isIterator = false): ?\Generator
+    protected function handleMessage(array $givenMediaIds, Context $context): \Generator
     {
         $mediaEntities = $this->getMediaByIds($givenMediaIds, $context);
 
@@ -84,9 +86,7 @@ class GenerateHashHandler extends AbstractMessageHandler
             $mediaEntities->remove($mediaId);
             gc_collect_cycles();
 
-            if ($isIterator) {
-                yield ['id' => $mediaId, 'hash' => $hash, 'name' => $name];
-            }
+            yield ['id' => $mediaId, 'hash' => $hash, 'name' => $name];
         }
 
         if (count($failedIds)) {
