@@ -5,7 +5,7 @@
         "hashGeneration": {
           "title": "Blurhash generierung",
           "message": "Keine Blurhashes verbleibend. | Ein Blurhash verbleibend ... | {n} Blurhashes verbleibend ...",
-          "messageSuccess": "Blurhashes wurden generiert."
+          "success": "Blurhashes wurden generiert."
         }
       }
     },
