@@ -11,7 +11,10 @@
     },
     "extension": {
       "sw-media-quickinfo": {
-        "blurredPreview": "Blurred Vorschau"
+        "blurredPreview": {
+          "title": "Blurhash Vorschau",
+          "alt": "Unscharfe Version des Originalbildes"
+        }
       }
     }
   }

@@ -3,15 +3,15 @@
 
     {% block sw_media_quickinfo_blurred_preview %}
         <sw-media-collapse
-            v-if="item.hasFile && ecbBluredImage"
+            v-if="hasBlurhash"
             :expandOnLoading="false"
-            :title="$tc('sw-media.sidebar.sections.preview')"
+            :title="$tc('ecBlurhash.extension.sw-media-quickinfo.blurredPreview.title')"
         >
             {% block sw_media_quickinfo_blurred_preview_content %}
                 <template #content>
-                    <div>
+                    <div class="sw-media-preview-v2 sw-media-quickinfo__media-preview">
                         {% block sw_media_quickinfo_blurred_preview_item %}
-                            <img :src="ecbBluredImage" alt="Blurred version the original Image" class="hidden">
+                            <img :src="blurhashImg" :alt="$tc('ecBlurhash.extension.sw-media-quickinfo.blurredPreview.alt')" class="sw-media-preview-v2__item">
                         {% endblock %}
                     </div>
                 </template>

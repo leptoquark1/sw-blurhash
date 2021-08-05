@@ -1,0 +1,7 @@
+{% sw_extends '@Administration/administration/index.html.twig' %}
+
+{% block administration_templates %}
+    {{ parent() }}
+
+    <script nonce="{{ cspNonce }}" src="{{ asset('blurhash.min.js', '@EcBlurHash') }}"></script>
+{% endblock %}
