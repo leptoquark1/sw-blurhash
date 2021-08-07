@@ -249,12 +249,12 @@ Process or enqueue the generation of Blurhashes for either only missing or renew
 Usage:
 `ec:blurhash:generate [options] [<entities>...]`
 
-| Argument / Option | Description | |   |
-| ----------------- | ------------- | - |
-| entities | Restrict to specific models. (_Comma separated list of model names._) | optional |
-| -a, --all | Include images that already have a hash. | optional |
-| -s, --sync | Rather work now than by message worker. | optional |
-| -d, --dryRun | Skip processing, just show how many media entities are affected | optional |
+| Argument / Option | Description | | 
+| ----------------- | ------------- | ---
+| entities | Restrict to specific models. (_Comma separated list of model names._) | optional
+| -a, --all | Include images that already have a hash. | optional
+| -s, --sync | Rather work now than by message worker. | optional
+| -d, --dryRun | Skip processing, just show how many media entities are affected | optional
 
 Example:
 
