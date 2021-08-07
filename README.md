@@ -1,16 +1,27 @@
-# EyecookBlurhash for Shopware6
+# ecBlurhash <small>_- Teaser your Images_</small>
 
-**A complete integration of [Blurhash](https://blurha.sh/) for Shopware 6.**
+#### _Look how a **tiny**, **blurry** placeholder enhances the **User Experience** by creating a **strong visual impact**_
 
-Come and see how a maybe simple, blurry placeholder can have a strong visual impact
+---
 
---- 
+### Not a _placeholder_, but a wholesome Teaser Image!
+
+- 🏞 **Teaser Images** with a **blurry** representation of the original image
+- 🔥 **Tiny!** Only a few dozen bytes <small>(~0.0001% of the image)</small>, therefore delivered with the **first response**
+- 🚀 Decoded **by the clients'** browser **itself**
+- 🌈 Configuration of **Performance** and **Quality** parameters to **fit your needs**
+- 💻 **Emulated integration** - targets **all types of images** used by the storefront and your theme
+- 😎 Quite casually: **Lazy images**, **reduced jumping of content** and much more...
+
+---
+
+><small>A full integration of [Blurhash](https://blurha.sh/) for Shopware 6.</small>
 
 ## Table of contents
 
 - [About Blurhash](#about-blurhash)
-    - [Claim & Classification for Shopware 6](#claim-for-shopware-6)
-- [Features & Roadmap](#features--roadmap)
+- [Claim & Classification for Shopware 6](#claim-for-shopware-6)
+- [Features & Roadmap](#roadmap)
 - [System Requirements](#system-requirements)
     - [Environment](#environment)
 - [Configuration](#configuration)
@@ -30,27 +41,92 @@ According to itself, it describes to be as follows
 
 However, this does not illustrate the enormous clout that this particular feature brings to bear!
 
-**That dense, squiggly blob will provide your customers your Theme in all its splendour and glory to its full magnitude, right from the very first 
- response of Shopware!**
+[comment]: <> (**That dense, squiggly blob will provide your customers your Theme in all its splendour and glory to its full magnitude, right from the very first response of Shopware!**)
 
-### Claim for Shopware 6
 
-The target of `EcBlurhash` is, to integrate the Blurhash functionality into the Shopware 6 ecosystem. Highly adaptable and customisable.
+## Claim for Shopware 6
 
-## Features & Roadmap
+The target of `EcBlurhash` is, to integrate the Blurhash functionality and manage its context in the Shopware 6 ecosystem.
 
-### Current
+**Optimized Performance & Resources**
+<br> Generate as efficiently as possible using PHP and Shopware peer dependencies
 
-- Generate Blurhashes for all or only specific images.
-- Configure performance and quality parameters.
-- Emulate a full integration which targets all types of image-integration in your storefront.
-- Reduce jumping Layouts: Until the client has decoded the Blurhash, a placeholder in form of transparent images with the same dimensions will take place in the image frame.
+**Emulated Integration**
+<br> Integration into the default Shopware "Theme System", providing the best possible coverage
 
-### Upcoming
+**Client optimized decoding**
+<br> Fast generation of the _Blurhash Teaser Image_ (decoded Blurhash) in the client browser
 
-- Custom placeholder (not only a transparent images) and loading indicators for the blurhash itself.
-- Full support for custom integrations.
-- Hash Media-queries: Different hash sizes by Device, User-Agent and more.
+**Controlling**
+<br> Comfortable control the processing and integration in the Shopware Administration
+
+**Easy adaptable for Custom Integrations**
+<br> Option to outsource the generation process to skirt 'PHP', 'Process' or even the 'System' bottlenecks
+
+
+## Roadmap
+
+### 4.0.0 Release Candidate
+
+- display in media browser whether a blurhash is possible
+  - for folder
+  - for single image
+- trigger generation from administration
+  - for single image from media browser (force for existing)
+  - for a complete folder from media browser (force or missing)
+  - for all that may missing or all from media browser main folder
+- add default tag for image exclusion (and exclude from generation)
+  - make sure this will be removed when uninstalling the plugin
+- remove svg files from validation
+- fix image parsing and bluhash decoding for images that were loaded by xhr.
+  for example search popover or offcanvas menu and cart
+- test if picture elements for as expected
+
+### 4.1.0 UX & Controlling
+
+- Exclude folders in media browser (like plugin config)
+- Check if a file size limit is possible
+- The HTML `img` 'lazy' attribute in combination with blurhash
+
+### 4.2.0 Cover Traces (Garbage Collecting)
+
+- List all image missing images (which do not meet the 'exclusion' config)
+  - display a message now and then, when in manual mode
+  - add a command with structural output
+  - clean up command and make it this can be triggered in administration
+- remove a blurhash from image
+  - for single image from media browser
+  - the possibility to fully remove all blurhashes when plugin is uninstalled
+  - Command to list all images with blurhash that no longer fit the 'exclusion' config
+  
+### 4.3.0 Increase compatibility - Vue Storefront and Custom Integrations
+
+- Api Integration of `MediaHashId` endpoint
+  - Read single media entities
+  - Read lists of media entities (filtered, searchable)
+  - Write Blurhash for media entities (Outsource of generation)
+  - Validate a list of media entities for compatibility
+  - List missing image (Not meet the 'exclusion' config)
+
+### Backlog
+
+- Emulated Integration should be compatible with background images
+- Support for images provided by CDNs
+
+#### Conceptual
+
+- Custom placeholder while blurhash is decoded
+
+##### Integration Tweaks
+
+Better performance on slow / weak devices
+
+- Compare lazy decoding of images (Those not in view port) on pages with a lot of images:
+  - Queue order should match the actual position of the Images in DOM
+  - Fixed or Absolut image position should be respected - can their position in queue be corrected?
+- Can the actual HTML5 'Lazy Loading' Attribute intercepted when triggered?
+- Hash Media-queries: Different hash sizes by Device, User-Agent and similar.
+- Blurhash decoding using WebAssembly 
 
 
 ## System Requirements
@@ -73,19 +149,29 @@ In order to adapt the plugin to your very special needs, you have a number of us
 
 #### Integration mode (Storefront)
 
-This configuration is the essential part for installations the [Shopware Storefront](https://github.com/shopware/storefront) to render the frontend.
+This configuration is the essential part for installations of the [Shopware Storefront](https://github.com/shopware/storefront) to render the frontend.
 If you use the [Shopware PWA](https://www.vuestorefront.io/shopware) or another frontend solution, you can safely ignore this configuration.
 
 > <small>Are using a custom frontend solution? [Learn how to integrate Blurhash in your SPA](#custom-integrations)</small>
 
-#### Emulated
+#### Emulated - Event Lifecycle
 
-##### Event timeline
-1. Relevant images captured while the browser is rendering the DOM. 
-2. Once it's interactive, the decoding starts for all images in the current viewport. All others images are postponed to be processed when the DOM is ready, so it won't disturb the UX.
-4. Images will have an invisible placeholder to fill out the space until the decoding is complete.
-5. The image of the decoded Blurhash replace the invisible placeholder to teaser the final image.
-6. Finally, when the actual source image has been loaded, it takes place of decoded teaser.
+1. While DOM is rendering
+   1. Detected all images that should be encoded
+   2. Images are distributed in two queues according to its relative emphasis: 'KeyVisual' & 'Subsequent' 
+   3. The image `source-set` is 'lazy' and regular transparent placeholder is provided
+   4. For 'KeyVisuals', the `srcset` is provided to delegate browsers fetch of the correct image for it
+2. After DOM is interactive
+   1. Blurhash decoding for 'KeyVisuals' are processed
+   2. Timeout any Blurhash decoding for `200ms` to have a reference distinction for Decoding vs. Final image response.
+   3. Is the final image not loaded yet, the placeholder itself gets replaced by the decoded Blurhash Teaser Image
+3. Relevant images captured while the browser is rendering the DOM.
+4. Once it's interactive, the decoding starts for all images in the current viewport. All others images are postponed to be processed when the DOM is ready, so it won't disturb the UX.
+5. Images will have an invisible placeholder to fill out the space until the decoding is complete.
+6. The image of the decoded Blurhash replace the invisible placeholder to teaser the final image.
+7. Finally, when the actual source image has been loaded, it takes place of decoded teaser.
+
+[comment]: <> (TODO Visualize Lifecycle as a Diagram)
 
 ### Inclusions / Exclusion
 
