@@ -5,9 +5,10 @@ namespace EyeCook\BlurHash\Test\Hash\Media;
 use EyeCook\BlurHash\Hash\Media\MediaValidator;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Content\Media\MediaEntity;
-use Shopware\Core\Content\Test\Media\MediaFixtures;
+use Shopware\Core\Content\Media\MediaType\ImageType;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
+use Shopware\Core\Framework\Uuid\Uuid;
 
 /**
  * @package EyeCook\BlurHash\Test
@@ -16,7 +17,6 @@ use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
 class MediaValidatorTest extends TestCase
 {
     use IntegrationTestBehaviour;
-    use MediaFixtures;
 
     protected Context $context;
     protected MediaValidator $mediaValidator;
@@ -25,7 +25,6 @@ class MediaValidatorTest extends TestCase
     {
         parent::setUp();
 
-        // TODO: Make sure the configuration of everything that is used to generate the hash is mocked by fixtures
         $this->context = Context::createDefaultContext();
         $this->mediaValidator = $this->getContainer()->get(MediaValidator::class);
     }
@@ -68,7 +67,12 @@ class MediaValidatorTest extends TestCase
 
     public function testMediaFileExtensions(): void
     {
-        static::markTestIncomplete();
+        static::assertTrue($this->mediaValidator->validate($this->getValidMedia())); // Jpg
+        static::assertTrue($this->mediaValidator->validate($this->getValidMedia('jpeg')));
+        static::assertTrue($this->mediaValidator->validate($this->getValidMedia('png', 'image/png')));
+        static::assertTrue($this->mediaValidator->validate($this->getValidMedia('gif', 'image/gif')));
+
+        static::assertFalse($this->mediaValidator->validate($this->getValidMedia('svg', 'image/svg')));
     }
 
     private function assertValidateExpectThrow($input, string $expectedExceptionClass = \TypeError::class): void
@@ -79,5 +83,21 @@ class MediaValidatorTest extends TestCase
             $this->mediaValidator->validate($input),
             'The value should throw "' . $expectedExceptionClass . '"'
         );
+    }
+
+    private function getValidMedia($fileExt = 'jpg', $mimeType = 'image/jpeg'): MediaEntity
+    {
+        $media = new MediaEntity();
+
+        $media->setId(Uuid::randomHex());
+        $media->setMetaData(['width' => 1, 'height' => 1, 'blurhash' => '1']);
+        $media->setFileName('validBlurhashMedia' . '.' . $fileExt);
+        $media->setFileExtension($fileExt);
+        $media->setMimeType($mimeType);
+        $media->setFileSize(1024);
+        $media->setMediaType(new ImageType());
+        $media->setPrivate(false);
+
+        return $media;
     }
 }

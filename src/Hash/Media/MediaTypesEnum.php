@@ -15,7 +15,6 @@ class MediaTypesEnum
         'jpeg',
         'png',
         'gif',
-        'svg'
     ];
 
     public static function getValues(): array

@@ -77,10 +77,9 @@ The target of `EcBlurhash` is, to integrate the Blurhash functionality and manag
   - for all that may missing or all from media browser main folder
 - add default tag for image exclusion (and exclude from generation)
   - make sure this will be removed when uninstalling the plugin
-- remove svg files from validation
-- fix image parsing and bluhash decoding for images that were loaded by xhr.
+- fix image parsing and blurhash decoding for images that were loaded with ajax.
   for example search popover or offcanvas menu and cart
-- test if picture elements for as expected
+- test if picture elements work as expected
 
 ### 4.1.0 UX & Controlling
 
