@@ -78,5 +78,13 @@
             <argument type="service" id="Eyecook\Blurhash\Configuration\ConfigService"/>
             <tag name="twig.extension"/>
         </service>
+
+        <service id="Eyecook\Blurhash\Controller\AdministrationController" public="true">
+            <argument type="service" id="messenger.bus.shopware"/>
+
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
     </services>
 </container>
