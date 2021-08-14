@@ -1,7 +1,6 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
-namespace EyeCook\BlurHash\Test\TestCaseBase;
+namespace EyeCook\BlurHash\Test;
 
 use EyeCook\BlurHash\Configuration\Config;
 use EyeCook\BlurHash\Configuration\ConfigService;
@@ -13,7 +12,7 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
  * @package EyeCook\BlurHash\Test
  * @author David Fecke (+leptoquark1)
  */
-trait ConfigServiceTestBehaviour
+trait ConfigMockStub
 {
     use IntegrationTestBehaviour;
     use SystemConfigTestBehaviour;
@@ -22,7 +21,6 @@ trait ConfigServiceTestBehaviour
     protected SystemConfigService $systemConfigService;
     protected ConfigService $configService;
 
-    /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
     public function setUpSystemConfigService(): void
     {
         $this->systemConfigService = $this->getContainer()->get(SystemConfigService::class);

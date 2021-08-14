@@ -3,7 +3,7 @@
 namespace EyeCook\BlurHash\Test\Hash\Media;
 
 use EyeCook\BlurHash\Hash\Media\MediaHashId;
-use EyeCook\BlurHash\Test\TestCaseBase\HashMediaFixtures;
+use EyeCook\BlurHash\Test\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;

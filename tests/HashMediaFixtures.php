@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace EyeCook\BlurHash\Test\TestCaseBase;
+namespace EyeCook\BlurHash\Test;
 
 use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Content\Media\MediaType\ImageType;

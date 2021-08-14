@@ -4,8 +4,8 @@ namespace EyeCook\BlurHash\Test\Controller;
 
 use EyeCook\BlurHash\Configuration\Config;
 use EyeCook\BlurHash\Message\GenerateHashMessage;
-use EyeCook\BlurHash\Test\TestCaseBase\ConfigServiceTestBehaviour;
-use EyeCook\BlurHash\Test\TestCaseBase\HashMediaFixtures;
+use EyeCook\BlurHash\Test\ConfigMockStub;
+use EyeCook\BlurHash\Test\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Test\TestCaseBase\AdminFunctionalTestBehaviour;
 use Shopware\Core\Framework\Test\TestCaseBase\QueueTestBehaviour;
@@ -20,7 +20,7 @@ class AdministrationControllerTest extends TestCase
 {
     use AdminFunctionalTestBehaviour,
         HashMediaFixtures,
-        ConfigServiceTestBehaviour,
+        ConfigMockStub,
         QueueTestBehaviour;
 
     protected const VALIDATE_MEDIA_ID_URL = '/api/_action/eyecook/blurhash/validator/media/';

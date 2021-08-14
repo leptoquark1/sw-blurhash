@@ -5,8 +5,8 @@ namespace EyeCook\BlurHash\Test\Hash;
 use EyeCook\BlurHash\Configuration\Config;
 use EyeCook\BlurHash\Hash\HashGenerator;
 use EyeCook\BlurHash\Hash\Media\MediaHashId;
-use EyeCook\BlurHash\Test\TestCaseBase\ConfigServiceTestBehaviour;
-use EyeCook\BlurHash\Test\TestCaseBase\HashMediaFixtures;
+use EyeCook\BlurHash\Test\ConfigMockStub;
+use EyeCook\BlurHash\Test\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
  */
 class HashGeneratorTest extends TestCase
 {
-    use ConfigServiceTestBehaviour,
+    use ConfigMockStub,
         HashMediaFixtures;
 
     protected HashGenerator $hashGenerator;

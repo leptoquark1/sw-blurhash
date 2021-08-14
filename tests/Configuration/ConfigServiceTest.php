@@ -4,7 +4,7 @@ namespace EyeCook\BlurHash\Test\Configuration;
 
 use EyeCook\BlurHash\Configuration\Config;
 use EyeCook\BlurHash\Configuration\ConfigService;
-use EyeCook\BlurHash\Test\TestCaseBase\ConfigServiceTestBehaviour;
+use EyeCook\BlurHash\Test\ConfigMockStub;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Uuid\Uuid;
 
@@ -14,7 +14,7 @@ use Shopware\Core\Framework\Uuid\Uuid;
  */
 class ConfigServiceTest extends TestCase
 {
-    use ConfigServiceTestBehaviour;
+    use ConfigMockStub;
 
     protected function setUp(): void
     {
