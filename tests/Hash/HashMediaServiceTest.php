@@ -4,8 +4,8 @@ namespace Eyecook\Blurhash\Test\Hash;
 
 use Eyecook\Blurhash\Configuration\Config;
 use Eyecook\Blurhash\Hash\HashMediaService;
-use Eyecook\Blurhash\Test\TestCaseBase\ConfigServiceTestBehaviour;
-use Eyecook\Blurhash\Test\TestCaseBase\HashMediaFixtures;
+use Eyecook\Blurhash\Test\ConfigMockStub;
+use Eyecook\Blurhash\Test\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Content\Media\Pathname\UrlGeneratorInterface;
@@ -22,7 +22,7 @@ class HashMediaServiceTest extends TestCase
 {
     use IntegrationTestBehaviour,
         HashMediaFixtures,
-        ConfigServiceTestBehaviour;
+        ConfigMockStub;
 
     protected Context $context;
     protected ?HashMediaService $hashMediaService;
