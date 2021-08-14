@@ -2,13 +2,13 @@
 
 namespace Eyecook\Blurhash\Test\Controller;
 
-use Enqueue\Client\TraceableProducer;
 use Eyecook\Blurhash\Configuration\Config;
+use Eyecook\Blurhash\Message\GenerateHashMessage;
 use Eyecook\Blurhash\Test\TestCaseBase\ConfigServiceTestBehaviour;
 use Eyecook\Blurhash\Test\TestCaseBase\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
-use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Test\TestCaseBase\AdminFunctionalTestBehaviour;
+use Shopware\Core\Framework\Test\TestCaseBase\QueueTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -20,51 +20,45 @@ class AdministrationControllerTest extends TestCase
 {
     use AdminFunctionalTestBehaviour,
         HashMediaFixtures,
-        ConfigServiceTestBehaviour;
+        ConfigServiceTestBehaviour,
+        QueueTestBehaviour;
 
     protected const VALIDATE_MEDIA_ID_URL = '/api/_action/eyecook/blurhash/validator/media/';
     protected const VALIDATE_FOLDER_ID_URL = '/api/_action/eyecook/blurhash/validator/folder/';
-
-    protected Context $context;
-    protected TraceableProducer $traceableProducer;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->traceableProducer = $this->getContainer()->get('enqueue.client.default.traceable_producer');
-        $this->context = Context::createDefaultContext();
         $this->initializeMediaFixtures();
         $this->setUpSystemConfigService();
         $this->resetInternalSystemConfigCache();
     }
 
-    public function testGenerateByMediaEntityReturnCode(): void
+    public function testGenerateByMediaEntity(): void
     {
-        $this->getBrowser()->request('GET', '/api/_action/eyecook/blurhash/generate/media/' . Uuid::randomHex());
+        $mediaId = Uuid::randomHex();
+        $this->getBrowser()->request('GET', '/api/_action/eyecook/blurhash/generate/media/' . $mediaId);
         $response = $this->getBrowser()->getResponse();
+        $message = $this->getMessageFromReceiver(GenerateHashMessage::class);
 
         static::assertEquals(204, $response->getStatusCode());
-    }
-
-    public function testGenerateByMediaEntityMessageDispatched(): void
-    {
-        $this->markTestSkipped();
+        static::assertInstanceOf(GenerateHashMessage::class, $message);
+        static::assertContains($mediaId, $message->getMediaIds());
     }
 
     public function testGenerateByMediaEntitiesReturnCode(): void
     {
+        $mediaId = Uuid::randomHex();
         $this->getBrowser()->request('POST', '/api/_action/eyecook/blurhash/generate/media', [
-            'mediaIds' => [Uuid::randomHex()]
+            'mediaIds' => [$mediaId]
         ]);
         $response = $this->getBrowser()->getResponse();
+        $message = $this->getMessageFromReceiver(GenerateHashMessage::class);
 
         static::assertEquals(204, $response->getStatusCode());
-    }
-
-    public function testGenerateByMediaEntitiesMessageDispatch(): void
-    {
-        $this->markTestSkipped();
+        static::assertInstanceOf(GenerateHashMessage::class, $message);
+        static::assertContains($mediaId, $message->getMediaIds());
     }
 
     public function testValidateMediaResponseWithNonExistentEntity(): void
@@ -142,7 +136,21 @@ class AdministrationControllerTest extends TestCase
 
         return [
             'response' => $response,
-            'content' => (array) json_decode($response->getContent()),
+            'content' => (array)json_decode($response->getContent()),
         ];
+    }
+
+    private function getMessageFromReceiver(string $className): object
+    {
+        $envelopes = $this->getReceiver()->get();
+        $message = null;
+        foreach ($envelopes as $envelope) {
+            if (get_class($envelope->getMessage()) === $className) {
+                $message = $envelope->getMessage();
+                break;
+            }
+        }
+
+        return $message;
     }
 }
