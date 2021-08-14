@@ -6,8 +6,8 @@ use Eyecook\Blurhash\Configuration\Config;
 use Eyecook\Blurhash\Hash\HashGenerator;
 use Eyecook\Blurhash\Hash\Media\MediaHashId;
 use Eyecook\Blurhash\Test\TestCaseBase\ConfigServiceTestBehaviour;
+use Eyecook\Blurhash\Test\TestCaseBase\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
-use Shopware\Core\Content\Test\Media\MediaFixtures;
 
 /**
  * @package Eyecook\Blurhash\Test
@@ -15,7 +15,8 @@ use Shopware\Core\Content\Test\Media\MediaFixtures;
  */
 class HashGeneratorTest extends TestCase
 {
-    use ConfigServiceTestBehaviour, MediaFixtures;
+    use ConfigServiceTestBehaviour,
+        HashMediaFixtures;
 
     protected HashGenerator $hashGenerator;
 

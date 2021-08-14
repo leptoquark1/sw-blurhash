@@ -2,8 +2,11 @@
 
 namespace Eyecook\Blurhash\Controller;
 
+use Eyecook\Blurhash\Hash\Media\MediaValidator;
 use Eyecook\Blurhash\Message\GenerateHashMessage;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\DataAbstractionLayer\Exception\EntityNotFoundException;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\Routing\Annotation\RouteScope;
 use Shopware\Core\Framework\Routing\Exception\InvalidRequestParameterException;
 use Shopware\Core\Framework\Routing\Exception\MissingRequestParameterException;
@@ -25,10 +28,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdministrationController extends AbstractController
 {
     protected MessageBusInterface $messageBus;
+    protected MediaValidator $mediaValidator;
 
-    public function __construct(MessageBusInterface $messageBus)
+    public function __construct(MessageBusInterface $messageBus, MediaValidator $mediaValidator)
     {
         $this->messageBus = $messageBus;
+        $this->mediaValidator = $mediaValidator;
     }
 
     /**
@@ -72,6 +77,74 @@ class AdministrationController extends AbstractController
         $this->delegateHashMessage($mediaIds, $context);
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @Route(
+     *     "/api/_action/eyecook/blurhash/validator/media/{mediaId}",
+     *     name="api.action.eyecook.blurhash.validator.media-id",
+     *     defaults={"auth_required"=true},
+     *     methods={"GET"}
+     * )
+     */
+    public function mediaIsValid(string $mediaId, Request $request, Context $context): JsonResponse
+    {
+        if (!$mediaId) {
+            throw new MissingRequestParameterException('mediaId');
+        }
+
+        $mediaRepository = $this->container->get('media.repository');
+        $criteria = new Criteria([$mediaId]);
+        $media = $mediaRepository->search($criteria, $context)->get($mediaId);
+
+        if (!$media) {
+            throw new EntityNotFoundException('media', $mediaId);
+        }
+
+        $error = $this->mediaValidator->getValidationError($media);
+
+        if ($error !== null) {
+            return $this->json([
+                'mediaId' => $mediaId,
+                'valid' => false,
+                'message' => $error,
+            ], Response::HTTP_OK);
+        }
+
+        return $this->json([
+            'mediaId' => $mediaId,
+            'valid' => true,
+        ], Response::HTTP_OK);
+    }
+
+    /**
+     * @Route(
+     *     "/api/_action/eyecook/blurhash/validator/folder/{folderId}",
+     *     name="api.action.eyecook.blurhash.validator.folder-id",
+     *     defaults={"auth_required"=true},
+     *     methods={"GET"}
+     * )
+     */
+    public function mediaFolderIsValid(string $folderId, Request $request, Context $context): JsonResponse
+    {
+        if (!$folderId) {
+            throw new MissingRequestParameterException('folderId');
+        }
+
+        $isExcluded = $this->mediaValidator->isExcludedFolderId($folderId);
+
+        if ($isExcluded) {
+            return $this->json([
+                'folderId' => $folderId,
+                'valid' => false,
+                'message' => 'Folder is excluded by configuration',
+            ], Response::HTTP_OK);
+        }
+
+        return $this->json([
+            'folderId' => $folderId,
+            'valid' => true,
+        ], Response::HTTP_OK);
     }
 
     private function delegateHashMessage(array $mediaIds, Context $context): void

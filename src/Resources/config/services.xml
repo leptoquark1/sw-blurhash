@@ -81,6 +81,7 @@
 
         <service id="Eyecook\Blurhash\Controller\AdministrationController" public="true">
             <argument type="service" id="messenger.bus.shopware"/>
+            <argument type="service" id="Eyecook\Blurhash\Hash\Media\MediaValidator"/>
 
             <call method="setContainer">
                 <argument type="service" id="service_container"/>

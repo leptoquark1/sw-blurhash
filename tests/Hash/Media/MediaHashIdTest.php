@@ -3,9 +3,9 @@
 namespace Eyecook\Blurhash\Test\Hash\Media;
 
 use Eyecook\Blurhash\Hash\Media\MediaHashId;
+use Eyecook\Blurhash\Test\TestCaseBase\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Content\Media\MediaEntity;
-use Shopware\Core\Content\Test\Media\MediaFixtures;
 use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
 
@@ -16,7 +16,7 @@ use Shopware\Core\Framework\Uuid\Uuid;
 class MediaHashIdTest extends TestCase
 {
     use IntegrationTestBehaviour;
-    use MediaFixtures;
+    use HashMediaFixtures;
 
     protected MediaEntity $media;
     protected array $metaDataFixture;
@@ -87,5 +87,4 @@ class MediaHashIdTest extends TestCase
         static::assertEquals(200, $serialized['hashOriginHeight']);
         static::assertEquals($this->metaDataFixture['blurhash'], $serialized['blurhash']);
     }
-
 }

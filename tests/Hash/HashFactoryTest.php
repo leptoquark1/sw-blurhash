@@ -3,9 +3,9 @@
 namespace Eyecook\Blurhash\Test\Hash;
 
 use Eyecook\Blurhash\Hash\Media\MediaHashIdFactory;
+use Eyecook\Blurhash\Test\TestCaseBase\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Content\Media\MediaEntity;
-use Shopware\Core\Content\Test\Media\MediaFixtures;
 use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
 
 /**
@@ -15,7 +15,7 @@ use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
 class HashFactoryTest extends TestCase
 {
     use IntegrationTestBehaviour;
-    use MediaFixtures;
+    use HashMediaFixtures;
 
     protected MediaHashIdFactory $factoryInstance;
 
