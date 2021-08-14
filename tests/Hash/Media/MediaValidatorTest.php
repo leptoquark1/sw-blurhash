@@ -3,12 +3,11 @@
 namespace EyeCook\BlurHash\Test\Hash\Media;
 
 use EyeCook\BlurHash\Hash\Media\MediaValidator;
+use EyeCook\BlurHash\Test\TestCaseBase\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Content\Media\MediaEntity;
-use Shopware\Core\Content\Media\MediaType\ImageType;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
-use Shopware\Core\Framework\Uuid\Uuid;
 
 /**
  * @package EyeCook\BlurHash\Test
@@ -16,7 +15,8 @@ use Shopware\Core\Framework\Uuid\Uuid;
  */
 class MediaValidatorTest extends TestCase
 {
-    use IntegrationTestBehaviour;
+    use IntegrationTestBehaviour,
+        HashMediaFixtures;
 
     protected Context $context;
     protected MediaValidator $mediaValidator;
@@ -67,12 +67,12 @@ class MediaValidatorTest extends TestCase
 
     public function testMediaFileExtensions(): void
     {
-        static::assertTrue($this->mediaValidator->validate($this->getValidMedia())); // Jpg
-        static::assertTrue($this->mediaValidator->validate($this->getValidMedia('jpeg')));
-        static::assertTrue($this->mediaValidator->validate($this->getValidMedia('png', 'image/png')));
-        static::assertTrue($this->mediaValidator->validate($this->getValidMedia('gif', 'image/gif')));
+        static::assertTrue($this->mediaValidator->validate($this->getValidLocalMediaForHash())); // Jpg
+        static::assertTrue($this->mediaValidator->validate($this->getValidLocalMediaForHash('jpeg')));
+        static::assertTrue($this->mediaValidator->validate($this->getValidLocalMediaForHash('png', 'image/png')));
+        static::assertTrue($this->mediaValidator->validate($this->getValidLocalMediaForHash('gif', 'image/gif')));
 
-        static::assertFalse($this->mediaValidator->validate($this->getValidMedia('svg', 'image/svg')));
+        static::assertFalse($this->mediaValidator->validate($this->getValidLocalMediaForHash('svg', 'image/svg')));
     }
 
     private function assertValidateExpectThrow($input, string $expectedExceptionClass = \TypeError::class): void
@@ -83,21 +83,5 @@ class MediaValidatorTest extends TestCase
             $this->mediaValidator->validate($input),
             'The value should throw "' . $expectedExceptionClass . '"'
         );
-    }
-
-    private function getValidMedia($fileExt = 'jpg', $mimeType = 'image/jpeg'): MediaEntity
-    {
-        $media = new MediaEntity();
-
-        $media->setId(Uuid::randomHex());
-        $media->setMetaData(['width' => 1, 'height' => 1, 'blurhash' => '1']);
-        $media->setFileName('validBlurhashMedia' . '.' . $fileExt);
-        $media->setFileExtension($fileExt);
-        $media->setMimeType($mimeType);
-        $media->setFileSize(1024);
-        $media->setMediaType(new ImageType());
-        $media->setPrivate(false);
-
-        return $media;
     }
 }

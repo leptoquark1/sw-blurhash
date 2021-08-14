@@ -5,10 +5,10 @@ namespace EyeCook\BlurHash\Test\Hash;
 use EyeCook\BlurHash\Configuration\Config;
 use EyeCook\BlurHash\Hash\HashMediaService;
 use EyeCook\BlurHash\Test\TestCaseBase\ConfigServiceTestBehaviour;
+use EyeCook\BlurHash\Test\TestCaseBase\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Content\Media\Pathname\UrlGeneratorInterface;
-use Shopware\Core\Content\Test\Media\MediaFixtures;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -20,7 +20,9 @@ use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
  */
 class HashMediaServiceTest extends TestCase
 {
-    use IntegrationTestBehaviour, MediaFixtures, ConfigServiceTestBehaviour;
+    use IntegrationTestBehaviour,
+        HashMediaFixtures,
+        ConfigServiceTestBehaviour;
 
     protected Context $context;
     protected ?HashMediaService $hashMediaService;

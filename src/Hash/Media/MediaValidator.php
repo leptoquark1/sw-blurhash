@@ -14,7 +14,8 @@ use Shopware\Core\Content\Media\MediaType\ImageType;
  * @package EyeCook\BlurHash
  * @author David Fecke (+leptoquark1)
  */
-class MediaValidator {
+class MediaValidator
+{
     protected const MESSAGE_GENERAL = 'Blurhash generation has been failed due to an unexpected error.';
     protected const MESSAGE_PRIVATE = 'This file is private, and therefore excluded by config';
     protected const MESSAGE_EXCLUDED_FOLDER = 'The folder is excluded by config';
@@ -27,8 +28,6 @@ class MediaValidator {
     protected LoggerInterface $logger;
     protected ConfigService $config;
     protected string $logLevel;
-    protected ?array $excludedFolders = null;
-    protected ?array $excludedTags = null;
 
     public function __construct(
         LoggerInterface $logger,
@@ -38,58 +37,53 @@ class MediaValidator {
         $this->config = $configService;
 
         $this->logLevel = $this->config->isProductionMode() ? LogLevel::INFO : LogLevel::DEBUG;
-        $this->excludedFolders = $this->config->getExcludedFolders();
-        $this->excludedTags = $this->config->getExcludedFolders();
     }
 
     public function validate(MediaEntity $media): bool
     {
         try {
-            $result = $this->validateMedia($media);
+            $error = $this->getValidationError($media);
 
-            if ($result !== true) {
-                $this->logger->log($this->logLevel, $result, ['mediaId' => $media->getId()]);
+            if ($error !== null) {
+                $this->logger->log($this->logLevel, $error, ['mediaId' => $media->getId()]);
+
                 return false;
             }
-
         } catch (\Exception $e) {
             $this->logger->error(self::MESSAGE_GENERAL, [
                 'mediaId' => $media->getId(),
                 'errorMessage' => $e->getMessage()
             ]);
+
             return false;
         }
 
         return true;
     }
 
-    /**
-     * @return true|string
-     */
-    protected function validateMedia(MediaEntity $media)
+    public function getValidationError(MediaEntity $media): ?string
     {
-        if (in_array($media->getFileExtension(), MediaTypesEnum::FILE_EXTENSIONS, true) === false) {
+        if ($this->hasValidFileExtension($media) === false) {
             return self::MESSAGE_INVALID_FILE_EXTENSION;
         }
 
-        $metaData = $media->getMetaData();
-        if (!is_array($metaData) || !$metaData['height'] || !$metaData['width']) {
+        if ($this->hasValidMetaData($media) === false) {
             return self::MESSAGE_INVALID_META;
         }
 
-        if ($media->hasFile() === false) {
+        if ($this->hasValidFile($media) === false) {
             return self::MESSAGE_NO_FILE;
         }
 
-        if ($media->getMediaType() instanceof ImageType === false) {
+        if ($this->hasValidMediaType($media) === false) {
             return self::MESSAGE_MEDIA_TYPE;
         }
 
-        if ($media->isPrivate() && $this->config->isIncludedPrivate() === false) {
+        if ($this->hasValidVisibility($media) === false) {
             return self::MESSAGE_PRIVATE;
         }
 
-        if ($this->hasExcludedFolder($media)) {
+        if ($this->isExcludedFolderId($media->getMediaFolderId())) {
             return self::MESSAGE_EXCLUDED_FOLDER;
         }
 
@@ -97,21 +91,51 @@ class MediaValidator {
             return self::MESSAGE_EXCLUDED_TAG;
         }
 
-        return true;
+        return null;
     }
 
-    private function hasExcludedTags(MediaEntity $media): bool
+    public function hasValidFileExtension(MediaEntity $media): bool
+    {
+        return in_array($media->getFileExtension(), MediaTypesEnum::FILE_EXTENSIONS, true);
+    }
+
+    public function hasValidMetaData(MediaEntity $media): bool
+    {
+        $metaData = $media->getMetaData();
+
+        return is_array($metaData)
+            && isset($metaData['height'], $metaData['width'])
+            && $metaData['height'] > 0
+            && $metaData['width'] > 0;
+    }
+
+    public function hasValidFile(MediaEntity $media): bool
+    {
+        return $media->hasFile();
+    }
+
+    public function hasValidMediaType(MediaEntity $media): bool
+    {
+        return $media->getMediaType() instanceof ImageType;
+    }
+
+    public function hasValidVisibility(MediaEntity $media): bool
+    {
+        return ($media->isPrivate() && $this->config->isIncludedPrivate() === false) === false;
+    }
+
+    public function hasExcludedTags(MediaEntity $media): bool
     {
         $tags = $media->getTags();
         if (!$tags || $tags->count()) {
             return false;
         }
 
-        return (bool) $tags->getList($this->excludedTags)->count();
+        return (bool)$tags->getList($this->config->getExcludedTags())->count();
     }
 
-    private function hasExcludedFolder(MediaEntity $media): bool
+    public function isExcludedFolderId(?string $folderId): bool
     {
-        return in_array($media->getMediaFolderId(), $this->excludedFolders, false);
+        return $folderId && in_array($folderId, $this->config->getExcludedFolders(), false);
     }
 }
