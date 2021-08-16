@@ -1,4 +1,6 @@
 {% if media.metaData.blurhash %}
+    {% set attributes = attributes ?: {} %} {# Initialize attributes if not set #}
+
     {% set attributes = attributes|merge({
         'data-blurhash': media.metaData.blurhash,
         'data-ow': media.metaData.hashOriginWidth,
