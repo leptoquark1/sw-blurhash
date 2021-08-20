@@ -230,17 +230,35 @@ class ConfigServiceTest extends TestCase
     {
         $this->setProductionModeMock(true);
         self::assertTrue($this->configService->isProductionMode());
+
+        $this->setProductionModeMock(false);
+        self::assertFalse($this->configService->isProductionMode());
     }
 
     public function testIsProductionModeIsSetByConstructor(): void
     {
-        $configService = new ConfigService('prod', $this->systemConfigService);
+        $configService = new ConfigService('prod', true, $this->systemConfigService);
         self::assertTrue($configService->isProductionMode());
 
-        $configService = new ConfigService('dev', $this->systemConfigService);
+        $configService = new ConfigService('dev', true, $this->systemConfigService);
         self::assertFalse($configService->isProductionMode());
 
-        $configService = new ConfigService('someother', $this->systemConfigService);
+        $configService = new ConfigService('someother', true, $this->systemConfigService);
         self::assertFalse($configService->isProductionMode());
+    }
+
+    public function testIsAdminWorkerEnabledInTestEnv(): void
+    {
+        $this->unsetAdminWorkerEnabledMock();
+        self::assertTrue($this->configService->isAdminWorkerEnabled(), 'isAdminWorkerEnabled must return true in test environment');
+    }
+
+    public function testIsAdminWorkerEnabledUsingProperty(): void
+    {
+        $this->setAdminWorkerEnabledMock(true);
+        self::assertTrue($this->configService->isAdminWorkerEnabled());
+
+        $this->setAdminWorkerEnabledMock(false);
+        self::assertFalse($this->configService->isAdminWorkerEnabled());
     }
 }

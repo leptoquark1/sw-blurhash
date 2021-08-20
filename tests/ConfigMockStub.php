@@ -17,6 +17,7 @@ trait ConfigMockStub
     use IntegrationTestBehaviour;
     use SystemConfigTestBehaviour;
 
+    private static ?bool $initialAdminWorkerEnabled = null;
     private static ?bool $initialProdModeValue = null;
     protected SystemConfigService $systemConfigService;
     protected ConfigService $configService;
@@ -45,6 +46,27 @@ trait ConfigMockStub
     {
         if (self::$initialProdModeValue !== null) {
             $this->setProductionModeMock(self::$initialProdModeValue);
+        }
+    }
+
+    protected function setAdminWorkerEnabledMock(bool $value): void
+    {
+        $reflection = new \ReflectionClass($this->configService);
+
+        $property = $reflection->getProperty('isAdminWorkerEnabled');
+        $property->setAccessible(true);
+
+        if (self::$initialAdminWorkerEnabled === null) {
+            self::$initialAdminWorkerEnabled = $property->getValue($this->configService);
+        }
+
+        $property->setValue($this->configService, $value);
+    }
+
+    protected function unsetAdminWorkerEnabledMock(): void
+    {
+        if (self::$initialAdminWorkerEnabled !== null) {
+            $this->setProductionModeMock(self::$initialAdminWorkerEnabled);
         }
     }
 

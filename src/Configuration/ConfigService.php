@@ -11,12 +11,14 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
 class ConfigService
 {
     protected bool $isProductionMode = false;
+    protected bool $isAdminWorkerEnabled = true;
     protected SystemConfigService $systemConfig;
     protected array $config = [];
 
-    public function __construct(string $appEnv, SystemConfigService $systemConfig)
+    public function __construct(string $appEnv, bool $adminWorkerEnabled, SystemConfigService $systemConfig)
     {
         $this->isProductionMode = $appEnv === 'prod';
+        $this->isAdminWorkerEnabled = $adminWorkerEnabled;
         $this->systemConfig = $systemConfig;
     }
 
@@ -77,6 +79,11 @@ class ConfigService
     public function isProductionMode(): bool
     {
         return $this->isProductionMode;
+    }
+
+    public function isAdminWorkerEnabled(): bool
+    {
+        return $this->isAdminWorkerEnabled;
     }
 
     public function getRaw(string $key) {
