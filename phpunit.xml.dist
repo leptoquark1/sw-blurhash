@@ -22,7 +22,7 @@
 
     <coverage>
         <include>
-            <directory suffix=".php">./src/</directory>
+            <directory suffix=".php">./src/tests</directory>
         </include>
         <exclude>
             <file>src/EcBlurHash.php</file>

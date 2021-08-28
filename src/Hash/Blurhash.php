@@ -2,7 +2,6 @@
 
 namespace EyeCook\BlurHash\Hash;
 
-use EyeCook\BlurHash\Util as Util;
 use InvalidArgumentException;
 
 /**

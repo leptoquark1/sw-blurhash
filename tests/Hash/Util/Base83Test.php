@@ -1,16 +1,17 @@
 <?php
 
-namespace EyeCook\BlurHash\Test\Util;
+namespace EyeCook\BlurHash\Test\Hash\Util;
 
-use PHPUnit\Framework\TestCase;
+use EyeCook\BlurHash\Hash\Util\Base83;
 use InvalidArgumentException;
-use EyeCook\BlurHash\Util\Base83;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @package kornrunner\Blurhash
  * @author kornrunner
  */
-class Base83Test extends TestCase {
+class Base83Test extends TestCase
+{
 
     /**
      * @dataProvider data
