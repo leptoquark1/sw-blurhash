@@ -68,12 +68,7 @@ The target of `EcBlurhash` is, to integrate the Blurhash functionality and manag
 
 ### 4.0.0 Release Candidate
 
-- display in media browser whether a blurhash is possible
-  - for folder
-  - for single image
 - trigger generation from administration
-  - for single image from media browser (force for existing)
-  - for a complete folder from media browser (force or missing)
   - for all that may missing or all from media browser main folder
 - add default tag for image exclusion (and exclude from generation)
   - make sure this will be removed when uninstalling the plugin

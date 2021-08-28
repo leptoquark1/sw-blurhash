@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace Eyecook\Blurhash\Util;
+namespace Eyecook\Blurhash\Hash\Util;
 
 use InvalidArgumentException;
 

@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace Eyecook\Blurhash\Test\Util;
+namespace Eyecook\Blurhash\Test\Hash\Util;
 
-use Eyecook\Blurhash\Util\AC;
+use Eyecook\Blurhash\Hash\Util\AC;
 use PHPUnit\Framework\TestCase;
 
 /**
