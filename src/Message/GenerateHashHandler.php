@@ -2,11 +2,9 @@
 
 namespace Eyecook\Blurhash\Message;
 
-use Eyecook\Blurhash\Hash\HashMediaService;
 use Eyecook\Blurhash\Configuration\ConfigService;
+use Eyecook\Blurhash\Hash\HashMediaService;
 use Psr\Log\LoggerInterface;
-use Shopware\Core\Content\Media\Message\GenerateThumbnailsMessage;
-use Shopware\Core\Content\Media\Message\UpdateThumbnailsMessage;
 use Shopware\Core\Framework\Adapter\Cache\CacheClearer;
 use Shopware\Core\Framework\App\Exception\InvalidArgumentException;
 use Shopware\Core\Framework\Context;
@@ -49,7 +47,7 @@ class GenerateHashHandler extends AbstractMessageHandler
 
     public function handle($message): void
     {
-        if ($this->config->isPluginManualMode() || $this->isMessageValid($message) === false) {
+        if ($this->isMessageValid($message) === false) {
             return;
         }
 
@@ -106,10 +104,15 @@ class GenerateHashHandler extends AbstractMessageHandler
 
     protected function isMessageValid($message): bool
     {
-        if (!$message || !is_object($message) || method_exists($message, 'getMediaIds') === false) {
+        if (
+            !$message
+            || !is_object($message)
+            || method_exists($message, 'getMediaIds') === false
+            || method_exists($message, 'isIgnoreManualMode') === false
+        ) {
             throw new InvalidArgumentException('Invalid Message invoked, unable to handle given message.');
         }
 
-        return count($message->getMediaIds()) > 0;
+        return count($message->getMediaIds()) > 0 && ($this->config->isPluginManualMode() === false || $message->isIgnoreManualMode());
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Eyecook\Blurhash\Controller;
 
+use Eyecook\Blurhash\Exception\IllegalManualModeLeverageException;
 use Eyecook\Blurhash\Hash\Media\MediaValidator;
 use Eyecook\Blurhash\Message\GenerateHashMessage;
 use Shopware\Core\Framework\Context;
@@ -10,7 +11,6 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\Routing\Annotation\RouteScope;
 use Shopware\Core\Framework\Routing\Exception\InvalidRequestParameterException;
 use Shopware\Core\Framework\Routing\Exception\MissingRequestParameterException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,7 +25,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * @package Eyecook\Blurhash
  * @author David Fecke (+leptoquark1)
  */
-class AdministrationController extends AbstractController
+class AdministrationController extends AbstractApiController
 {
     protected MessageBusInterface $messageBus;
     protected MediaValidator $mediaValidator;
@@ -147,10 +147,16 @@ class AdministrationController extends AbstractController
         ], Response::HTTP_OK);
     }
 
+    /**
+     * @throws IllegalManualModeLeverageException
+     */
     private function delegateHashMessage(array $mediaIds, Context $context): void
     {
+        $this->preventManualModeLeverage();
+
         $message = new GenerateHashMessage();
         $message->setMediaIds($mediaIds);
+        $message->setIgnoreManualMode(true);
         $message->withContext($context);
 
         $this->messageBus->dispatch($message);

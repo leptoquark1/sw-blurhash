@@ -12,8 +12,9 @@ use Shopware\Core\Framework\Context;
  */
 class GenerateHashMessage
 {
-    private array $mediaIds = [];
-    private string $contextData;
+    protected array $mediaIds = [];
+    protected bool $ignoreManualMode = false;
+    protected string $contextData;
 
     public function getMediaIds(): array
     {
@@ -23,6 +24,16 @@ class GenerateHashMessage
     public function setMediaIds(array $mediaIds): void
     {
         $this->mediaIds = $mediaIds;
+    }
+
+    public function isIgnoreManualMode(): bool
+    {
+        return $this->ignoreManualMode;
+    }
+
+    public function setIgnoreManualMode(bool $ignoreManualMode): void
+    {
+        $this->ignoreManualMode = $ignoreManualMode;
     }
 
     public function getContextData(): string
