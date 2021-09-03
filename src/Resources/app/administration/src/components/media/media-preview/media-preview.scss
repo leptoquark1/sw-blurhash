@@ -1,0 +1,10 @@
+@import "~scss/mixins";
+
+.sw-media-blurhash-preview {
+  .sw-media-blurhash-preview__loading {
+    animation-name: sw-media-loader-rotation;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+  }
+}
+

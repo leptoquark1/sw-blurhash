@@ -1,5 +1,41 @@
 {
   "ecBlurhash": {
+    "general": {
+      "blurhash": "Blurhash",
+      "validation": {
+        "valid": "Bereit",
+        "invalid": "Inkompatibel",
+        "folder": {
+          "help": "Wurde dieser Ordner von der Generierung ausgeschlossen?",
+          "notQualified": "Dieser Ordner wurde von der Generierung ausgeschlossen."
+        },
+        "media": {
+          "help": "Ist dieses Bild für Blurhash geeignet und wurde nicht von der Generierung ausgeschlossen?",
+          "notQualified": "Dieses Bild ist nicht für Blurhash geeignet. Grund: {reason}"
+        }
+      },
+      "generation": {
+        "start": "Generieren",
+        "refresh": "Erneuern",
+        "refreshAll": "Alle erneuern",
+        "folder": {
+          "help": "Generiere alle fehlenden Blurhashes in diesem Ordner",
+          "helpForce": "Generiere alle Blurhashes in diesem Ordner und überschreibt vorhandene"
+        },
+        "media": {
+          "help": "Generiere einen Blurhash für dieses Bild",
+          "helpForce": "Generiert den Blurhash für dieses Bild erneut und überschreibe den vorhandenen"
+        }
+      },
+      "exclusion": {
+        "exclude": "Ausschließen",
+        "include": "Inkludieren",
+        "remove": "Nicht mehr ausschließen"
+      },
+      "preview": {
+        "toggle": "Blurhash Vorschau"
+      }
+    },
     "notification-center": {
       "worker-listener": {
         "hashGeneration": {
@@ -8,14 +44,9 @@
           "success": "Blurhashes wurden generiert."
         }
       }
-    },
-    "extension": {
-      "sw-media-quickinfo": {
-        "blurredPreview": {
-          "title": "Blurhash Vorschau",
-          "alt": "Unscharfe Version des Originalbildes"
-        }
-      }
     }
+  },
+  "errors": {
+    "EYECOOK_BLURHASH__ILLEGAL_MANUAL_MODE_LEVERAGE": "Wenn der 'Admin Worker' deaktiviert ist, können im 'Handbetrieb'-Modus keine Blurhashes verarbeitet werden."
   }
 }

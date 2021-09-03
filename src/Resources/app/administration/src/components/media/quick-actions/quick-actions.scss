@@ -1,0 +1,36 @@
+@import "~scss/variables";
+
+.sw-media-quickinfo__quickactions-blurhash {
+  display: flex;
+  flex-direction: column;
+  padding-top: 16px;
+  margin-top: 8px;
+  border-top: 1px dashed $color-gray-300;
+
+  .sw-media-quickinfo__quickactions-blurhash__header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .ecb-validation--status-invalid {
+    color: $color-crimson-500;
+  }
+
+  .ecb-validation--status-valid {
+    color: $color-emerald-500;
+  }
+
+  .sw-media-quickinfo__alert-not-qualified {
+    margin: 0;
+    font-size: 14px;
+
+    .sw-alert__icon {
+      left: 10px;
+      top: 10px;
+    }
+
+    .sw-alert__body--icon {
+      padding: 10px 10px 10px 40px;
+    }
+  }
+}

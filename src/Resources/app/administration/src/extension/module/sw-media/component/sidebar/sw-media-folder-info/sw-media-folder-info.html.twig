@@ -1,0 +1,40 @@
+{% block sw_media_quickinfo_folder_quickactions_content %}
+    {% parent %}
+
+    <template slot="content">
+
+        {% block sw_media_quickinfo_folder_quickactions_content_blurhash_actions %}
+            <ecb-quick-actions
+                :isValid="isEcbValid"
+                :isValidating="isEcbValidating"
+                validationErrorText="ecBlurhash.general.validation.folder.notQualified"
+            >
+                <template slot="actions">
+
+                    {% block sw_media_quickinfo_folder_quickactions_content_blurhash_action_generate_missing %}
+                        <ecb-quick-action
+                            @click="onGenerateMissingActionClick"
+                            icon="default-object-paint"
+                            color="#fc427b"
+                            title="ecBlurhash.general.generation.folder.help"
+                            text="ecBlurhash.general.generation.start"
+                            :disabled="canEcbGenerate === false || isEcbLoading"
+                        ></ecb-quick-action>
+                    {% endblock %}
+
+                    {% block sw_media_quickinfo_folder_quickactions_content_blurhash_action_generate_all %}
+                        <ecb-quick-action
+                            @click="onGenerateAllActionClick"
+                            icon="default-object-paint"
+                            title="ecBlurhash.general.generation.folder.helpForce"
+                            text="ecBlurhash.general.generation.refreshAll"
+                            :disabled="canEcbGenerate === false || isEcbLoading"
+                        ></ecb-quick-action>
+                    {% endblock %}
+
+                </template>
+            </ecb-quick-actions>
+        {% endblock %}
+
+    </template>
+{% endblock %}

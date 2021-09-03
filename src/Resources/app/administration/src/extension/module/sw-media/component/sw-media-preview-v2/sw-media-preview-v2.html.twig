@@ -1,0 +1,24 @@
+{% block sw_media_preview_v2_file_types %}
+    {% parent %}
+
+    {% block sw_media_preview_v2_ecb_toggle %}
+        <span
+            v-if="isBlurhashPreviewApplicable && hasItemBlurhash"
+            class="sw-media-preview-v2__ecb-toggle sw-context-button"
+            @click="toggleBlurhashPreview"
+            :title="$t('ecBlurhash.general.preview.toggle')"
+        >
+            <sw-icon name="ecb-canvas" size="26px"></sw-icon>
+        </span>
+    {% endblock %}
+{% endblock %}
+
+{% block sw_media_preview_v2_file_type_image %}
+    <template v-if="!isBlurhashPreview">
+        {% parent %}
+    </template>
+
+    {% block sw_media_preview_v2_file_type_image_ecb_source %}
+        <ecb-media-preview v-if="isBlurhashPreview" :item="trueSource"></ecb-media-preview>
+    {% endblock %}
+{% endblock %}

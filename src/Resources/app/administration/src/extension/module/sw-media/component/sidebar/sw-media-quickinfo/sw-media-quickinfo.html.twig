@@ -1,35 +1,43 @@
-{% block sw_media_quickinfo_preview %}
+{% block sw_media_quickinfo_quickactions_content %}
     {% parent %}
 
-    {% block sw_media_quickinfo_blurred_preview %}
-        <sw-media-collapse
-            v-if="hasBlurhash"
-            :expandOnLoading="false"
-            :title="$tc('ecBlurhash.extension.sw-media-quickinfo.blurredPreview.title')"
+    {% block sw_media_quickinfo_quickactions_content_blurhash_actions %}
+        <ecb-quick-actions
+            :isValid="isEcbValid"
+            :isValidating="isEcbValidating"
+            validationErrorText="ecBlurhash.general.validation.media.notQualified"
+            :validationError="ecbValidationError"
         >
-            {% block sw_media_quickinfo_blurred_preview_content %}
-                <template #content>
-                    <div class="sw-media-preview-v2 sw-media-quickinfo__media-preview">
-                        {% block sw_media_quickinfo_blurred_preview_item %}
-                            <img :src="blurhashImg" :alt="$tc('ecBlurhash.extension.sw-media-quickinfo.blurredPreview.alt')" class="sw-media-preview-v2__item">
-                        {% endblock %}
-                    </div>
-                </template>
-            {% endblock %}
-        </sw-media-collapse>
+            <template slot="actions">
+                {% block sw_media_quickinfo_quickactions_content_blurhash_actions_generate %}
+                    <ecb-quick-action
+                        @click="onEcbGenerateActionClick"
+                        icon="default-object-paint"
+                        color="#fc427b"
+                        :title="generationHelpText"
+                        :text="generationText"
+                        :disabled="canEcbGenerate === false || isEcbLoading"
+                    ></ecb-quick-action>
+                {% endblock %}
+            </template>
+        </ecb-quick-actions>
     {% endblock %}
 {% endblock %}
 
 {% block sw_media_quickinfo_metadata_content_base %}
     {% parent %}
 
-    <sw-media-quickinfo-metadata-item
-        v-if="item.metaData.blurhash"
-        class="sw-media-quickinfo-metadata-blurhash"
-        label-name="Blurhash"
-    >
-        <span :title="item.metaData.blurhash">
-            <sw-icon color="green" name="small-default-checkmark-line-small"></sw-icon>
-        </span>
-    </sw-media-quickinfo-metadata-item>
+    {% block sw_media_quickinfo_metadata_item_blurhash %}
+        <sw-media-quickinfo-metadata-item
+            class="sw-media-quickinfo-metadata-blurhash"
+            :label-name="$t('ecBlurhash.general.blurhash')"
+        >
+            <span :title="itemBlurhash" v-if="hasItemBlurhash">
+                <sw-icon color="green" name="small-default-checkmark-line-small"></sw-icon>
+            </span>
+            <span :title="itemBlurhash" v-else>
+                <sw-icon color="red" name="default-basic-x-line"></sw-icon>
+            </span>
+        </sw-media-quickinfo-metadata-item>
+    {% endblock %}
 {% endblock %}

@@ -1,5 +1,10 @@
+import './init/svg-icons.init';
 import './init/locale.init';
 import './init/workers.init';
+import './init/blurhash.init';
+import './init/services.init';
 
-import './extension/module/sw-media/component/sidebar/sw-media-quickinfo';
-import './extension/module/sw-system-config';
+import './mixin';
+import './components';
+import './extension/module';
+

@@ -1,0 +1,13 @@
+<div class="sw-media-blurhash-preview">
+    {% block ecb_media_blurhash_preview %}
+        <template v-if="blurhashSrc">
+            <img :src="blurhashSrc" class="sw-media-preview-v2__item sw-media-blurhash-preview__item" draggable="false">
+        </template>
+
+        <template v-else>
+            <span class="sw-media-preview-v2__item">
+                <sw-icon class="sw-media-blurhash-preview__loading" multicolor name="default-web-loading-star"></sw-icon>
+            </span>
+        </template>
+    {% endblock %}
+</div>
