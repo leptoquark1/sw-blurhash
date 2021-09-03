@@ -1,5 +1,41 @@
 {
   "ecBlurhash": {
+    "general": {
+      "blurhash": "Blurhash",
+      "validation": {
+        "valid": "Ready",
+        "invalid": "Incompatible",
+        "folder": {
+          "help": "Was this folder excluded from Blurhash generation?",
+          "notQualified": "This folder was excluded from generation"
+        },
+        "media": {
+          "help": "Is this media qualified and has not been excluded from Blurhash generation?",
+          "notQualified": "This media is not qualified for Blurhash. Reason: {reason}"
+        }
+      },
+      "generation": {
+        "start": "Generate",
+        "refresh": "Refresh",
+        "refreshAll": "Refresh All",
+        "folder": {
+          "help": "Generate missing Blurhashes for media in this folder",
+          "helpForce": "Generate and overwrite existing Blurhashes for media in this folder"
+        },
+        "media": {
+          "help": "Generate Blurhash for this media",
+          "helpForce": "Generate and overwrite existing Blurhash for this media"
+        }
+      },
+      "exclusion": {
+        "exclude": "Exclude",
+        "include": "Include",
+        "remove": "Remove exclusion"
+      },
+      "preview": {
+        "toggle": "Toggle Blurhash preview"
+      }
+    },
     "notification-center": {
       "worker-listener": {
         "hashGeneration": {
@@ -9,13 +45,8 @@
         }
       }
     },
-    "extension": {
-      "sw-media-quickinfo": {
-        "blurredPreview": {
-          "title": "Blurhash Preview",
-          "alt": "Blurred version the original Image"
-        }
-      }
+    "errors": {
+      "EYECOOK_BLURHASH__ILLEGAL_MANUAL_MODE_LEVERAGE": "If the \"Admin Worker\" is deactivated in manual mode, Blurhash cannot be process."
     }
   }
 }

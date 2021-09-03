@@ -1,0 +1,22 @@
+@import "~scss/variables";
+
+.sw-media-preview-v2 {
+  .sw-media-preview-v2__ecb-toggle {
+    position: absolute;
+    top: auto;
+    right: 8px;
+    bottom: 8px;
+    left: auto;
+    background-color: #e4e4e4;
+    padding: 2px 0 0 2px;
+    border: 1px solid #b0c8dc;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #7b70b5;
+
+    .sw-icon.sw-icon--fill > svg path, .sw-icon.sw-icon--fill > svg use,
+    .sw-icon.sw-icon--fill > svg {
+      fill: none
+    }
+  }
+}

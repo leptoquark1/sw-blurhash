@@ -1,0 +1,42 @@
+<div class="sw-media-quickinfo__quickactions-blurhash">
+    {% block ecb_media_quickactions_content_blurhash_header %}
+    <div class="sw-media-quickinfo__quickactions-blurhash__header">
+        {% block ecb_media_quickactions_content_blurhash_header_inner %}
+            <h4 class="sw-media-collapse__title">
+                {{ $t('ecBlurhash.general.blurhash') }}
+            </h4>
+
+            <sw-icon v-if="isValidating" small
+                     class="sw-media-base-item__loader ecb-validation--status-loading"
+                     name="default-web-loading-star"
+            ></sw-icon>
+            <template v-else>
+                <span v-if="isValid" class="ecb-validation--status-valid">
+                    {{ $t('ecBlurhash.general.validation.valid') }}
+                </span>
+                <span v-else class="ecb-validation--status-invalid">
+                    {{ $t('ecBlurhash.general.validation.invalid') }}
+                </span>
+            </template>
+        {% endblock %}
+    </div>
+    {% endblock %}
+
+    {% block ecb_media_quickactions_content_blurhash_actions %}
+        <ul class="sw-media-sidebar__quickactions-list">
+            <slot name="actions">
+                {% block ecb_media_quickactions_content_blurhash_actions_inner %}{% endblock %}
+            </slot>
+        </ul>
+    {% endblock %}
+
+    {% block ecb_media_quickactions_content_blurhash_message %}
+
+        {% block ecb_media_quickactions_content_blurhash_message_not_qualified %}
+            <sw-alert v-if="isValid === false" class="sw-media-quickinfo__alert-not-qualified" variant="warning">
+                {{ $tc(validationErrorText, 0, { reason: validationError}) }}
+            </sw-alert>
+        {% endblock %}
+
+    {% endblock %}
+</div>

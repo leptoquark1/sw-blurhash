@@ -24,7 +24,7 @@
 
     <card>
         <title>Inclusions / Exclusion</title>
-        <title lang="de-DE">Einschlüsse / Ausschlüsse</title>
+        <title lang="de-DE">Inklusionen / Ausschlüsse</title>
 
         <input-field type="bool">
             <name>includePrivate</name>

@@ -68,8 +68,6 @@ The target of `EcBlurhash` is, to integrate the Blurhash functionality and manag
 
 ### 4.0.0 Release Candidate
 
-- trigger generation from administration
-  - for all that may missing or all from media browser main folder
 - add default tag for image exclusion (and exclude from generation)
   - make sure this will be removed when uninstalling the plugin
 - fix image parsing and blurhash decoding for images that were loaded with ajax.
