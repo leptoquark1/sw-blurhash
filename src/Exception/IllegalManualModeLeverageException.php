@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class IllegalManualModeLeverageException extends ShopwareHttpException
 {
-    public static string $ERROR_CODE = 'EYECOOK_BLURHASH__ILLEGAL_MANUAL_MODE_LEVERAGE';
+    public static string $ERROR_CODE = 'ECB_ILLEGAL_MANUAL_MODE_LEVERAGE';
 
     public function __construct()
     {
