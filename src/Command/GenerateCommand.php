@@ -1,12 +1,16 @@
 <?php declare(strict_types=1);
+
 namespace EyeCook\BlurHash\Command;
 
+use EyeCook\BlurHash\Hash\HashMediaService;
 use EyeCook\BlurHash\Hash\Media\MediaTypesEnum;
-use EyeCook\BlurHash\Message\GenerateHashHandler;
 use EyeCook\BlurHash\Message\GenerateHashMessage;
 use Shopware\Core\Content\Media\Aggregate\MediaFolder\MediaFolderEntity;
+use Shopware\Core\Content\Media\MediaCollection;
+use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Aggregation\Bucket\TermsAggregation;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\AggregationResult\AggregationResult;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\AndFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\ContainsFilter;
@@ -15,6 +19,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\NandFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\NorFilter;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -23,7 +28,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 /**
  * CLI command for Blurhash processing
  *
- * Process or enqueue Blurhash generation for either only missing missing or renew all existing.
+ * Process or enqueue Blurhash generation for either only missing or renew all existing.
  *
  * Example to regenerate all hashes for only Product Images:
  *
@@ -39,15 +44,18 @@ class GenerateCommand extends AbstractCommand
     protected MessageBusInterface $messageBus;
     protected EntityRepositoryInterface $mediaRepository;
     protected EntityRepositoryInterface $mediaFolderRepository;
+    protected HashMediaService $hashMediaService;
 
     public function __construct(
         MessageBusInterface $messageBus,
         EntityRepositoryInterface $mediaRepository,
-        EntityRepositoryInterface $mediaFolderRepository
+        EntityRepositoryInterface $mediaFolderRepository,
+        HashMediaService $hashMediaService
     ) {
         $this->messageBus = $messageBus;
         $this->mediaRepository = $mediaRepository;
         $this->mediaFolderRepository = $mediaFolderRepository;
+        $this->hashMediaService = $hashMediaService;
 
         parent::__construct('generate');
     }
@@ -72,9 +80,15 @@ class GenerateCommand extends AbstractCommand
     public function handle(): int
     {
         try {
-            $mediaIds = $this->getAffectedMediaIds();
+            $mediaEntities = $this->getAffectedMediaEntities();
 
-            return $this->processMessage($mediaIds);
+            if ($mediaEntities->count() === 0) {
+                $this->ioHelper->info('There are no entities to process. You\'re done here');
+
+                return 0;
+            }
+
+            return $this->processMessage($mediaEntities);
         } catch (\Exception $e) {
             $this->ioHelper->error($e->getMessage());
 
@@ -82,73 +96,46 @@ class GenerateCommand extends AbstractCommand
         }
     }
 
-    /**
-     * @throws \Exception
-     */
-    protected function processMessage(array $mediaIds): int
+    protected function processMessage(MediaCollection $mediaEntities): int
     {
-        if (count($mediaIds) === 0) {
-            $this->ioHelper->info('There are no entities to process. You\'re done here');
-
-            return 0;
-        }
-
+        $count = $mediaEntities->count();
         if ($this->input->getOption('dryRun')) {
-            $this->ioHelper->info(count($mediaIds) . '" media entities can be processed.');
-        } else {
-            $this->ioHelper->section('Prepare generation of ' . count($mediaIds) . ' Entities');
+            $this->ioHelper->info($count . '" media entities can be processed.');
 
-            if ($this->input->getOption('sync')) {
-                $message = $this->createMessage($mediaIds);
-                $this->generateSynchronous($message);
-            } else {
-                foreach (array_chunk($mediaIds, 10) as $chunk) {
-                    $message = $this->createMessage($chunk);
-                    $this->messageBus->dispatch($message);
-                }
-            }
-            $this->ioHelper->success('Handled "' . count($mediaIds) . '" media entities.');
+            return 1;
         }
+
+        $this->ioHelper->section('Prepare generation of ' . $count . ' Entities');
+
+        if ($this->input->getOption('sync')) {
+            $this->generateSynchronous($mediaEntities);
+        } else {
+            foreach (array_chunk($mediaEntities->getIds(), 10) as $chunk) {
+                $message = new GenerateHashMessage();
+                $message->setMediaIds($chunk);
+                $message->withContext($this->context);
+
+                $this->messageBus->dispatch($message);
+            }
+        }
+        $this->ioHelper->success('Handled "' . $count . '" media entities.');
 
         return 1;
     }
 
-    protected function createMessage(array $mediaIds): GenerateHashMessage
+    protected function generateSynchronous(MediaCollection $mediaEntities): void
     {
-        $message = new GenerateHashMessage();
-        $message->setMediaIds($mediaIds);
-        $message->withContext($this->context);
+        $progressBar = $this->initProcessProgressBar();
+        $progressBar->start($mediaEntities->count());
 
-        return $message;
-    }
-
-    /**
-     * @throws \Exception
-     */
-    protected function generateSynchronous(GenerateHashMessage $message): void
-    {
-        $count = count($message->getMediaIds());
-        $progressBar = $this->ioHelper->createProgressBar();
-        $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% |> %name%');
-        $progressBar->setMessage('', 'name');
-
-        /** @noinspection NullPointerExceptionInspection */
-        $processor = $this->container
-            ->get(GenerateHashHandler::class)
-            ->handleIterative($message);
-
-        if ($processor) {
-            $progressBar->start($count);
-            while ($processor->valid()) {
-                $itemProcessed = $processor->current();
-                $progressBar->setMessage($itemProcessed['name'], 'name');
-                $progressBar->advance();
-                $processor->next();
-            }
+        foreach ($mediaEntities->getElements() as $mediaEntity) {
+            $this->preProcessUpdateProgressBar($progressBar, $mediaEntity);
+            $this->hashMediaService->processHashForMedia($mediaEntity);
+            $this->postProcessUpdateProgressBar($progressBar, $mediaEntity);
         }
 
-        $this->ioHelper->newLine(2);
         $progressBar->finish();
+        $this->ioHelper->newLine(2);
     }
 
     private function getAffectedFolders(): ?array
@@ -184,11 +171,15 @@ class GenerateCommand extends AbstractCommand
         return $folderIds;
     }
 
-    private function getAffectedMediaIds(): array
+    private function getAffectedMediaEntities(): MediaCollection
     {
         $criteria = $this->buildMediaEntityCriteria();
 
-        return $this->mediaRepository->searchIds($criteria, $this->context)->getIds();
+        if ($this->input->getOption('sync') === false) {
+            $criteria->setIncludes(['id']);
+        }
+
+        return $this->mediaRepository->search($criteria, $this->context)->getEntities();
     }
 
     private function buildMediaEntityCriteria(): Criteria
@@ -252,7 +243,7 @@ class GenerateCommand extends AbstractCommand
         $result = $this->mediaFolderRepository->search($criteria, $this->context);
         $aggregations = $result->getAggregations();
 
-        /** @var \Shopware\Core\Framework\DataAbstractionLayer\Search\AggregationResult\Bucket\TermsResult $mediaInFolderCount */
+        /** @var AggregationResult $mediaInFolderCount */
         $mediaInFolderCount = $aggregations->get('media-in-folder-count');
 
         return $result->reduce(static function ($arr, MediaFolderEntity $e) use ($mediaInFolderCount) {
@@ -291,5 +282,29 @@ class GenerateCommand extends AbstractCommand
             $this->ioHelper->caution('When plugin running in manual mode, asynchronous generation is disabled. You can run this synchronous by using the `--sync` option though.. ');
             exit(1);
         }
+    }
+
+    private function initProcessProgressBar(): ProgressBar
+    {
+        $progressBar = $this->ioHelper->createProgressBar();
+        $progressBar->setFormat(' %current%/%max% [%bar%] %percent:3s%% |> Current: %currentName% |> Last: %lastName% (Mem: %memory:6s%, tØ: %apt:s% sec)');
+        $progressBar->setMessage('0', 'apt');
+        $progressBar->setMessage('-', 'lastName');
+
+        return $progressBar;
+    }
+
+    private function preProcessUpdateProgressBar(ProgressBar $progressBar, MediaEntity $entity): void
+    {
+        $progressBar->setMessage($entity->getTitle() ?? $entity->getFileName(), 'currentName');
+        $progressBar->display();
+    }
+
+    private function postProcessUpdateProgressBar(ProgressBar $progressBar, MediaEntity $entity): void
+    {
+        $avgProcessTime = ((time() - $progressBar->getStartTime()) / ($progressBar->getProgress() + 1));
+        $progressBar->setMessage((string)$avgProcessTime, 'apt');
+        $progressBar->setMessage($entity->getTitle() ?? $entity->getFileName(), 'lastName');
+        $progressBar->advance();
     }
 }
