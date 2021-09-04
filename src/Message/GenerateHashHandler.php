@@ -57,15 +57,6 @@ class GenerateHashHandler extends AbstractMessageHandler
         }
     }
 
-    public function handleIterative($message): ?\Generator
-    {
-        if (!$this->isMessageValid($message)) {
-            return null;
-        }
-
-        return $this->handleMessage($message->getMediaIds(), $message->readContext());
-    }
-
     protected function handleMessage(array $givenMediaIds, Context $context): \Generator
     {
         $mediaEntities = $this->getMediaByIds($givenMediaIds, $context);
@@ -73,9 +64,7 @@ class GenerateHashHandler extends AbstractMessageHandler
         $failedIds = [];
         foreach ($mediaEntities as $media) {
             $hash = $this->hashMediaService->processHashForMedia($media);
-
             $mediaId = $media->getId();
-            $name = $media->getTitle() ?? $media->getFileName();
 
             if (!$hash) {
                 $failedIds[] = $mediaId;
@@ -84,7 +73,7 @@ class GenerateHashHandler extends AbstractMessageHandler
             $mediaEntities->remove($mediaId);
             gc_collect_cycles();
 
-            yield ['id' => $mediaId, 'hash' => $hash, 'name' => $name];
+            yield ['id' => $mediaId];
         }
 
         if (count($failedIds)) {
