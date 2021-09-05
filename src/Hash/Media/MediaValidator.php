@@ -127,7 +127,7 @@ class MediaValidator
     public function hasExcludedTags(MediaEntity $media): bool
     {
         $tags = $media->getTags();
-        if (!$tags || $tags->count()) {
+        if (!$tags || $tags->count() === 0) {
             return false;
         }
 

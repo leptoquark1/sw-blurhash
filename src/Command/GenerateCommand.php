@@ -2,8 +2,9 @@
 
 namespace EyeCook\BlurHash\Command;
 
+use EyeCook\BlurHash\Hash\Filter\NoHashFilter;
 use EyeCook\BlurHash\Hash\HashMediaService;
-use EyeCook\BlurHash\Hash\Media\MediaTypesEnum;
+use EyeCook\BlurHash\Hash\Media\HashMediaProvider;
 use EyeCook\BlurHash\Message\GenerateHashMessage;
 use Shopware\Core\Content\Media\Aggregate\MediaFolder\MediaFolderEntity;
 use Shopware\Core\Content\Media\MediaCollection;
@@ -12,12 +13,9 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Aggregation\Bucket\TermsAggregation;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\AggregationResult\AggregationResult;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\AndFilter;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\ContainsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\NandFilter;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\NorFilter;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\Table;
@@ -45,17 +43,20 @@ class GenerateCommand extends AbstractCommand
     protected EntityRepositoryInterface $mediaRepository;
     protected EntityRepositoryInterface $mediaFolderRepository;
     protected HashMediaService $hashMediaService;
+    protected HashMediaProvider $hashMediaProvider;
 
     public function __construct(
         MessageBusInterface $messageBus,
         EntityRepositoryInterface $mediaRepository,
         EntityRepositoryInterface $mediaFolderRepository,
-        HashMediaService $hashMediaService
+        HashMediaService $hashMediaService,
+        HashMediaProvider $hashMediaProvider
     ) {
         $this->messageBus = $messageBus;
         $this->mediaRepository = $mediaRepository;
         $this->mediaFolderRepository = $mediaFolderRepository;
         $this->hashMediaService = $hashMediaService;
+        $this->hashMediaProvider = $hashMediaProvider;
 
         parent::__construct('generate');
     }
@@ -173,58 +174,42 @@ class GenerateCommand extends AbstractCommand
 
     private function getAffectedMediaEntities(): MediaCollection
     {
-        $criteria = $this->buildMediaEntityCriteria();
+        /** @var MediaCollection $media */
+        $media = $this->hashMediaProvider->searchValidMedia(
+            $this->context,
+            $this->buildMediaEntityCriteria()
+        )->getEntities();
 
-        if ($this->input->getOption('sync') === false) {
-            $criteria->setIncludes(['id']);
-        }
-
-        return $this->mediaRepository->search($criteria, $this->context)->getEntities();
+        return $media;
     }
 
     private function buildMediaEntityCriteria(): Criteria
     {
-        $folderIds = $this->getAffectedFolders();
         $criteria = new Criteria();
-        $precludingConditions = [];
-        $commensurateConditions = [];
 
         if (!$this->input->getOption('all')) {
-            $precludingConditions[] = new ContainsFilter('metaData', 'blurhash');
+            $criteria->addFilter(new NoHashFilter());
             $this->ioHelper->text('<check>✔</> Generate missing hashes.');
         } else {
             $this->ioHelper->text('<check>✔</> Existing hashes will be refreshed.');
         }
 
+        $folderIds = $this->getAffectedFolders();
+        if ($folderIds !== null && count($folderIds)) {
+            $criteria->addFilter(new EqualsAnyFilter('mediaFolderId', $folderIds));
+        }
+
         if ($this->config->isIncludedPrivate() === false) {
             $this->ioHelper->text('<check>✔</> Protected images will be skipped.');
-            $commensurateConditions[] = new EqualsFilter('private', false);
         }
 
         if (count($this->config->getExcludedFolders()) > 0) {
-            $precludingConditions[] = new EqualsAnyFilter('mediaFolderId', $this->config->getExcludedFolders());
             $this->ioHelper->text('<check>✔</> Some Folders will be skipped as specified in configuration.');
         }
 
         if (count($this->config->getExcludedTags()) > 0) {
-            $criteria->addAssociation('tags')
-                ->addFilter(new NorFilter([
-                    new EqualsAnyFilter('tags.id', $this->config->getExcludedTags())
-                ]));
             $this->ioHelper->text('<check>✔</> Some Tags will be skipped as specified in configuration.');
         }
-
-        if ($folderIds !== null && count($folderIds)) {
-            $commensurateConditions[] = new EqualsAnyFilter('mediaFolderId', $folderIds);
-        }
-
-        $criteria->addFilter(
-            new AndFilter([
-                new EqualsAnyFilter('fileExtension', MediaTypesEnum::FILE_EXTENSIONS),
-                ...$commensurateConditions,
-                new NorFilter($precludingConditions)
-            ]),
-        );
 
         return $criteria;
     }
