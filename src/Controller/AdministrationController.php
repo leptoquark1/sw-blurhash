@@ -3,6 +3,7 @@
 namespace Eyecook\Blurhash\Controller;
 
 use Eyecook\Blurhash\Exception\IllegalManualModeLeverageException;
+use Eyecook\Blurhash\Hash\Media\HashMediaProvider;
 use Eyecook\Blurhash\Hash\Media\MediaValidator;
 use Eyecook\Blurhash\Message\GenerateHashMessage;
 use Shopware\Core\Framework\Context;
@@ -94,7 +95,7 @@ class AdministrationController extends AbstractApiController
         }
 
         $mediaRepository = $this->container->get('media.repository');
-        $criteria = new Criteria([$mediaId]);
+        $criteria = HashMediaProvider::buildCriteria([$mediaId]);
         $media = $mediaRepository->search($criteria, $context)->get($mediaId);
 
         if (!$media) {

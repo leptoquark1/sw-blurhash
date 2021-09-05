@@ -42,6 +42,11 @@
             <argument type="service" id="Doctrine\DBAL\Connection"/>
         </service>
 
+        <service id="Eyecook\Blurhash\Hash\Media\HashMediaProvider" public="true">
+            <argument type="service" id="Eyecook\Blurhash\Configuration\ConfigService"/>
+            <argument type="service" id="media.repository"/>
+        </service>
+
         <service id="Eyecook\Blurhash\Message\GenerateHashHandler" public="true">
             <argument type="service" id="Eyecook\Blurhash\Configuration\ConfigService"/>
             <argument type="service" id="Eyecook\Blurhash\Hash\HashMediaService"/>
@@ -72,6 +77,7 @@
             <argument type="service" id="media.repository"/>
             <argument type="service" id="media_folder.repository"/>
             <argument type="service" id="Eyecook\Blurhash\Hash\HashMediaService"/>
+            <argument type="service" id="Eyecook\Blurhash\Hash\Media\HashMediaProvider"/>
 
             <tag name="console.command"/>
         </service>
