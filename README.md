@@ -68,8 +68,6 @@ The target of `EcBlurhash` is, to integrate the Blurhash functionality and manag
 
 ### 4.0.0 Release Candidate
 
-- add default tag for image exclusion (and exclude from generation)
-  - make sure this will be removed when uninstalling the plugin
 - fix image parsing and blurhash decoding for images that were loaded with ajax.
   for example search popover or offcanvas menu and cart
 - test if picture elements work as expected
@@ -157,11 +155,6 @@ If you use the [Shopware PWA](https://www.vuestorefront.io/shopware) or another 
    1. Blurhash decoding for 'KeyVisuals' are processed
    2. Timeout any Blurhash decoding for `200ms` to have a reference distinction for Decoding vs. Final image response.
    3. Is the final image not loaded yet, the placeholder itself gets replaced by the decoded Blurhash Teaser Image
-3. Relevant images captured while the browser is rendering the DOM.
-4. Once it's interactive, the decoding starts for all images in the current viewport. All others images are postponed to be processed when the DOM is ready, so it won't disturb the UX.
-5. Images will have an invisible placeholder to fill out the space until the decoding is complete.
-6. The image of the decoded Blurhash replace the invisible placeholder to teaser the final image.
-7. Finally, when the actual source image has been loaded, it takes place of decoded teaser.
 
 [comment]: <> (TODO Visualize Lifecycle as a Diagram)
 
@@ -173,7 +166,7 @@ Specify which images are either allowed or not allowed for processing.
 | ------------- | ----------- | ------- |
 | Include protected Images | Protected images are those that are not accessible to everyone through a public URL | Yes |
 | Excluded Folders | Images in these folders are ignored. | - |
-| Excluded Tags | Images with these tags are ignored. | - |
+| Excluded Tags | Images with these tags are ignored. | 'No Blurhash' |
 
 ### Performance
 

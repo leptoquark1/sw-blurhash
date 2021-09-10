@@ -24,6 +24,7 @@
   "require": {
     "php": "^7.4|8.0",
     "ext-gd": "*",
+    "ext-json": "*",
     "shopware/core": "~6.4",
     "shopware/storefront": "~6.4",
     "shopware/administration": "~6.4"
