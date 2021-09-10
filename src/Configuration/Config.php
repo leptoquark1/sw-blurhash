@@ -37,6 +37,12 @@ final class Config
     ];
     /**#@-*/
 
+    /**#@+
+     * @internal Configuration Defaults
+     */
+    public const DEFAULT_TAG_NAME = 'No Blurhash';
+    /**#@-*/
+
     /**
      * Validate configuration for integration mode.
      * Only fixed values are allowed
