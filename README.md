@@ -75,49 +75,48 @@ The target of `EcBlurhash` is, to integrate the Blurhash functionality and manag
 ### 4.1.0 UX & Controlling
 
 - Exclude folders in media browser (like plugin config)
-- Check if a file size limit is possible
-- The HTML `img` 'lazy' attribute in combination with blurhash
+- Consider the HTML5 `img` 'lazy' attribute in combination with blurhash
 
 ### 4.2.0 Cover Traces (Garbage Collecting)
 
-- List all image missing images (which do not meet the 'exclusion' config)
-  - display a message now and then, when in manual mode
-  - add a command with structural output
-  - clean up command and make it this can be triggered in administration
-- remove a blurhash from image
-  - for single image from media browser
-  - the possibility to fully remove all blurhashes when plugin is uninstalled
-  - Command to list all images with blurhash that no longer fit the 'exclusion' config
+- List all missing images (those which do not meet the 'exclusion' configuration settings)
+  - add a cli command with structural output; List all images with blurhash that no longer fit the 'exclusion' config
+  - clean up existing command and (if possible) make it to be triggered from administration
+- Remove a blurhash from image
+  - Using the media browser:
+    - single images
+    - folders
+  - Possibility to fully remove all generated Blurhashes when the plugin is uninstalled
   
 ### 4.3.0 Increase compatibility - Vue Storefront and Custom Integrations
 
 - Api Integration of `MediaHashId` endpoint
-  - Read single media entities
-  - Read lists of media entities (filtered, searchable)
-  - Write Blurhash for media entities (Outsource of generation)
-  - Validate a list of media entities for compatibility
-  - List missing image (Not meet the 'exclusion' config)
+  - read single blurhash for media entities and thumbnails
+  - read lists of media entities (filtered, searchable)
+  - write Blurhash for media entities (upsert backbone for outsourced generation)
+  - validate a list of media entities for compatibility
+  - list missing images (Those which not meet the 'exclusion' configuration settings)
 
 ### Backlog
 
-- Emulated Integration should be compatible with background images
+- Emulated integration should be compatible with background images
 - Support for images provided by CDNs
+- Display a message now and then, when in manual mode
 
 #### Conceptual
 
-- Custom placeholder while blurhash is decoded
+- Individual placeholders / loading state indicators while blurhash is processing
+- File size limitation; Default exclusion for tiny and small images
 
 ##### Integration Tweaks
 
 Better performance on slow / weak devices
 
-- Compare lazy decoding of images (Those not in view port) on pages with a lot of images:
+- Compare lazy decoding of images (those not in view port) on pages with a lot of images:
   - Queue order should match the actual position of the Images in DOM
-  - Fixed or Absolut image position should be respected - can their position in queue be corrected?
-- Can the actual HTML5 'Lazy Loading' Attribute intercepted when triggered?
-- Hash Media-queries: Different hash sizes by Device, User-Agent and similar.
-- Blurhash decoding using WebAssembly 
-
+  - Fixed or absolut image position should be respected - can their position in queue be corrected?
+- Hash Media-queries: Different hash sizes by device size (media-query), user-agent and similar classifications
+- Blurhash decoding using WebAssembly (First try in Rust was significant slower than the current implementation)
 
 ## System Requirements
 
@@ -125,7 +124,7 @@ Better performance on slow / weak devices
 
 __PHP__
 
-- PHP version >7.4.0 | ^8.0.0
+- PHP version >=7.4.3 | >=8.x
 - ext-gd (GD Graphics Library)
 - ext-json
 
