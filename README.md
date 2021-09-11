@@ -125,8 +125,9 @@ Better performance on slow / weak devices
 
 __PHP__
 
+- PHP version >7.4.0 | ^8.0.0
 - ext-gd (GD Graphics Library)
-
+- ext-json
 
 ## Configuration
 
