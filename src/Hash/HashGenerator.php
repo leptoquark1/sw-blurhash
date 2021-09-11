@@ -33,7 +33,6 @@ class HashGenerator implements HashGeneratorInterface
             $this->imageAdapter,
             $this->config->getComponentsX(),
             $this->config->getComponentsY(),
-            false
         );
         $image = null;
 
