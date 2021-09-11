@@ -8,7 +8,6 @@ use Eyecook\Blurhash\Hash\Media\MediaHashIdFactory;
 use Eyecook\Blurhash\Hash\Media\MediaHashMeta;
 use Eyecook\Blurhash\Configuration\ConfigService;
 use League\Flysystem\FilesystemInterface;
-use Shopware\Core\Content\Media\Aggregate\MediaThumbnail\MediaThumbnailCollection;
 use Shopware\Core\Content\Media\Aggregate\MediaThumbnail\MediaThumbnailEntity;
 use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Content\Media\Pathname\UrlGeneratorInterface;
@@ -106,14 +105,16 @@ class HashMediaService
             return null;
         }
 
-        $filtered = $media->getThumbnails()->filter(function(MediaThumbnailEntity $thumb) {
-            return $thumb->getWidth() <= $this->config->getThumbnailThresholdWidth()
-                ||  $thumb->getHeight() <= $this->config->getThumbnailThresholdHeight();
+        $isLandscape = $media->getMetaData()['width'] > $media->getMetaData()['height'];
+        $threshold = $isLandscape ? $this->config->getThumbnailThresholdWidth() : $this->config->getThumbnailThresholdHeight();
+
+        $filtered = $media->getThumbnails()->filter(function(MediaThumbnailEntity $thumb) use ($isLandscape, $threshold) {
+            return $isLandscape ? $thumb->getWidth() < $threshold : $thumb->getHeight() < $threshold;
         });
 
-        $filtered->sort(static function(MediaThumbnailEntity $a, MediaThumbnailEntity $b) {
-            $ag = $a->getHeight() + $a->getWidth();
-            $bg = $b->getHeight() + $b->getWidth();
+        $filtered->sort(static function(MediaThumbnailEntity $a, MediaThumbnailEntity $b) use ($isLandscape) {
+            $ag = $isLandscape ? $a->getWidth() : $a->getHeight();
+            $bg = $isLandscape ? $b->getWidth() : $b->getHeight();
 
             if ($ag === $bg) {
                 return 0;

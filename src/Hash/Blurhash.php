@@ -32,6 +32,7 @@ final class Blurhash
         }
 
         $isLinear = $adapter->isLinear($resource);
+        $isTrueColor = $adapter->isTrueColor($resource);
         $height = $adapter->getImageHeight($resource);
         $width = $adapter->getImageWidth($resource);
 
@@ -44,10 +45,16 @@ final class Blurhash
 
                 for ($i = 0; $i < $width; $i++) {
                     for ($j = 0; $j < $height; $j++) {
-                        ['red' => $red, 'green' => $green, 'blue' => $blue] = $adapter->getImageColorAt($resource, $i, $j);
-                        $color = $isLinear
-                            ? [$red, $green, $blue]
-                            : [Util\Color::toLinear($red), Util\Color::toLinear($green), Util\Color::toLinear($blue)];
+                        $color = $isTrueColor
+                            ? $adapter->getImageTrueColorAt($resource, $i, $j)
+                            : $adapter->getImageColorAt($resource, $i, $j, false);
+
+                        if ($isLinear === false) {
+                            $color[0] = Util\Color::toLinear($color[0]);
+                            $color[1] = Util\Color::toLinear($color[1]);
+                            $color[2] = Util\Color::toLinear($color[2]);
+                        }
+
                         $basis = $normalisation
                             * cos(M_PI * $i * $x / $width)
                             * cos(M_PI * $j * $y / $height);
@@ -70,7 +77,7 @@ final class Blurhash
             $maxAcComponent = max($component);
         }
 
-        $quantMaxAcComponent = (int) max(0, min(82, floor($maxAcComponent * 166 - 0.5)));
+        $quantMaxAcComponent = (int)max(0, min(82, floor($maxAcComponent * 166 - 0.5)));
         $acComponentNormFactor = ($quantMaxAcComponent + 1) / 166;
 
         $acValues = [];
@@ -82,7 +89,7 @@ final class Blurhash
         $blurhash .= Util\Base83::encode($quantMaxAcComponent, 1);
         $blurhash .= Util\Base83::encode($dc_value, 4);
         foreach ($acValues as $acValue) {
-            $blurhash .= Util\Base83::encode((int) $acValue, 2);
+            $blurhash .= Util\Base83::encode((int)$acValue, 2);
         }
 
         return $blurhash;
