@@ -37,4 +37,10 @@ interface HashImageAdapterInterface
      * @return int The height of the image
      */
     public function getImageHeight(&$resource): int;
+
+    /**
+     * @param resource $resource An image resource, returned by the image creation function
+     * @return bool Indication if getImageColorAt returns linear colors or not
+     */
+    public function isLinear(&$resource): bool;
 }

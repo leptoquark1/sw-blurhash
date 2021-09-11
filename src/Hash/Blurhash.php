@@ -21,8 +21,7 @@ final class Blurhash
         &$resource,
         Adapter\HashImageAdapterInterface $adapter,
         int $componentsX = 4,
-        int $componentsY = 4,
-        bool $linear = false
+        int $componentsY = 4
     ): string {
         if (($componentsX < 1 || $componentsX > 9) || ($componentsY < 1 || $componentsY > 9)) {
             throw new InvalidArgumentException("Component counts must be between 1 and 9 inclusive.");
@@ -32,6 +31,7 @@ final class Blurhash
             $resource = $adapter->createImage($resource);
         }
 
+        $isLinear = $adapter->isLinear($resource);
         $height = $adapter->getImageHeight($resource);
         $width = $adapter->getImageWidth($resource);
 
@@ -45,7 +45,7 @@ final class Blurhash
                 for ($i = 0; $i < $width; $i++) {
                     for ($j = 0; $j < $height; $j++) {
                         ['red' => $red, 'green' => $green, 'blue' => $blue] = $adapter->getImageColorAt($resource, $i, $j);
-                        $color = $linear
+                        $color = $isLinear
                             ? [$red, $green, $blue]
                             : [Util\Color::toLinear($red), Util\Color::toLinear($green), Util\Color::toLinear($blue)];
                         $basis = $normalisation

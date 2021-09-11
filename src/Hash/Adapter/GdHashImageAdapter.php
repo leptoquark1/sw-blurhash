@@ -31,4 +31,9 @@ class GdHashImageAdapter implements HashImageAdapterInterface
     {
         return imagesy($resource);
     }
+
+    public function isLinear(&$resource): bool
+    {
+        return false;
+    }
 }
