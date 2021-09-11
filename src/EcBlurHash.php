@@ -25,7 +25,8 @@ class EcBlurHash extends Plugin
         }
 
         if (!\function_exists('imagecreatefromstring')) {
-            throw new LogicException('This Plugin requires GD extension to be installed and enabled.');
+            //This may only indicate as a warning, since the adapter can be overwritten
+            throw new LogicException('This Plugin requires GD extension to work without a custom adapter! You may run into errors.');
         }
     }
 
