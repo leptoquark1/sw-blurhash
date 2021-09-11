@@ -15,11 +15,20 @@ class GdHashImageAdapter implements HashImageAdapterInterface
         return imagecreatefromstring($data);
     }
 
-    public function getImageColorAt(&$resource, int $x, int $y): array
+    public function getImageColorAt(&$resource, int $x, int $y, ?bool $isTrueColor = null): array
     {
-        $index = imagecolorat($resource, $x, $y);
+        $rgb = imagecolorat($resource, $x, $y);
 
-        return imagecolorsforindex($resource, $index);
+        return ($isTrueColor ?? imageistruecolor($resource))
+            ? [($rgb >> 16) & 0xFF, ($rgb >> 8) & 0xFF, $rgb & 0xFF]
+            : array_values(imagecolorsforindex($resource, $rgb));
+    }
+
+    public function getImageTrueColorAt(&$resource, int $x, int $y): array
+    {
+        $rgb = imagecolorat($resource, $x, $y);
+
+        return [($rgb >> 16) & 0xFF, ($rgb >> 8) & 0xFF, $rgb & 0xFF];
     }
 
     public function getImageWidth(&$resource): int
@@ -35,5 +44,10 @@ class GdHashImageAdapter implements HashImageAdapterInterface
     public function isLinear(&$resource): bool
     {
         return false;
+    }
+
+    public function isTrueColor(&$resource): bool
+    {
+        return imageistruecolor($resource);
     }
 }

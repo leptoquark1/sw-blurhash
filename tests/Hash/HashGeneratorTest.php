@@ -51,8 +51,8 @@ class HashGeneratorTest extends TestCase
 
     public function testHashGenerationForGif(): void
     {
-        $expectedHash = '12Ry$-_N';
-        $fileContent = file_get_contents(__DIR__ . '/fixtures/logo.gif');
+        $expectedHash = '17I;zW1n';
+        $fileContent = file_get_contents(__DIR__ . '/fixtures/avatar.gif');
 
         $hashId = new MediaHashId($this->getEmptyMedia());
         $this->hashGenerator->generate($hashId, $fileContent);
@@ -87,8 +87,8 @@ class HashGeneratorTest extends TestCase
 
     public function testHashGenerationRespectsComponentConfig1(): void
     {
-        $expectedHash = '00Ry$-';
-        $fileContent = file_get_contents(__DIR__ . '/fixtures/logo.gif');
+        $expectedHash = '00I;zW';
+        $fileContent = file_get_contents(__DIR__ . '/fixtures/avatar.png');
 
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_X, 1);
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_Y, 1);

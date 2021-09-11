@@ -21,13 +21,13 @@ final class AC
 
     private static function quantise(float $value): float
     {
-        return floor(max(0, min(18, floor(self::signPow($value, 0.5) * 9 + 9.5))));
+        return floor(max(0, min(18, floor(self::signPow($value) * 9 + 9.5))));
     }
 
-    private static function signPow(float $base, float $exp): float
+    private static function signPow(float $base): float
     {
         $sign = $base <=> 0;
 
-        return $sign * pow(abs($base), $exp);
+        return $sign * (abs($base) ** 0.5);
     }
 }
