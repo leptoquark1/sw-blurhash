@@ -1,4 +1,4 @@
-# ecBlurhash <small>_- Teaser your Images_</small>
+# Blurhash for Shopware <small>_- Teaser your Images_</small>
 
 ![Release](https://img.shields.io/github/v/release/leptoquark1/sw-blurhash?include_prereleases&style=flat-square)
 ![GitHub](https://img.shields.io/github/license/leptoquark1/sw-blurhash?style=flat-square)
