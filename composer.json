@@ -11,6 +11,11 @@
     }
   ],
   "readme": "https://github.com/leptoquark1/sw-blurhash#README",
+  "scripts": {
+    "unit": "./bin/phpunit.sh",
+    "coverage": "./bin/coverage.sh",
+    "prepare-release": "standard-version"
+  },
   "autoload": {
     "psr-4": {
       "EyeCook\\BlurHash\\": "src/"

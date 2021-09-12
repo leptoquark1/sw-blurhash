@@ -10,6 +10,10 @@ use EyeCook\BlurHash\Test\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
 
 /**
+ * @covers \EyeCook\BlurHash\Hash\HashGenerator
+ * @covers \EyeCook\BlurHash\Hash\Blurhash::encode
+ * @large
+ *
  * @package EyeCook\BlurHash\Test
  * @author David Fecke (+leptoquark1)
  */
