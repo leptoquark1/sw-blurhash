@@ -249,4 +249,29 @@ class ConfigServiceTest extends TestCase
         $this->setAdminWorkerEnabledMock(false);
         self::assertFalse($this->configService->isAdminWorkerEnabled());
     }
+
+    public function testGetRaw(): void
+    {
+        self::assertEquals(
+            $this->configService->getThumbnailThresholdWidth(),
+            $this->configService->getRaw(Config::PATH_THUMB_THRESHOLD_WIDTH),
+        );
+        self::assertSame(
+            $this->configService->getExcludedTags(),
+            $this->configService->getRaw(Config::PATH_EXCLUDED_TAGS),
+            'Should both grab from cache, but object are not same'
+        );
+        self::assertSame(
+            $this->configService->getExcludedFolders(),
+            $this->configService->getRaw(Config::PATH_EXCLUDED_FOLDERS),
+            'Should both grab from cache, but object are not same'
+        );
+
+        $this->setSystemConfigMock(Config::PATH_EXCLUDED_FOLDERS, [Uuid::randomHex()]);
+        $expected = $this->configService->getExcludedFolders();
+        $this->resetInternalConfigCache(Config::PATH_EXCLUDED_FOLDERS);
+        $result = $this->configService->getRaw(Config::PATH_EXCLUDED_FOLDERS);
+
+        self::assertEqualsCanonicalizing($expected, $result);
+    }
 }
