@@ -9,6 +9,10 @@ use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Uuid\Uuid;
 
 /**
+ * @coversDefaultClass \Eyecook\Blurhash\Configuration\ConfigService
+ * @covers \Eyecook\Blurhash\Configuration\Config
+ * @covers \Eyecook\Blurhash\Configuration\ConfigService
+ *
  * @package Eyecook\Blurhash\Test
  * @author David Fecke (+leptoquark1)
  */
@@ -250,6 +254,9 @@ class ConfigServiceTest extends TestCase
         self::assertFalse($this->configService->isAdminWorkerEnabled());
     }
 
+    /**
+     * @covers ::getRaw
+     */
     public function testGetRaw(): void
     {
         self::assertEquals(

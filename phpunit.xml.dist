@@ -3,7 +3,8 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
          bootstrap="./tests/TestBootstrap.php"
-         executionOrder="random">
+         cacheResultFile="./build/test-results.json"
+         executionOrder="depends,random">
 
     <php>
         <ini name="error_reporting" value="-1"/>
@@ -11,7 +12,7 @@
         <env name="APP_ENV" value="test"/>
         <env name="APP_DEBUG" value="1"/>
         <env name="APP_SECRET" value="s$cretf0rt3st"/>
-        <env name="SYMFONY_DEPRECATIONS_HELPER" value="weak"/>
+        <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled=1"/>
     </php>
 
     <testsuites>
@@ -20,9 +21,10 @@
         </testsuite>
     </testsuites>
 
-    <coverage>
+    <coverage cacheDirectory="./build/code-coverage"
+              processUncoveredFiles="true">
         <include>
-            <directory suffix=".php">./src/tests</directory>
+            <directory suffix=".php">src</directory>
         </include>
         <exclude>
             <file>src/EyecookBlurhash.php</file>
@@ -34,7 +36,9 @@
             <arguments>
                 <array>
                     <!-- set this option to 0 to disable the DebugClassLoader integration -->
-                    <element key="debug-class-loader"><integer>0</integer></element>
+                    <element key="debug-class-loader">
+                        <integer>0</integer>
+                    </element>
                 </array>
             </arguments>
         </listener>
