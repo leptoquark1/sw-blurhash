@@ -1,6 +1,10 @@
 # ecBlurhash <small>_- Teaser your Images_</small>
 
-#### _Look how a **tiny**, **blurry** placeholder enhances the **User Experience** by creating a **strong visual impact**_
+![Release](https://img.shields.io/github/v/release/leptoquark1/sw-blurhash?include_prereleases&style=flat-square)
+![GitHub](https://img.shields.io/github/license/leptoquark1/sw-blurhash?style=flat-square)
+![ShopwareVersion](https://img.shields.io/static/v1?label=Shopware&message=%5E6.4.0&color=189EFF&logo=shopware)
+
+#### _Look how a **tiny**, **blurry** placeholder enhances the **user experience** by creating a **strong visual impact**_
 
 ---
 
