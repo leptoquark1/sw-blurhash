@@ -1,0 +1,12 @@
+{% block ecb_base_script %}
+    {# {% if ecbConfig('isProductionMode') %} #}
+    {# {% else %} #}
+    <script>
+      MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+      var observer = new MutationObserver(ecBlurhash.mutationHandler);
+
+      observer.observe(document.body, { childList: true, subtree: true });
+      document.addEventListener('readystatechange', ecBlurhash.readyStateChangeListener);
+    </script>
+    {# {% endif %} #}
+{% endblock %}

@@ -66,12 +66,6 @@ The target of `EcBlurhash` is, to integrate the Blurhash functionality and manag
 
 ## Roadmap
 
-### 4.0.0 Release Candidate
-
-- fix image parsing and blurhash decoding for images that were loaded with ajax.
-  for example search popover or offcanvas menu and cart
-- test if picture elements work as expected
-
 ### 4.1.0 UX & Controlling
 
 - Exclude folders in media browser (like plugin config)

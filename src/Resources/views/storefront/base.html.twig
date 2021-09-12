@@ -3,26 +3,5 @@
 {% block base_noscript %}
     {{ parent() }}
 
-    <script>
-    {% if ecbConfig('isProductionMode') %}
-        MutationObserver=window.MutationObserver||window.WebKitMutationObserver;var observer=new MutationObserver(ecBlurhash.mutationHandler);observer.observe(document.body,{childList:!0,subtree:!0});document.addEventListener("readystatechange",(function(){if("interactive"===document.readyState)ecBlurhash.onDomInteractive();else if("complete"===document.readyState){ecBlurhash.onDomComplete();observer.disconnect()}}));
-    {% else %}
-        MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
-        var observer = new MutationObserver(ecBlurhash.mutationHandler);
-
-        observer.observe(document.body, {
-          childList: true,
-          subtree: true
-        });
-
-        document.addEventListener("readystatechange", function () {
-          if (document.readyState === 'interactive') {
-            ecBlurhash.onDomInteractive();
-          } else if (document.readyState === 'complete') {
-            ecBlurhash.onDomComplete();
-            observer.disconnect();
-          }
-        });
-    {% endif %}
-    </script>
+    {% sw_include '@Storefron/storefront/ecBlurhash/component/base-script.html.twig' %}
 {% endblock %}
