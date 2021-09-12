@@ -19,6 +19,9 @@ class Migration1631297401CreateDefaultTagTest extends TestCase
     protected ?Connection $connection;
     protected Migration1631297401CreateDefaultTag $migration;
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -26,6 +29,9 @@ class Migration1631297401CreateDefaultTagTest extends TestCase
         $this->connection = $this->getContainer()->get(Connection::class);
         $this->migration = new Migration1631297401CreateDefaultTag();
         $this->migration->setConnection($this->connection);
+
+        // Make sure that test database is in state where the migration did not run yet
+        $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS=0; TRUNCATE tag; SET FOREIGN_KEY_CHECKS=1;');
     }
 
     /**
@@ -50,6 +56,7 @@ class Migration1631297401CreateDefaultTagTest extends TestCase
     }
 
     /**
+     * @depends testUp
      * @throws \Doctrine\DBAL\Exception
      */
     public function testDown(): void
