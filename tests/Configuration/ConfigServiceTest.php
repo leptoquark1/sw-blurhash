@@ -220,12 +220,6 @@ class ConfigServiceTest extends TestCase
         self::assertEquals(220, $this->configService->getThumbnailThresholdHeight());
     }
 
-    public function testIsProductionModeInTestEnv(): void
-    {
-        $this->unsetProductionModeMock();
-        self::assertFalse($this->configService->isProductionMode(), 'isProductionMode must return false in test environment');
-    }
-
     public function testIsProductionModeUsingProperty(): void
     {
         $this->setProductionModeMock(true);
@@ -245,12 +239,6 @@ class ConfigServiceTest extends TestCase
 
         $configService = new ConfigService('someother', true, $this->systemConfigService);
         self::assertFalse($configService->isProductionMode());
-    }
-
-    public function testIsAdminWorkerEnabledInTestEnv(): void
-    {
-        $this->unsetAdminWorkerEnabledMock();
-        self::assertTrue($this->configService->isAdminWorkerEnabled(), 'isAdminWorkerEnabled must return true in test environment');
     }
 
     public function testIsAdminWorkerEnabledUsingProperty(): void
