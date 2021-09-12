@@ -6,7 +6,7 @@ window.ecBlurhash = {
   cbOnDecode: {},
 
   addImageNode: function (nodeAttr) {
-    if (document.readyState === 'interactive') {
+    if (document.readyState === 'interactive' || document.readyState === 'complete') {
       // Process sync, otherwise we need to wait for the actual images
       ecBlurhash.decodeHashForImage(nodeAttr);
     } else {
@@ -15,7 +15,11 @@ window.ecBlurhash = {
   },
 
   addPostponedImageNode: function (nodeAttr) {
-    ecBlurhash.imageNodesPostponed.unshift(nodeAttr);
+    if (document.readyState === 'complete') {
+      ecBlurhash.decodeHashForImage(nodeAttr);
+    } else {
+      ecBlurhash.imageNodesPostponed.unshift(nodeAttr);
+    }
   },
 
   addCbOnDecode(hash, cb) {
@@ -138,18 +142,33 @@ window.ecBlurhash = {
     }
   },
 
+  findImageNodesInChildren(nodeList,) {
+    nodeList.forEach(function (node) {
+      if (
+        node.nodeType === Node.ELEMENT_NODE
+        && node.tagName === 'IMG'
+        && node.hasAttribute('data-ecb-p') === false
+      ) {
+        return ecBlurhash.prepareNode(node);
+      }
+
+      if (document.readyState === 'complete' && node.hasChildNodes()) {
+        ecBlurhash.findImageNodesInChildren(node.childNodes);
+      }
+    })
+  },
+
   mutationHandler: function (mutations) {
     for (var mx = 0; mx < mutations.length; mx++) {
-      var mutation = mutations[mx];
+      ecBlurhash.findImageNodesInChildren(mutations[mx].addedNodes);
+    }
+  },
 
-      for (var anx = 0; anx < mutation.addedNodes.length; anx++) {
-        var node = mutation.addedNodes[anx];
-        var isImageNode = node.nodeType === Node.ELEMENT_NODE && node.tagName === 'IMG';
-
-        if (isImageNode && node.hasAttribute('data-ecb-p') === false) {
-          ecBlurhash.prepareNode(node);
-        }
-      }
+  readyStateChangeListener: function () {
+    if (document.readyState === 'interactive') {
+      ecBlurhash.onDomInteractive();
+    } else if (document.readyState === 'complete') {
+      ecBlurhash.onDomComplete();
     }
   },
 
