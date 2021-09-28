@@ -34,7 +34,8 @@ abstract class MigrationStep extends OriginalMigrationStep
      * Run migrations only when called in plugin installation context
      * This will be run before the common migration process
      */
-    public function install(): void {
+    public function install(): void
+    {
         //
     }
 
@@ -57,9 +58,10 @@ abstract class MigrationStep extends OriginalMigrationStep
         $className = get_class($this);
         preg_match('/[\d]{10}/', $className, $matches, PREG_UNMATCHED_AS_NULL, 1);
 
-        if (count($matches) === 0 || (($timestamp = (int) $matches[0]) === 0)) {
+        if (count($matches) === 0 || (($timestamp = (int)$matches[0]) === 0)) {
             throw new InvalidClassException(self::class, $className);
         }
+
         return $timestamp;
     }
 

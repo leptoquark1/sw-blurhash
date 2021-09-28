@@ -2,21 +2,89 @@
 
 namespace Eyecook\Blurhash\Test\Framework\Migration;
 
+use Doctrine\DBAL\Connection;
+use Eyecook\Blurhash\Framework\Migration\MigrationStep;
+use Eyecook\Blurhash\Test\MockBuilderStub;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Shopware\Core\Framework\Migration\MigrationStep as OriginalMigrationStep;
 
 /**
+ * @group Framework
+ *
  * @package Eyecook\Blurhash\Test
  * @author David Fecke (+leptoquark1)
  */
 class MigrationStepTest extends TestCase
 {
-    public function testUpMethodIsCalledLikeNative(): void
+    use MockBuilderStub;
+
+    private int $mockClassDate;
+    private static $defaultInstallEnvValue = false;
+    protected Connection $connection;
+    /**
+     * @var MigrationStep|MockObject
+     */
+    protected $migrationMock;
+
+    public static function setUpBeforeClass(): void
     {
-        static::markTestIncomplete();
+        self::$defaultInstallEnvValue = $_ENV[OriginalMigrationStep::INSTALL_ENVIRONMENT_VARIABLE] ?? null;
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        $_ENV[OriginalMigrationStep::INSTALL_ENVIRONMENT_VARIABLE] = self::$defaultInstallEnvValue;
+    }
+
+    protected function setUp(): void
+    {
+        $_ENV[OriginalMigrationStep::INSTALL_ENVIRONMENT_VARIABLE] = self::$defaultInstallEnvValue;
+        $this->mockClassDate = time();
+        $this->connection = $this->getContainer()->get(Connection::class);
+        $this->migrationMock = $this->getMockForAbstractClass(
+            MigrationStep::class,
+            [],
+            'Migration' . $this->mockClassDate . 'Abc',
+            false,
+            true,
+            true,
+            ['install', 'setConnection'],
+            true
+        );
+    }
+
+    public function testSetConnectionIsCalledInitially(): void
+    {
+        $this->migrationMock->expects($this->once())->method('setConnection');
+        $this->migrationMock->update($this->connection);
+    }
+
+    public function testSetConnection(): void
+    {
+        $this->markTestIncomplete('Reflect property by setter');
+    }
+
+    public function testGetCreationTimestampIsReturnTimestampFromClass(): void
+    {
+        self::assertEquals($this->mockClassDate, $this->migrationMock->getCreationTimestamp());
+    }
+
+    public function testUpdateDestructiveIsCallable(): void
+    {
+        self::assertTrue(method_exists($this->migrationMock, 'updateDestructive'));
+    }
+
+    public function testUpAndInstallMethodIsCalledLikeNative(): void
+    {
+        $this->migrationMock->expects($this->once())->method('up');
+        $this->migrationMock->update($this->connection);
     }
 
     public function testInstallMethodIsCalledInContext(): void
     {
-        static::markTestIncomplete();
+        $_ENV[OriginalMigrationStep::INSTALL_ENVIRONMENT_VARIABLE] = true;
+        $this->migrationMock->expects($this->once())->method('install');
+        $this->migrationMock->update($this->connection);
     }
 }
