@@ -9,6 +9,9 @@ use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
 
 /**
+ * @group Migration
+ * @covers \Eyecook\Blurhash\Migration\Migration1631297401CreateDefaultTag
+ *
  * @package Eyecook\Blurhash\Test
  * @author David Fecke (+leptoquark1)
  */
