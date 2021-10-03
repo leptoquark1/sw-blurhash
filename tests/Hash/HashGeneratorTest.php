@@ -8,6 +8,7 @@ use Eyecook\Blurhash\Hash\Media\MediaHashId;
 use Eyecook\Blurhash\Test\ConfigMockStub;
 use Eyecook\Blurhash\Test\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
+use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
 
 /**
  * @covers \Eyecook\Blurhash\Hash\HashGenerator
@@ -20,6 +21,7 @@ use PHPUnit\Framework\TestCase;
 class HashGeneratorTest extends TestCase
 {
     use ConfigMockStub,
+        IntegrationTestBehaviour,
         HashMediaFixtures;
 
     protected HashGenerator $hashGenerator;

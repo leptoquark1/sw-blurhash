@@ -4,7 +4,7 @@ namespace Eyecook\Blurhash\Test;
 
 use Eyecook\Blurhash\Configuration\Config;
 use Eyecook\Blurhash\Configuration\ConfigService;
-use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
+use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
 use Shopware\Core\Framework\Test\TestCaseBase\SystemConfigTestBehaviour;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 
@@ -14,8 +14,7 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
  */
 trait ConfigMockStub
 {
-    use IntegrationTestBehaviour;
-    use SystemConfigTestBehaviour;
+    use SystemConfigTestBehaviour, KernelTestBehaviour;
 
     private static ?bool $initialAdminWorkerEnabled = null;
     private static ?bool $initialProdModeValue = null;
