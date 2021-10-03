@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  * @package Eyecook\Blurhash
  * @author David Fecke (+leptoquark1)
  */
-class AbstractApiController extends AbstractController
+abstract class AbstractApiController extends AbstractController
 {
     private ?ConfigService $config = null;
 
