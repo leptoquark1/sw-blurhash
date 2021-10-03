@@ -6,7 +6,6 @@ use EyeCook\BlurHash\Configuration\Config;
 use EyeCook\BlurHash\Configuration\Twig\ConfigTwigExtension;
 use EyeCook\BlurHash\Test\ConfigMockStub;
 use PHPUnit\Framework\TestCase;
-use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
 use Twig\TwigFunction;
 use Twig\TwigTest;
 
@@ -16,7 +15,7 @@ use Twig\TwigTest;
  */
 class ConfigTwigExtensionTest extends TestCase
 {
-    use IntegrationTestBehaviour, ConfigMockStub;
+    use ConfigMockStub;
 
     protected ?ConfigTwigExtension $twigExtension = null;
 

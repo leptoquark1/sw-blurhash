@@ -11,7 +11,8 @@ use Shopware\Core\Framework\Uuid\Uuid;
  * @package EyeCook\BlurHash\Test
  * @author David Fecke (+leptoquark1)
  */
-trait HashMediaFixtures {
+trait HashMediaFixtures
+{
     use MediaFixtures;
 
     protected function getValidLocalMediaForHash($fileExt = 'jpg', $mimeType = 'image/jpeg'): MediaEntity
