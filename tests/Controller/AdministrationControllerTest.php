@@ -15,6 +15,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
+ * @group Controller
+ * @covers \EyeCook\BlurHash\Controller\AdministrationController
+ *
  * @package EyeCook\BlurHash\Test
  * @author David Fecke (+leptoquark1)
  */
