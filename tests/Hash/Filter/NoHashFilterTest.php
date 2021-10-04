@@ -2,7 +2,13 @@
 
 namespace Eyecook\Blurhash\Test\Hash\Filter;
 
+use Eyecook\Blurhash\Hash\Filter\NoHashFilter;
+use Eyecook\Blurhash\Test\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
+use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
 
 /**
  * @package Eyecook\Blurhash\Test
@@ -10,8 +16,26 @@ use PHPUnit\Framework\TestCase;
  */
 class NoHashFilterTest extends TestCase
 {
+    use IntegrationTestBehaviour, HashMediaFixtures;
+
+    private EntityRepositoryInterface $mediaRepository;
+    private Context $context;
+
+    protected function setUp(): void
+    {
+        $this->mediaRepository = $this->getContainer()->get('media.repository');
+        $this->context = Context::createDefaultContext();
+    }
+
     public function testCriteriaIntegration(): void
     {
-        static::markTestIncomplete();
+        $media = $this->getValidExistingMediaForHash();
+
+        $criteria = new Criteria();
+        $criteria->addFilter(new NoHashFilter());
+
+        $foundMedia = $this->mediaRepository->searchIds($criteria, $this->context)->has($media->getId());
+
+        static::assertFalse($foundMedia);
     }
 }
