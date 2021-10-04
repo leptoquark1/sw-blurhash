@@ -15,17 +15,38 @@ trait HashMediaFixtures
 {
     use MediaFixtures;
 
-    protected function getValidLocalMediaForHash($fileExt = 'jpg', $mimeType = 'image/jpeg'): MediaEntity
+    protected function getValidLocalMediaForHash(?string $fileExt = 'jpg', ?string $mimeType = 'image/jpeg', array $unset = []): MediaEntity
     {
         $media = new MediaEntity();
 
-        $media->setId(Uuid::randomHex());
-        $media->setMetaData(['width' => 1, 'height' => 1, 'blurhash' => '1']);
-        $media->setFileName('validBlurhashMedia' . '.' . $fileExt);
-        $media->setFileExtension($fileExt);
-        $media->setMimeType($mimeType);
-        $media->setFileSize(1024);
-        $media->setMediaType(new ImageType());
+        if (in_array('id', $unset, true) === false) {
+            $media->setId(Uuid::randomHex());
+        }
+
+        if (in_array('metaData', $unset, true) === false) {
+            $media->setMetaData(['width' => 1, 'height' => 1, 'blurhash' => '1']);
+        }
+
+        if (in_array('fileName', $unset, true) === false) {
+            $media->setFileName('validBlurhashMedia' . '.' . $fileExt);
+        }
+
+        if ($fileExt !== null) {
+            $media->setFileExtension($fileExt);
+        }
+
+        if ($mimeType !== null) {
+            $media->setMimeType($mimeType);
+        }
+
+        if (in_array('fileSize', $unset, true) === false) {
+            $media->setFileSize(1024);
+        }
+
+        if (in_array('mediaType', $unset, true) === false) {
+            $media->setMediaType(new ImageType());
+        }
+
         $media->setPrivate(false);
 
         return $media;
