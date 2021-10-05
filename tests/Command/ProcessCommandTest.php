@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Tester\CommandTester;
 
@@ -73,6 +74,7 @@ class ProcessCommandTest extends TestCase
         static::assertStringContainsStringIgnoringCase('media entities can be processed', $output);
         static::assertStringNotContainsStringIgnoringCase('generation will be synchronous', $output);
         static::assertStringNotContainsStringIgnoringCase('generation will be asynchronous', $output);
+        static::assertEquals(Command::SUCCESS, $tester->getStatusCode());
     }
 
     public function testOutputWithSyncFlag(): void
@@ -82,10 +84,12 @@ class ProcessCommandTest extends TestCase
         $tester->execute(['--sync' => 1]);
         $output = $tester->getDisplay(true);
         static::assertStringContainsStringIgnoringCase('generation will be synchronous', $output);
+        static::assertEquals(Command::SUCCESS, $tester->getStatusCode());
 
         $tester->execute([]);
         $output = $tester->getDisplay(true);
         static::assertStringContainsStringIgnoringCase('generation will be asynchronous', $output);
+        static::assertEquals(Command::SUCCESS, $tester->getStatusCode());
     }
 
     public function testOutputInManualMode(): void
@@ -99,6 +103,7 @@ class ProcessCommandTest extends TestCase
             'when plugin running in manual mode, asynchronous generation is disabled',
             $output
         );
+        static::assertEquals(Command::SUCCESS, $tester->getStatusCode());
 
         $this->setSystemConfigMock(Config::PATH_MANUAL_MODE, false);
         $tester->execute([]);
@@ -107,6 +112,7 @@ class ProcessCommandTest extends TestCase
             'when plugin running in manual mode, asynchronous generation is disabled',
             $output
         );
+        static::assertEquals(Command::SUCCESS, $tester->getStatusCode());
 
         $this->setSystemConfigMock(Config::PATH_MANUAL_MODE, true);
         $tester->execute([]);
@@ -115,9 +121,10 @@ class ProcessCommandTest extends TestCase
             'when plugin running in manual mode, asynchronous generation is disabled',
             $output
         );
+        static::assertEquals(Command::INVALID, $tester->getStatusCode());
     }
 
-    public function testExitOnUnknownEntity(): void
+    public function testOutputOnUnknownEntity(): void
     {
         $tester = new CommandTester($this->command);
 
@@ -127,6 +134,7 @@ class ProcessCommandTest extends TestCase
         $output = $tester->getDisplay(true);
 
         static::assertStringContainsStringIgnoringCase('Unknown entity "' . $nonExistingEntity . '"', $output);
+        static::assertEquals(Command::FAILURE, $tester->getStatusCode());
     }
 
     public function testProcessCommandIntegration(): void
