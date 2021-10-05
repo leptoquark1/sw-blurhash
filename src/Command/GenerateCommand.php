@@ -80,6 +80,12 @@ class GenerateCommand extends AbstractCommand
 
     public function handle(): int
     {
+        if ((bool)$this->input->getOption('sync') === false && $this->config->isPluginManualMode()) {
+            $this->ioHelper->caution('When plugin running in manual mode, asynchronous generation is disabled. You can run this synchronous by using the `--sync` option though.. ');
+
+            return 1;
+        }
+
         try {
             $mediaEntities = $this->getAffectedMediaEntities();
 
@@ -261,11 +267,6 @@ class GenerateCommand extends AbstractCommand
 
         if (count($infoMessages) > 0) {
             $this->ioHelper->block(implode(PHP_EOL, $infoMessages), 'INFO', 'fg=green', ' ', false);
-        }
-
-        if ($syncMode === false && $pluginManualMode) {
-            $this->ioHelper->caution('When plugin running in manual mode, asynchronous generation is disabled. You can run this synchronous by using the `--sync` option though.. ');
-            exit(1);
         }
     }
 
