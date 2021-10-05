@@ -16,6 +16,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\NandFilter;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\Table;
@@ -83,7 +84,7 @@ class GenerateCommand extends AbstractCommand
         if ((bool)$this->input->getOption('sync') === false && $this->config->isPluginManualMode()) {
             $this->ioHelper->caution('When plugin running in manual mode, asynchronous generation is disabled. You can run this synchronous by using the `--sync` option though.. ');
 
-            return 1;
+            return Command::INVALID;
         }
 
         try {
@@ -92,14 +93,14 @@ class GenerateCommand extends AbstractCommand
             if ($mediaEntities->count() === 0) {
                 $this->ioHelper->info('There are no entities to process. You\'re done here');
 
-                return 0;
+                return Command::SUCCESS;
             }
 
             return $this->processMessage($mediaEntities);
         } catch (\Exception $e) {
             $this->ioHelper->error($e->getMessage());
 
-            return 1;
+            return Command::FAILURE;
         }
     }
 
@@ -109,7 +110,7 @@ class GenerateCommand extends AbstractCommand
         if ($this->input->getOption('dryRun')) {
             $this->ioHelper->info($count . '" media entities can be processed.');
 
-            return 1;
+            return Command::SUCCESS;
         }
 
         $this->ioHelper->section('Prepare generation of ' . $count . ' Entities');
@@ -127,7 +128,7 @@ class GenerateCommand extends AbstractCommand
         }
         $this->ioHelper->success('Handled "' . $count . '" media entities.');
 
-        return 1;
+        return Command::SUCCESS;
     }
 
     protected function generateSynchronous(MediaCollection $mediaEntities): void
