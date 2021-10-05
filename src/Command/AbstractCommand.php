@@ -43,25 +43,32 @@ abstract class AbstractCommand extends Command
         $this->config = $configService;
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function initialize(InputInterface $input, OutputInterface $output): void
     {
         $this->createContext();
         $this->input = $input;
         $this->output = $output;
         $this->ioHelper = new SymfonyStyle($input, $output);
+
         $this->initializeCommand();
     }
 
+    /**
+     * @throws \Exception
+     */
     protected function createContext(): void
     {
-        $injectedContext = $this->container->get(Context::class,ContainerInterface::NULL_ON_INVALID_REFERENCE);
+        $injectedContext = $this->container->get(Context::class, ContainerInterface::NULL_ON_INVALID_REFERENCE);
         $this->context = new Context($injectedContext ?? new SystemSource());
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $result = $this->handle();
-        if ($result === null || is_int($result) === false) {
+        if (is_int($result) === false) {
             return 0;
         }
 
