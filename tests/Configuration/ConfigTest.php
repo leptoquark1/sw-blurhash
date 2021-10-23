@@ -48,6 +48,8 @@ class ConfigTest extends TestCase
         static::assertInstanceOf(\Closure::class, $validator);
 
         // Valid values
+        static::assertEquals(Config::VALUE_INTEGRATION_MODE_NONE, $validator(Config::VALUE_INTEGRATION_MODE_NONE));
+        static::assertEquals(Config::VALUE_INTEGRATION_MODE_CUSTOM, $validator(Config::VALUE_INTEGRATION_MODE_CUSTOM));
         static::assertEquals(Config::VALUE_INTEGRATION_MODE_EMULATED, $validator(Config::VALUE_INTEGRATION_MODE_EMULATED));
 
         // Invalid Values

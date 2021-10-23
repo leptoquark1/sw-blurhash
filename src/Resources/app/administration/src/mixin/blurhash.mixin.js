@@ -13,8 +13,8 @@ Mixin.register('ecb-blurhash', {
 
     blurhashToBase64(item) {
       const data = this.pickBlurhashMetaData(item);
-      const pixels = Blurhash.decodeBlurhash(data.blurhash, data.hashOriginWidth, data.hashOriginHeight);
-      return Blurhash.pixelsToBase64(pixels, data.hashOriginWidth, data.hashOriginHeight);
+      const pixels = decodeBlurhash(data.blurhash, data.hashOriginWidth, data.hashOriginHeight);
+      return pixelsToBase64(pixels, data.hashOriginWidth, data.hashOriginHeight);
     },
 
     async itemBlurhashAsImageSrc() {

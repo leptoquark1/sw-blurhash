@@ -65,11 +65,11 @@ class ConfigTwigExtensionTest extends TestCase
 
     public function testConfigMethod(): void
     {
-        $this->setSystemConfigMock(Config::PATH_INTEGRATION_MODE, Config::VALUE_INTEGRATION_MODE_EMULATED);
+        $this->setSystemConfigMock(Config::PATH_INTEGRATION_MODE, Config::VALUE_INTEGRATION_MODE_CUSTOM);
         $this->setSystemConfigMock(Config::PATH_INCLUDE_PRIVATE, false);
 
-        static::assertEquals(Config::VALUE_INTEGRATION_MODE_EMULATED, $this->twigExtension->config('integrationMode'));
-        static::assertEquals(Config::VALUE_INTEGRATION_MODE_EMULATED, $this->twigExtension->config('getIntegrationMode'));
+        static::assertEquals(Config::VALUE_INTEGRATION_MODE_CUSTOM, $this->twigExtension->config('integrationMode'));
+        static::assertEquals(Config::VALUE_INTEGRATION_MODE_CUSTOM, $this->twigExtension->config('getIntegrationMode'));
         static::assertNull($this->twigExtension->config('isIntegrationMode'));
 
         static::assertFalse($this->twigExtension->config('includedPrivate'));
