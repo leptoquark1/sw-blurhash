@@ -1,4 +1,17 @@
 # Changelog
+
+## [4.0.0-RC1](https://github.com/leptoquark1/sw-blurhash/compare/v4.0.0-RC0...v4.0.0-RC1) (2021-10-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* **integration:** modularization and enhancement of storefront plugin integration and utils ([dcd3a1f](https://github.com/leptoquark1/sw-blurhash/commit/dcd3a1f092a436de79c667207b5b58444089b19a))
+
+### Bug Fixes
+
+* **command:** avoid hard exit in initialization due to testing concerns ([5004401](https://github.com/leptoquark1/sw-blurhash/commit/5004401d306f7bf1e88703e81c1fad9ff30c65d3))
+* **command:** exit codes and its related assertions ([92affc7](https://github.com/leptoquark1/sw-blurhash/commit/92affc7b2cbd8038bac71a4bbda6b4787210ea95))
+
 ## 4.0.0-RC0 (2021-09-12)
 
 
@@ -21,7 +34,6 @@
 * manual-mode leverage handling ([bbfbe28](https://github.com/leptoquark1/sw-blurhash/commit/bbfbe28b85205aef13842f06869ef28f96daa4a1))
 * switch to a faster blurhash implementation `fast-blurhash` ([fe8be8c](https://github.com/leptoquark1/sw-blurhash/commit/fe8be8c2eda00efbbbe12163290f88188bd45250))
 * **mvp:** initial plugin minimal version prototype ([10f3e05](https://github.com/leptoquark1/sw-blurhash/commit/10f3e05602670f89aa111d9bdb399a34adfa629f))
-
 
 ### Bug Fixes
 
