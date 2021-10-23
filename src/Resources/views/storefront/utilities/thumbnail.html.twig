@@ -1,4 +1,6 @@
-{% if media.metaData.blurhash %}
+{% set noIntegration = ecbConfEqualsConst('integrationMode', 'VALUE_INTEGRATION_MODE_NONE') %}
+
+{% if not noIntegration and media.metaData.blurhash %}
     {% set attributes = attributes ?: {} %} {# Initialize attributes if not set #}
 
     {% set attributes = attributes|merge({
@@ -13,7 +15,5 @@
 {% endif %}
 
 {% block thumbnail_content %}
-    <div class="ecb-img-wrapper">
-        {% include '@Storefront/storefront/utilities/thumbnail.html.twig' %}
-    </div>
+    {% include '@Storefront/storefront/utilities/thumbnail.html.twig' %}
 {% endblock %}

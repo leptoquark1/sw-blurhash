@@ -13,7 +13,6 @@ final class Config
      * @internal Configuration Domain
      */
     public const PLUGIN_CONFIG_DOMAIN = 'EcBlurHash.config';
-
     /**#@+
      * @internal Configuration Paths
      */
@@ -31,8 +30,12 @@ final class Config
     /**#@+
      * @internal Configuration Values
      */
+    public const VALUE_INTEGRATION_MODE_NONE = 'none';
+    public const VALUE_INTEGRATION_MODE_CUSTOM = 'custom';
     public const VALUE_INTEGRATION_MODE_EMULATED = 'emulated';
     public const VALUES_INTEGRATION_MODE = [
+        self::VALUE_INTEGRATION_MODE_NONE,
+        self::VALUE_INTEGRATION_MODE_CUSTOM,
         self::VALUE_INTEGRATION_MODE_EMULATED,
     ];
     /**#@-*/
@@ -46,6 +49,7 @@ final class Config
     /**
      * Validate configuration for integration mode.
      * Only fixed values are allowed
+     *
      * @internal
      */
     public static function validateIntegrationModeValue(): \Closure
@@ -60,6 +64,7 @@ final class Config
     /**
      * Validate configuration for component input.
      * Only values between 1-9 unsigned integer are valid
+     *
      * @internal
      */
     public static function validateComponentValue(int $default): \Closure

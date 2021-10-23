@@ -3,5 +3,6 @@
 {% block administration_templates %}
     {{ parent() }}
 
-    <script nonce="{{ cspNonce }}" src="{{ asset('blurhash.min.js', '@EcBlurHash') }}"></script>
+    <script nonce="{{ cspNonce }}" src="{{ asset('ecb-decode.js', '@EcBlurHash') }}"></script>
+    <script nonce="{{ cspNonce }}" src="{{ asset('ecb-helper.js', '@EcBlurHash') }}"></script>
 {% endblock %}

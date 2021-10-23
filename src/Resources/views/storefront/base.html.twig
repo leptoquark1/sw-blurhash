@@ -1,7 +1,7 @@
 {% sw_extends '@Storefront/storefront/base.html.twig' %}
 
-{% block base_noscript %}
-    {{ parent() }}
-
+{% block base_body_script %}
     {% sw_include '@Storefron/storefront/ecBlurhash/component/base-script.html.twig' %}
+
+    {{ parent() }}
 {% endblock %}

@@ -1,25 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/shopware/platform/master/src/Core/System/SystemConfig/Schema/config.xsd">
-
     <card>
-            <title>Decoding</title>
+        <title>Decoding</title>
 
-            <input-field type="single-select">
-                <name>integrationMode</name>
-                <label>Integration mode (Storefront)</label>
-                <label lang="de-DE">Integration (Storefront)</label>
-                <helpText>For more information on this configuration, see the plug-in's README file.</helpText>
-                <helpText lang="de-DE">Genauere Informationen zu dieser Konfiguration findest du in der README des Plugins.</helpText>
-                <options>
-                    <option>
-                        <id>emulated</id>
-                        <name>Emulated</name>
-                        <name lang="de-DE">Emuliert</name>
-                    </option>
-                </options>
-                <defaultValue>emulated</defaultValue>
-            </input-field>
+        <input-field type="single-select">
+            <name>integrationMode</name>
+            <label>Integration mode (Storefront)</label>
+            <label lang="de-DE">Integration (Storefront)</label>
+            <helpText>For more information on this configuration, see the plug-in's README file.</helpText>
+            <helpText lang="de-DE">Genauere Informationen zu dieser Konfiguration findest du in der README des Plugins.</helpText>
+            <options>
+                <option>
+                    <id>none</id>
+                    <name>None</name>
+                    <name lang="de-DE">Ohne</name>
+                </option>
+                <option>
+                    <id>custom</id>
+                    <name>Custom</name>
+                    <name lang="de-DE">Custom</name>
+                </option>
+                <option>
+                    <id>emulated</id>
+                    <name>Emulated</name>
+                    <name lang="de-DE">Emuliert</name>
+                </option>
+            </options>
+            <defaultValue>emulated</defaultValue>
+        </input-field>
     </card>
 
     <card>
@@ -91,7 +100,9 @@
             <label>Manual Mode</label>
             <label lang="de-DE">Handbetrieb</label>
             <helpText>In manual mode, you have sole control of the images that are processed with Blurhash. More information in the README.</helpText>
-            <helpText lang="de-DE">Im manuellen Modus hast allein du die Kontrolle über die Bilder welche mit Blurhash verarbeitet werden. Was das bedeutet, kannst du in der README nachlesen.</helpText>
+            <helpText
+                lang="de-DE">Im manuellen Modus hast allein du die Kontrolle über die Bilder welche mit Blurhash verarbeitet werden. Was das bedeutet, kannst du in der README nachlesen.
+            </helpText>
         </input-field>
 
         <input-field type="int">
