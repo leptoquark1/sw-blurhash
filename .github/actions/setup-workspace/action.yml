@@ -1,0 +1,38 @@
+name: 'Set up Workspace'
+description: 'Initialize Shopware and install Blurhash Plugin'
+runs:
+  using: "composite"
+  steps:
+    - id: checkout_shopware
+      name: Checkout Shopware Development Template
+      uses: actions/checkout@v2
+      with:
+        repository: shopware/development
+        path: shopware
+    - id: after_shopware_checkout
+      name: After Checkout Shopware
+      shell: bash
+      run: |
+        ln -s $(pwd)/sw-blurhash shopware/custom/plugins/sw-blurhash
+        cp sw-blurhash/.github/.psh.yaml.override shopware/.psh.yaml.override
+    - id: install_shopware
+      name: Install Shopware
+      shell: bash
+      working-directory: shopware
+      run: |
+        ./psh.phar init
+    - id: prepare_bundles
+      name: Prepare bundles
+      shell: bash
+      working-directory: shopware
+      run: |
+        ./psh.phar storefront:install-dependencies
+        ./psh.phar storefront:build
+    - id: install_plugin
+      name: Install Blurhash Plugin
+      shell: bash
+      working-directory: shopware
+      run: |
+        composer dump-autoload --dev -d ./custom/plugins/sw-blurhash
+        php ./bin/console plugin:refresh
+        php ./bin/console plugin:install EcBlurHash --activate
