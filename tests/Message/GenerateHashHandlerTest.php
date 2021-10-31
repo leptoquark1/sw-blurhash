@@ -10,17 +10,21 @@ use Eyecook\Blurhash\Message\GenerateHashMessage;
 use Eyecook\Blurhash\Test\ConfigMockStub;
 use Eyecook\Blurhash\Test\MockBuilderStub;
 use Eyecook\Blurhash\Test\ProviderUtils;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Shopware\Core\Content\Media\MediaCollection;
 use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\EntitySearchResult;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
 use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
 use Shopware\Core\Framework\Util\Random;
 use Shopware\Core\Framework\Uuid\Uuid;
+use stdClass;
 
 /**
  * @covers \Eyecook\Blurhash\Message\GenerateHashHandler
@@ -70,8 +74,8 @@ class GenerateHashHandlerTest extends TestCase
             ['abc'],
             [1],
             [[]],
-            [(object)new \stdClass()],
-            [new \stdClass()],
+            [(object)new stdClass()],
+            [new stdClass()],
         ];
     }
 
@@ -80,7 +84,7 @@ class GenerateHashHandlerTest extends TestCase
      */
     public function testIsMessageValidThrows($message): void
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->handler->handle($message);
     }
 
@@ -144,12 +148,16 @@ class GenerateHashHandlerTest extends TestCase
         $criteria = new Criteria(); // The expected Criteria
         $criteria->addFilter(new EqualsAnyFilter('media.id', $mediaIds));
 
+        $searchResultMock = $this->createStub(EntitySearchResult::class);
+        $searchResultMock->method('getEntities')->willReturn(new EntityCollection([])); // We dont need to actually process
+
         $mockMediaRepository = $this->createStub(EntityRepository::class);
         // Expect one call to search method
         $mockMediaRepository
             ->expects($this->once())
             ->method('search')
-            ->with($criteria, $this->isInstanceOf(Context::class)); // With this Args
+            ->with($criteria, $this->isInstanceOf(Context::class)) // With this Args
+            ->willReturn($searchResultMock);
 
         $mockHandler = $this->getPreparedMock(
             GenerateHashHandler::class,
