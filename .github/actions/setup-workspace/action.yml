@@ -1,0 +1,87 @@
+name: 'Set up workspace with Shopware'
+description: 'Initialize Shopware and install plugin'
+runs:
+  using: "composite"
+  steps:
+    - id: checkout_shopware_template
+      name: Checkout Shopware Template
+      uses: actions/checkout@v2
+      with:
+        repository: shopware/production
+        path: shopware
+    - id: link_repositories
+      name: Link Plugin Repository
+      shell: bash
+      run: |
+        ln -sfn "$GITHUB_WORKSPACE/sw-blurhash" "$GITHUB_WORKSPACE/shopware/custom/plugins/sw-blurhash"
+    - id: install_shopware_dependencies
+      name: Install Shopware dependencies
+      shell: bash
+      working-directory: shopware
+      run: |
+        composer install --no-scripts
+    - id: prepare_shopware_env
+      name: Prepare Shopware Environment
+      shell: bash
+      working-directory: shopware
+      run: |
+        echo "APP_ENV=test" >> .env
+        echo "APP_SECRET=1" >> .env
+        echo "INSTANCE_ID=1" >> .env
+        echo "DATABASE_URL=mysql://root:root@mysql:3306/shopware" >> .env
+        echo "APP_URL=http://localhost:8000" >> .env
+        echo "MAILER_URL=null://localhost" >> .env
+        echo "COMPOSER_HOME=$(composer config --global home)" >> .env
+        echo "SHOPWARE_ES_ENABLED=0" >> .env
+    - id: install_shopware
+      name: Install Shopware
+      shell: bash
+      working-directory: shopware
+      env:
+        APP_ENV: prod
+      run: |
+        php bin/console system:install --create-database --basic-setup
+        rm -rf var/cache/*
+    - id: prepare_shopware_test_database
+      name: Prepare Shopware Test Database
+      shell: bash
+      env:
+        DB_USER: root
+        DB_PASSWORD: root
+        DB_HOST: mysql
+        DB_PORT: "3306"
+        DB_SOURCE_NAME: shopware
+        DB_NAME: shopware_test
+      run: |
+        mysql -u "$DB_USER" -p"$DB_PASSWORD" -h "$DB_HOST" --port="$DB_PORT" -e "DROP DATABASE IF EXISTS \`$DB_NAME\`"
+        mysql -u "$DB_USER" -p"$DB_PASSWORD" -h "$DB_HOST" --port="$DB_PORT" -e "CREATE DATABASE \`$DB_NAME\` DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_unicode_ci"
+        mysqldump "$DB_SOURCE_NAME" -u "$DB_USER" -p"$DB_PASSWORD" -h "$DB_HOST" --port="$DB_PORT" | mysql "$DB_NAME" -u "$DB_USER" -p"$DB_PASSWORD" -h "$DB_HOST" --port="$DB_PORT"
+    - id: prepare_shopware_test_env
+      name: Prepare Shopware Test Environment
+      shell: bash
+      working-directory: shopware
+      run: |
+        mkdir config/jwt || true
+        openssl genrsa -out config/jwt/private.pem 2048
+        openssl rsa -in config/jwt/private.pem -outform PEM -pubout -out config/jwt/public.pem
+        mkdir var/test || true
+        mkdir var/test/jwt || true
+        cp config/jwt/*.pem var/test/jwt/ || true
+        chmod 600 config/jwt/p* || true
+        chmod 600 var/test/jwt/p* || true
+    - id: prepare_shopware_bundles
+      name: Prepare Shopware bundles
+      shell: bash
+      working-directory: shopware
+      env:
+        APP_ENV: prod
+      run: |
+        ./bin/build-storefront.sh
+    - id: install_plugin
+      name: Install Blurhash Plugin
+      shell: bash
+      working-directory: shopware
+      run: |
+        php ./bin/console plugin:refresh
+        php ./bin/console plugin:install EyecookBlurhash --activate
+        php ./bin/console cache:clear
