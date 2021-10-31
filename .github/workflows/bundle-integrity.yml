@@ -1,0 +1,82 @@
+name: Test and Integrity Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+env:
+  APP_ENV: test
+
+jobs:
+  integrity:
+    name: Validate bundle integrity
+    runs-on: ubuntu-latest
+    container: shopware/development:7.4-composer-2
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Validate administration bundle integrity
+        shell: bash
+        run: |
+          SFDate=$(git --no-pager log -1 --pretty="format:%ct" ./src/Resources/app/administration/src/)
+          TFDate=$(git --no-pager log -1 --pretty="format:%ct" ./src/Resources/public/administration/)
+          if [ "$SFDate" -ge "$TFDate" ];
+          then
+              echo "Administration bundle source is newer than its bundles, please rebuild administration"
+              exit 1
+          else
+              echo "Administration Bundles are fine!"
+          fi
+      - name: Validate blurhash bundle integrity
+        shell: bash
+        run: |
+          SFDate=$(git --no-pager log -1 --pretty="format:%ct" ./src/Resources/app/blurhash/src/)
+          TFDate=$(git --no-pager log -1 --pretty="format:%ct" "./src/Resources/public/ecb-*")
+          if [ "$SFDate" -ge "$TFDate" ];
+          then
+              echo "Blurhash bundle source is newer than its bundles, please rebuild Blurhash bundles"
+              exit 1
+          else
+              echo "Blurhash Bundles are fine!"
+          fi
+
+  unit_test:
+    name: PHP Unit Test
+    runs-on: ubuntu-latest
+    container: shopware/development:7.4-composer-2
+
+    env:
+      XDEBUG_MODE: off
+
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: root
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: sw-blurhash
+      - name: Set up Workspace
+        uses: ./sw-blurhash/.github/actions/setup-workspace
+      - name: Prepare PHPUnit tests
+        shell: bash
+        working-directory: shopware
+        run: |
+          composer dump-autoload --dev -d custom/plugins/sw-blurhash
+          touch custom/plugins/sw-blurhash/vendor/composer/InstalledVersions.php
+      - name: Execute PHPUnit tests
+        shell: bash
+        env:
+          PROJECT_ROOT: ${{ GITHUB.WORKSPACE }}/shopware
+        run: |
+          php "$PROJECT_ROOT/vendor/bin/phpunit" \
+            --bootstrap "$PROJECT_ROOT/custom/plugins/sw-blurhash/tests/TestBootstrap.php" \
+            --configuration "$PROJECT_ROOT/custom/plugins/sw-blurhash/phpunit.xml.dist"
