@@ -25,15 +25,15 @@
 
 - [About Blurhash](#about-blurhash)
 - [Claim & Classification for Shopware 6](#claim-for-shopware-6)
-- [Features & Roadmap](#roadmap)
 - [System Requirements](#system-requirements)
-  - [Environment](#environment)
 - [Configuration](#configuration)
   - [Decoding](#decoding)
   - [Inclusions / Exclusion](#inclusions--exclusion)
   - [Performance](#performance)
   - [Encoding](#encoding)
 - [Customization](#customization)
+  - [Image Adapter (Graphics Library)](#image-adapter-graphics-library)
+  - [Hash Generator](#hash-generator)
   - [Custom Integrations](#custom-integrations)
 - [Commands (CLI)](#commands-cli)
 - [Licence](#licence)
@@ -45,12 +45,12 @@ According to itself, it describes to be as follows
 
 However, this does not illustrate the enormous clout that this particular feature brings to bear!
 
-[comment]: <> (**That dense, squiggly blob will provide your customers your Theme in all its splendour and glory to its full magnitude, right from the very first response of Shopware!**)
+[comment]: <> (**This dense, squiggly blob will provide your customers Theme in all its splendour and glory, right from the very first response of Shopware!**)
 
 
 ## Claim for Shopware 6
 
-The target of `EcBlurhash` is, to integrate the Blurhash functionality and manage its context in the Shopware 6 ecosystem.
+The target of `EcBlurhash` is, to integrate the original Blurhash functionality and manage its context in the Shopware 6 ecosystem.
 
 **Optimized Performance & Resources**
 <br> Generate as efficiently as possible using PHP and Shopware peer dependencies
@@ -67,55 +67,6 @@ The target of `EcBlurhash` is, to integrate the Blurhash functionality and manag
 **Easy adaptable for Custom Integrations**
 <br> Option to outsource the generation process to skirt 'PHP', 'Process' or even the 'System' bottlenecks
 
-
-## Roadmap
-
-### 4.1.0 UX & Controlling
-
-- Exclude folders in media browser (like plugin config)
-- Consider the HTML5 `img` 'lazy' attribute in combination with blurhash
-
-### 4.2.0 Cover Traces (Garbage Collecting)
-
-- List all missing images (those which do not meet the 'exclusion' configuration settings)
-  - add a cli command with structural output; List all images with blurhash that no longer fit the 'exclusion' config
-  - clean up existing command and (if possible) make it to be triggered from administration
-- Remove a blurhash from image
-  - Using the media browser:
-    - single images
-    - folders
-  - Possibility to fully remove all generated Blurhashes when the plugin is uninstalled
-
-### 4.3.0 Increase compatibility - Vue Storefront and Custom Integrations
-
-- Api Integration of `MediaHashId` endpoint
-  - read single blurhash for media entities and thumbnails
-  - read lists of media entities (filtered, searchable)
-  - write Blurhash for media entities (upsert backbone for outsourced generation)
-  - validate a list of media entities for compatibility
-  - list missing images (Those which not meet the 'exclusion' configuration settings)
-
-### Backlog
-
-- Emulated integration should be compatible with background images
-- Support for images provided by CDNs
-- Display a message now and then, when in manual mode
-
-#### Conceptual
-
-- Individual placeholders / loading state indicators while blurhash is processing
-- File size limitation; Default exclusion for tiny and small images
-
-##### Integration Tweaks
-
-Better performance on slow / weak devices
-
-- Compare lazy decoding of images (those not in view port) on pages with a lot of images:
-  - Queue order should match the actual position of the Images in DOM
-  - Fixed or absolut image position should be respected - can their position in queue be corrected?
-- Hash Media-queries: Different hash sizes by device size (media-query), user-agent and similar classifications
-- Blurhash decoding using WebAssembly (First try in Rust was significant slower than the current implementation)
-
 ## System Requirements
 
 ### Environment
@@ -130,7 +81,7 @@ __PHP__
 
 In order to adapt the plugin to your very special needs, you have a number of useful configuration parameters at your disposal.
 
-> **All configurations will apply to all SalesChannels!**
+**All configurations will apply to all SalesChannels!**
 
 ### Decoding
 
@@ -145,20 +96,6 @@ This configuration is the essential part if you are using a Theme that make use 
 | None | Want to do your very own thing? Fine! |
 | Custom | For your own custom integrations, with this option only the basic functionality is provided need for decoding. |
 | Emulated | Full integration providing the best possible coverage; [Learn more about](#emulated---event-lifecycle) |
-
-##### Emulated - Event Lifecycle
-
-1. While DOM is rendering
-1. Detected all images that should be encoded
-2. Images are distributed in two queues according to its relative emphasis: 'KeyVisual' & 'Subsequent'
-3. The image `source-set` is 'lazy' and regular transparent placeholder is provided
-4. For 'KeyVisuals', the `srcset` is provided to delegate browsers fetch of the correct image for it
-2. After DOM is interactive
-1. Blurhash decoding for 'KeyVisuals' are processed
-2. Timeout any Blurhash decoding for `200ms` to have a reference distinction for Decoding vs. Final image response.
-3. Is the final image not loaded yet, the placeholder itself gets replaced by the decoded Blurhash Teaser Image
-
-[comment]: <> (TODO Visualize Lifecycle as a Diagram)
 
 ### Inclusions / Exclusion
 
@@ -260,4 +197,4 @@ bin/console ec:blurhash:generate product --all --sync
 
 ## Licence
 
-This project is licensed under the MIT License.
+This project was created by David Fecke (leptoquark1) and is **licensed under the MIT License**.

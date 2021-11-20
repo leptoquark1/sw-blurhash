@@ -48,8 +48,8 @@
       "en-GB": "Blurhash - Teaser your Images!"
     },
     "description": {
-      "de-DE": "Die wohl kompakteste Form einer repränsantiven Vorschau für ein Bild, die vorstellbar ist. Das beste Einkaufserlebnis für jeden, jederzeit und überall - auch wenn die Verbindung unterwegs nicht ganz so gut sein sollte. Wird nicht nur zusammen mit dem ersten Inhalt der Seite ausgeliefert sondern auch vom Endgerät des Kunden selbst berechnet..",
-      "en-GB": "Probably the most compact and representative form of placeholder for images in existence. Best shopping experience for everyone, anytime, anywhere - even if the connection on the mobile isn't all that good. Not only delivered with the first content of the page, it is also calculated by the customer's device itself."
+      "de-DE": "Die wohl kompakteste Form einer repräsantiven Vorschau für ein Bild, die vorstellbar ist",
+      "en-GB": "Probably the most compact and representative form of placeholder for images in existence"
     },
     "supportLink": {
       "de-DE": "https://github.com/leptoquark1/sw-blurhash/issues",
