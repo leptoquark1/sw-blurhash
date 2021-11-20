@@ -2,6 +2,7 @@
 
 namespace Eyecook\Blurhash\Command;
 
+use Exception;
 use Eyecook\Blurhash\Hash\Filter\NoHashFilter;
 use Eyecook\Blurhash\Hash\HashMediaService;
 use Eyecook\Blurhash\Hash\Media\HashMediaProvider;
@@ -22,7 +23,9 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Messenger\MessageBusInterface;
+use UnexpectedValueException;
 
 /**
  * CLI command for Blurhash processing
@@ -45,6 +48,7 @@ class GenerateCommand extends AbstractCommand
     protected EntityRepositoryInterface $mediaFolderRepository;
     protected HashMediaService $hashMediaService;
     protected HashMediaProvider $hashMediaProvider;
+    protected ?array $defaultFolders = null;
 
     public function __construct(
         MessageBusInterface $messageBus,
@@ -87,6 +91,10 @@ class GenerateCommand extends AbstractCommand
             return Command::INVALID;
         }
 
+        if (!$this->input->getArgument('entities')) {
+            $this->askForEntities();
+        }
+
         try {
             $mediaEntities = $this->getAffectedMediaEntities();
 
@@ -97,7 +105,7 @@ class GenerateCommand extends AbstractCommand
             }
 
             return $this->processMessage($mediaEntities);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->ioHelper->error($e->getMessage());
 
             return Command::FAILURE;
@@ -146,6 +154,40 @@ class GenerateCommand extends AbstractCommand
         $this->ioHelper->newLine(2);
     }
 
+    protected function askForEntities(): void
+    {
+        $choiceMap = array_merge(['root' => null], $this->getEntityDefaultFolders());
+
+        $choices = array_map(static function ($entry) {
+            return $entry === null ? 'Root Folder' : $entry['folderName'] . ' - (' . $entry['entityName'] . ')';
+        }, $choiceMap);
+
+        $question = new ChoiceQuestion(
+            'You have selected the root media folder as entry point. There are the following other options?',
+            $choices,
+            'root',
+        );
+        $question->setMultiselect(true);
+
+        $defaultValidator = $question->getValidator();
+        $question->setValidator(static function (string $answer) use ($defaultValidator) {
+            $choices = explode(',', $answer);
+            if (in_array('root', $choices, true) && count($choices) >= 2) {
+                throw new Exception('"root" can not be combined with one of its subset');
+            }
+
+            return $defaultValidator($answer);
+        });
+
+        $questionHelper = $this->getHelper('question');
+        $entities = $questionHelper->ask($this->input, $this->output, $question);
+        $this->ioHelper->newLine(2);
+
+        if (is_array($entities) !== false && in_array('root', $entities, true) === false) {
+            $this->input->setArgument('entities', $entities);
+        }
+    }
+
     private function getAffectedFolders(): ?array
     {
         $entities = $this->input->getArgument('entities') ?? [];
@@ -155,10 +197,10 @@ class GenerateCommand extends AbstractCommand
         }
 
         $folderIds = [];
-        $entityFolders = $this->aggregateEntityDefaultFolders();
+        $entityFolders = $this->getEntityDefaultFolders();
         foreach ($entities as $entity) {
             if (isset($entityFolders[$entity]) === false) {
-                throw new \UnexpectedValueException('Unknown entity "' . $entity . '"');
+                throw new UnexpectedValueException('Unknown entity "' . $entity . '"');
             }
             $folderIds[] = $entityFolders[$entity]['folderId'];
         }
@@ -169,6 +211,7 @@ class GenerateCommand extends AbstractCommand
             return in_array($ef['folderId'], $folderIds, true);
         }));
 
+        $this->ioHelper->newLine();
         $table = new Table($this->output);
         $table->setHeaders(['Entity', 'Folder', 'Media Files'])
             ->setHeaderTitle('Restrict to Folders:')
@@ -219,6 +262,15 @@ class GenerateCommand extends AbstractCommand
         }
 
         return $criteria;
+    }
+
+    private function getEntityDefaultFolders(): array
+    {
+        if ($this->defaultFolders === null) {
+            $this->defaultFolders = $this->aggregateEntityDefaultFolders();
+        }
+
+        return $this->defaultFolders;
     }
 
     private function aggregateEntityDefaultFolders(): array

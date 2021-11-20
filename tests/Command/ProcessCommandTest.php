@@ -38,7 +38,12 @@ class ProcessCommandTest extends TestCase
 
         $this->unsetSystemConfigMock(Config::PATH_MANUAL_MODE);
 
-        $this->command = $this->getContainer()->get(GenerateCommand::class);
+        $command = $this->getContainer()->get(GenerateCommand::class);
+
+        $application = new Application($this->getKernel());
+        $application->add($command);
+
+        $this->command = $application->find('ec:blurhash:generate');
     }
 
     public function testIsAvailableByCommand(): void
@@ -60,22 +65,22 @@ class ProcessCommandTest extends TestCase
 
     public function testOutputWithAllFlag(): void
     {
-        $tester = new CommandTester($this->command);
+        $tester = $this->createCommandTester();
 
-        $tester->execute(['--all' => 1]);
+        $this->executeCommand($tester, ['--all' => 1]);
         $output = self::normalizeOutput($tester);
         static::assertStringContainsStringIgnoringCase('Existing hashes will be refreshed', $output);
 
-        $tester->execute([]);
+        $this->executeCommand($tester, []);
         $output = self::normalizeOutput($tester);
         static::assertStringContainsStringIgnoringCase('Generate missing hashes', $output);
     }
 
     public function testOutputWithDryRunFlag(): void
     {
-        $tester = new CommandTester($this->command);
+        $tester = $this->createCommandTester();
 
-        $tester->execute(['--dryRun' => 1]);
+        $this->executeCommand($tester, ['--dryRun' => 1]);
         $output = self::normalizeOutput($tester);
 
         static::assertStringContainsStringIgnoringCase('media entities can be processed', $output);
@@ -86,14 +91,14 @@ class ProcessCommandTest extends TestCase
 
     public function testOutputWithSyncFlag(): void
     {
-        $tester = new CommandTester($this->command);
+        $tester = $this->createCommandTester();
 
-        $tester->execute(['--sync' => 1]);
+        $this->executeCommand($tester, ['--sync' => 1]);
         $output = self::normalizeOutput($tester);
         static::assertStringContainsStringIgnoringCase('generation will be synchronous', $output);
         static::assertEquals(Command::SUCCESS, $tester->getStatusCode());
 
-        $tester->execute([]);
+        $this->executeCommand($tester);
         $output = self::normalizeOutput($tester);
         static::assertStringContainsStringIgnoringCase('generation will be asynchronous', $output);
         static::assertEquals(Command::SUCCESS, $tester->getStatusCode());
@@ -102,9 +107,9 @@ class ProcessCommandTest extends TestCase
     public function testOutputInManualMode(): void
     {
         $this->setSystemConfigMock(Config::PATH_MANUAL_MODE, true);
-        $tester = new CommandTester($this->command);
+        $tester = $this->createCommandTester();
 
-        $tester->execute(['--sync' => 1]);
+        $this->executeCommand($tester, ['--sync' => 1]);
         $output = self::normalizeOutput($tester);
         static::assertStringNotContainsStringIgnoringCase(
             'when plugin running in manual mode, asynchronous generation is disabled',
@@ -113,7 +118,7 @@ class ProcessCommandTest extends TestCase
         static::assertEquals(Command::SUCCESS, $tester->getStatusCode());
 
         $this->setSystemConfigMock(Config::PATH_MANUAL_MODE, false);
-        $tester->execute([]);
+        $this->executeCommand($tester);
         $output = self::normalizeOutput($tester);
         static::assertStringNotContainsStringIgnoringCase(
             'when plugin running in manual mode, asynchronous generation is disabled',
@@ -122,7 +127,7 @@ class ProcessCommandTest extends TestCase
         static::assertEquals(Command::SUCCESS, $tester->getStatusCode());
 
         $this->setSystemConfigMock(Config::PATH_MANUAL_MODE, true);
-        $tester->execute([]);
+        $this->executeCommand($tester);
         $output = self::normalizeOutput($tester);
         static::assertStringContainsStringIgnoringCase(
             'when plugin running in manual mode, asynchronous generation is disabled',
@@ -133,11 +138,11 @@ class ProcessCommandTest extends TestCase
 
     public function testOutputOnUnknownEntity(): void
     {
-        $tester = new CommandTester($this->command);
+        $tester = $this->createCommandTester();
 
         $nonExistingEntity = Uuid::randomHex();
 
-        $tester->execute(['entities' => [$nonExistingEntity]]);
+        $this->executeCommand($tester, ['entities' => [$nonExistingEntity]]);
         $output = self::normalizeOutput($tester);
 
         static::assertStringContainsStringIgnoringCase('Unknown entity "' . $nonExistingEntity . '"', $output);
@@ -147,5 +152,20 @@ class ProcessCommandTest extends TestCase
     public function testProcessCommandIntegration(): void
     {
         static::markTestIncomplete();
+    }
+
+    public function testQuestionForEntities(): void
+    {
+        static::markTestIncomplete();
+    }
+
+    private function createCommandTester(): CommandTester
+    {
+        return new CommandTester($this->command);
+    }
+
+    private function executeCommand(CommandTester $tester, array $inputs = [], array $options = ['interactive' => false]): int
+    {
+        return $tester->execute($inputs, $options);
     }
 }
