@@ -1,83 +1,33 @@
 <?php declare(strict_types=1);
 
-namespace Eyecook\Blurhash\Controller;
+namespace Eyecook\Blurhash\Controller\Administration;
 
-use Eyecook\Blurhash\Exception\IllegalManualModeLeverageException;
+use Eyecook\Blurhash\Controller\AbstractApiController;
 use Eyecook\Blurhash\Hash\Media\HashMediaProvider;
 use Eyecook\Blurhash\Hash\Media\MediaValidator;
-use Eyecook\Blurhash\Message\GenerateHashMessage;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\Exception\EntityNotFoundException;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\Routing\Annotation\RouteScope;
-use Shopware\Core\Framework\Routing\Exception\InvalidRequestParameterException;
 use Shopware\Core\Framework\Routing\Exception\MissingRequestParameterException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Administrative Api endpoint
- *
  * @RouteScope(scopes={"api"})
  *
  * @package Eyecook\Blurhash
  * @author David Fecke (+leptoquark1)
+ * @
  */
-class AdministrationController extends AbstractApiController
+class ValidationController extends AbstractApiController
 {
-    protected MessageBusInterface $messageBus;
     protected MediaValidator $mediaValidator;
 
-    public function __construct(MessageBusInterface $messageBus, MediaValidator $mediaValidator)
+    public function __construct(MediaValidator $mediaValidator)
     {
-        $this->messageBus = $messageBus;
         $this->mediaValidator = $mediaValidator;
-    }
-
-    /**
-     * @Route(
-     *     "/api/_action/eyecook/blurhash/generate/media/{mediaId}",
-     *     name="api.ec.blurhash.generate.media-id",
-     *     defaults={"auth_required"=true},
-     *     methods={"GET"},
-     * )
-     */
-    public function generateByMediaEntity(?string $mediaId, Request $request, Context $context): JsonResponse
-    {
-        if (!$mediaId) {
-            throw new MissingRequestParameterException('mediaId');
-        }
-
-        $this->delegateHashMessage([$mediaId], $context);
-
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
-    }
-
-    /**
-     * @Route(
-     *     "/api/_action/eyecook/blurhash/generate/media",
-     *     name="api.action.eyecook.blurhash.generate.media",
-     *     defaults={"auth_required"=true},
-     *     methods={"POST"}
-     * )
-     */
-    public function generateByMediaEntities(Request $request, Context $context): JsonResponse
-    {
-        if ($request->request->has('mediaIds') === false) {
-            throw new MissingRequestParameterException('mediaIds');
-        }
-
-        $mediaIds = $request->request->get('mediaIds');
-        if (is_array($mediaIds) === false) {
-            throw new InvalidRequestParameterException('mediaIds');
-        }
-
-        $this->delegateHashMessage($mediaIds, $context);
-
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -126,7 +76,7 @@ class AdministrationController extends AbstractApiController
      *     methods={"GET"}
      * )
      */
-    public function mediaFolderIsValid(string $folderId, Request $request, Context $context): JsonResponse
+    public function folderIsValid(string $folderId, Request $request, Context $context): JsonResponse
     {
         if (!$folderId) {
             throw new MissingRequestParameterException('folderId');
@@ -146,20 +96,5 @@ class AdministrationController extends AbstractApiController
             'folderId' => $folderId,
             'valid' => true,
         ], Response::HTTP_OK);
-    }
-
-    /**
-     * @throws IllegalManualModeLeverageException
-     */
-    private function delegateHashMessage(array $mediaIds, Context $context): void
-    {
-        $this->preventManualModeLeverage();
-
-        $message = new GenerateHashMessage();
-        $message->setMediaIds($mediaIds);
-        $message->setIgnoreManualMode(true);
-        $message->withContext($context);
-
-        $this->messageBus->dispatch($message);
     }
 }
