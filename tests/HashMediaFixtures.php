@@ -2,6 +2,7 @@
 
 namespace Eyecook\Blurhash\Test;
 
+use DateTime;
 use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Content\Media\MediaType\ImageType;
 use Shopware\Core\Content\Test\Media\MediaFixtures;
@@ -52,23 +53,40 @@ trait HashMediaFixtures
         return $media;
     }
 
-    protected function getValidExistingMediaForHash(): MediaEntity
+    protected function getValidExistingMediaForHash(bool $withBlurhash = true, bool $withFolder = false): MediaEntity
     {
+        $id = Uuid::randomHex();
+        $data = [
+            'id' => $id,
+            'mimeType' => 'image/jpeg',
+            'fileExtension' => 'jpg',
+            'fileName' => 'validExistingBlurhashMedia_' . $id,
+            'fileSize' => 1024,
+            'mediaType' => new ImageType(),
+            'private' => false,
+            'metaData' => ['width' => 1, 'height' => 1],
+            'uploadedAt' => new DateTime('2021-08-14T11:17:06.012345Z'),
+        ];
+
+        if ($withBlurhash) {
+            $data['metaData']['blurhash'] = '1';
+        }
+
+        if ($withFolder) {
+            $data['mediaFolder'] = [
+                'name' => 'test folder ' . $id,
+                'useParentConfiguration' => false,
+                'configuration' => [
+                    'createThumbnails' => false,
+                ],
+            ];
+        }
+
         /** @var MediaEntity $media */
         $media = $this->createFixture(
             'validExistingBlurhashMedia',
             [
-                'validExistingBlurhashMedia' => [
-                    'id' => Uuid::randomHex(),
-                    'mimeType' => 'image/jpeg',
-                    'fileExtension' => 'jpg',
-                    'fileName' => 'validExistingBlurhashMedia',
-                    'fileSize' => 1024,
-                    'mediaType' => new ImageType(),
-                    'private' => false,
-                    'metaData' => ['width' => 1, 'height' => 1, 'blurhash' => '1'],
-                    'uploadedAt' => new \DateTime('2021-08-14T11:17:06.012345Z'),
-                ]
+                'validExistingBlurhashMedia' => $data,
             ],
             self::getFixtureRepository('media')
         );

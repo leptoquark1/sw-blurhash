@@ -12,6 +12,7 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\NorFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\NotFilter;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\OrFilter;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\IdSearchResult;
 
 /**
  * @package Eyecook\Blurhash
@@ -51,6 +52,36 @@ class HashMediaProvider
 
     public function searchValidMedia(Context $context, ?Criteria $criteria = null): EntitySearchResult
     {
+        return $this->mediaRepository->search($this->buildValidCriteria($criteria), $context);
+    }
+
+    public function searchValidMediaIds(Context $context, ?Criteria $criteria = null): IdSearchResult
+    {
+        return $this->mediaRepository->searchIds($this->buildValidCriteria($criteria), $context);
+    }
+
+    public function searchInvalidMedia(Context $context, ?Criteria $criteria = null): EntitySearchResult
+    {
+        $criteria = self::buildCriteria($criteria);
+
+        $orFilters = [
+            new EqualsAnyFilter('mediaFolderId', $this->config->getExcludedFolders()),
+            new EqualsAnyFilter('tags.id', $this->config->getExcludedTags()),
+            new NorFilter([
+                new EqualsAnyFilter('fileExtension', MediaTypesEnum::FILE_EXTENSIONS),
+            ]),
+        ];
+
+        if ($this->config->isIncludedPrivate() === false) {
+            $orFilters[] = new EqualsFilter('private', true);
+        }
+        $criteria->addFilter(new OrFilter($orFilters));
+
+        return $this->mediaRepository->search($criteria, $context);
+    }
+
+    protected function buildValidCriteria(?Criteria $criteria = null): Criteria
+    {
         $criteria = self::buildCriteria($criteria);
         $norConditions = [];
 
@@ -72,26 +103,6 @@ class HashMediaProvider
             $criteria->addFilter(new NotFilter(NotFilter::CONNECTION_OR, $norConditions));
         }
 
-        return $this->mediaRepository->search($criteria, $context);
-    }
-
-    public function searchInvalidMedia(Context $context, ?Criteria $criteria = null): EntitySearchResult
-    {
-        $criteria = self::buildCriteria($criteria);
-
-        $orFilters = [
-            new EqualsAnyFilter('mediaFolderId', $this->config->getExcludedFolders()),
-            new EqualsAnyFilter('tags.id', $this->config->getExcludedTags()),
-            new NorFilter([
-                new EqualsAnyFilter('fileExtension', MediaTypesEnum::FILE_EXTENSIONS),
-            ]),
-        ];
-
-        if ($this->config->isIncludedPrivate() === false) {
-            $orFilters[] = new EqualsFilter('private', true);
-        }
-        $criteria->addFilter(new OrFilter($orFilters));
-
-        return $this->mediaRepository->search($criteria, $context);
+        return $criteria;
     }
 }
