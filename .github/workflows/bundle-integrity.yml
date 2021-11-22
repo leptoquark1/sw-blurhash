@@ -24,7 +24,7 @@ jobs:
         run: |
           SFDate=$(git --no-pager log -1 --pretty="format:%ct" ./src/Resources/app/administration/src/)
           TFDate=$(git --no-pager log -1 --pretty="format:%ct" ./src/Resources/public/administration/)
-          if [ "$SFDate" -ge "$TFDate" ];
+          if [ "$SFDate" -gt "$TFDate" ];
           then
               echo "Administration bundle source is newer than its bundles, please rebuild administration"
               exit 1
@@ -36,7 +36,7 @@ jobs:
         run: |
           SFDate=$(git --no-pager log -1 --pretty="format:%ct" ./src/Resources/app/blurhash/src/)
           TFDate=$(git --no-pager log -1 --pretty="format:%ct" "./src/Resources/public/ecb-*")
-          if [ "$SFDate" -ge "$TFDate" ];
+          if [ "$SFDate" -gt "$TFDate" ];
           then
               echo "Blurhash bundle source is newer than its bundles, please rebuild Blurhash bundles"
               exit 1
