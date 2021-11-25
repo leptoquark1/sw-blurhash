@@ -56,10 +56,10 @@
             <tag name="messenger.message_handler"/>
         </service>
 
-        <service id="Eyecook\Blurhash\Message\DelegateMessagesHandler" public="true">
+        <service id="Eyecook\Blurhash\Message\DelegateMessagesSubscriber">
             <argument type="service" id="messenger.bus.shopware"/>
 
-            <tag name="messenger.message_handler"/>
+            <tag name="kernel.event_subscriber"/>
         </service>
 
         <service id="Eyecook\Blurhash\Command\AbstractCommand" abstract="true">
