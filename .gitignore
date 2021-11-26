@@ -5,3 +5,4 @@ composer.lock
 var/
 phpunit.cache/
 build/
+CHANGELOG-SEMANTIC.md
