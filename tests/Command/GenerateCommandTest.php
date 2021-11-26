@@ -4,8 +4,19 @@ namespace Eyecook\Blurhash\Test\Command;
 
 use Eyecook\Blurhash\Command\GenerateCommand;
 use Eyecook\Blurhash\Configuration\Config;
+use Eyecook\Blurhash\Configuration\ConfigService;
+use Eyecook\Blurhash\Hash\HashMediaService;
+use Eyecook\Blurhash\Hash\Media\HashMediaProvider;
 use Eyecook\Blurhash\Test\ConfigMockStub;
+use Eyecook\Blurhash\Test\MockBuilderStub;
 use PHPUnit\Framework\TestCase;
+use Shopware\Core\Content\Media\Aggregate\MediaFolder\MediaFolderEntity;
+use Shopware\Core\Content\Media\MediaEntity;
+use Shopware\Core\Content\Test\Media\MediaFixtures;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\NandFilter;
 use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -14,14 +25,15 @@ use Symfony\Component\Console\Exception\CommandNotFoundException;
 use Symfony\Component\Console\Tester\CommandTester;
 
 /**
+ * @covers \Eyecook\Blurhash\Command\GenerateCommand
+ * @group Command
+ *
  * @package Eyecook\Blurhash\Test
  * @author David Fecke (+leptoquark1)
  */
-class ProcessCommandTest extends TestCase
+class GenerateCommandTest extends TestCase
 {
-    use IntegrationTestBehaviour, ConfigMockStub;
-
-    protected ?GenerateCommand $command = null;
+    use IntegrationTestBehaviour, ConfigMockStub, MediaFixtures, MockBuilderStub;
 
     protected static function normalizeOutput(CommandTester $tester): string
     {
@@ -38,12 +50,13 @@ class ProcessCommandTest extends TestCase
 
         $this->unsetSystemConfigMock(Config::PATH_MANUAL_MODE);
 
-        $command = $this->getContainer()->get(GenerateCommand::class);
-
-        $application = new Application($this->getKernel());
-        $application->add($command);
-
-        $this->command = $application->find('ec:blurhash:generate');
+        $this->prepareMockConstructorArgs(GenerateCommand::class, [
+            'messenger.bus.shopware',
+            'media.repository',
+            'media_folder.repository',
+            HashMediaService::class,
+            HashMediaProvider::class,
+        ]);
     }
 
     public function testIsAvailableByCommand(): void
@@ -149,9 +162,46 @@ class ProcessCommandTest extends TestCase
         static::assertEquals(Command::FAILURE, $tester->getStatusCode());
     }
 
-    public function testProcessCommandIntegration(): void
+    public function testProcessWithEntityArgument(): void
     {
-        static::markTestIncomplete();
+        $this->setSystemConfigMock(Config::PATH_EXCLUDED_FOLDERS, []);
+        $this->setSystemConfigMock(Config::PATH_EXCLUDED_TAGS, []);
+
+        /** @var EntityRepositoryInterface $mediaDefaultFolderRepository */
+        $mediaFolderRepository = $this->getContainer()->get('media_folder.repository');
+        $mediaFolderCriteria = (new Criteria())
+            ->addFilter(new NandFilter([new EqualsFilter('defaultFolderId', null)]))
+            ->addAssociation('defaultFolder')
+            ->setLimit(1);
+
+        /** @var MediaFolderEntity $mediaFolder */
+        $mediaFolder = $mediaFolderRepository->search($mediaFolderCriteria, $this->entityFixtureContext)->first();
+        $defaultFolderEntity = $mediaFolder->getDefaultFolder()->getEntity();
+
+        $testFixture = $this->mediaFixtures['NamedMimeJpgEtxJpgWithFolderWithoutThumbnails'];
+        unset($testFixture['mediaFolder']);
+        $testFixture['mediaFolderId'] = $mediaFolder->getId();
+        $testFixture['metaData'] = ['width' => 1, 'height' => 1];
+
+        /** @var MediaEntity $testMediaEntity */
+        $testMediaEntity = $this->createFixture('ECBEA', [
+            'ECBEA' => $testFixture,
+        ], self::getFixtureRepository('media'));
+
+        $mockedHashMediaService = $this->createMock(HashMediaService::class);
+        $mockedHashMediaService->expects($this->atLeastOnce())
+            ->method('processHashForMedia')
+            ->with($this->callback(function (MediaEntity $mediaEntity) use ($testMediaEntity) {
+                return $testMediaEntity->getId() === $mediaEntity->getId();
+            }));
+
+        $command = $this->createCommandWithArgs([HashMediaService::class => $mockedHashMediaService]);
+
+        $tester = new CommandTester($command);
+        $this->executeCommand($tester, ['entities' => [$defaultFolderEntity], '--sync' => 1]);
+
+        $output = self::normalizeOutput($tester);
+        static::assertStringContainsStringIgnoringCase($defaultFolderEntity, $output);
     }
 
     public function testQuestionForEntities(): void
@@ -161,11 +211,27 @@ class ProcessCommandTest extends TestCase
 
     private function createCommandTester(): CommandTester
     {
-        return new CommandTester($this->command);
+        $command = $this->getContainer()->get(GenerateCommand::class);
+
+        $application = new Application($this->getKernel());
+        $application->add($command);
+
+        return new CommandTester($application->find('ec:blurhash:generate'));
     }
 
     private function executeCommand(CommandTester $tester, array $inputs = [], array $options = ['interactive' => false]): int
     {
         return $tester->execute($inputs, $options);
+    }
+
+    private function createCommandWithArgs($mockArgs = []): GenerateCommand
+    {
+        $command = $this->getPreparedClassInstance(GenerateCommand::class, $mockArgs);
+
+        /** @noinspection PhpParamsInspection */
+        $command->setContainer($this->getContainer());
+        $command->setConfigService($this->getContainer()->get(ConfigService::class));
+
+        return $command;
     }
 }
