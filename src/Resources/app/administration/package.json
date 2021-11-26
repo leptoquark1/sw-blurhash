@@ -1,8 +1,8 @@
 {
-    "name": "ecblurhash",
-    "version": "1.0.0",
-    "description": "Administration for EcBlurhash",
-    "main": "index.js",
-    "author": "David Fecke (leptoquark1)",
-    "license": "MIT"
+  "name": "ecblurhash",
+  "version": "1.0.0",
+  "description": "Administration for EcBlurhash",
+  "main": "index.js",
+  "author": "David Fecke (leptoquark1)",
+  "license": "Apache-2.0"
 }
