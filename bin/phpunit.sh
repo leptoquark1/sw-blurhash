@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 
+WORK_DIR="$(pwd)"
+SW_DIR="$WORK_DIR/../../.."
+
 export XDEBUG_MODE=off
+composer dump-autoload -d "$WORK_DIR" --dev
+touch "$WORK_DIR/vendor/composer/InstalledVersions.php"
 
-composer dump-autoload
-touch vendor/composer/InstalledVersions.php
-
-php -n ./../../../vendor/bin/phpunit "$@"
+php -n "$SW_DIR/vendor/bin/phpunit" -c "$WORK_DIR/phpunit.xml.dist" --bootstrap "$WORK_DIR/tests/TestBootstrap.php" "$@"
