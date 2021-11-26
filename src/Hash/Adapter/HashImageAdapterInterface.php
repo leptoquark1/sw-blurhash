@@ -13,10 +13,10 @@ namespace Eyecook\Blurhash\Hash\Adapter;
 interface HashImageAdapterInterface
 {
     /**
-     * @param string $data A string containing the image data
+     * @param string $filename A string representing the absolute path to the file
      * @return resource|false Image resource for provided data or false on error
      */
-    public function createImage(string &$data);
+    public function createImage(string $filename);
 
     /**
      * @param resource $resource An image resource, returned by the `createImage` function

@@ -34,7 +34,7 @@ class ValidationControllerTest extends TestCase
         $this->setUpSystemConfigService();
         $this->resetInternalSystemConfigCache();
     }
-    
+
     public function testValidateMediaResponseWithNonExistentEntity(): void
     {
         ['response' => $response] = $this->fetch(

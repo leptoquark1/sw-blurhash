@@ -10,9 +10,32 @@ namespace Eyecook\Blurhash\Hash\Adapter;
  */
 class GdHashImageAdapter implements HashImageAdapterInterface
 {
-    public function createImage(&$data)
+    public function createImage(string $filename)
     {
-        return imagecreatefromstring($data);
+        $type = function_exists('exif_imagetype')
+            ? exif_imagetype($filename)
+            : getImageSize($filename)[2] ?? null;
+
+        if ($type === null) {
+            return false;
+        }
+
+        switch ($type) {
+            case IMAGETYPE_GIF:
+                $resource = @imageCreateFromGif($filename);
+                break;
+            case IMAGETYPE_JPEG:
+            case IMAGETYPE_JPEG2000:
+                $resource = @imageCreateFromJpeg($filename);
+                break;
+            case IMAGETYPE_PNG:
+                $resource = @imagecreatefrompng($filename);
+                break;
+            default:
+                return false;
+        }
+
+        return is_resource($resource) === true ? $resource : false;
     }
 
     public function getImageColorAt(&$resource, int $x, int $y, ?bool $isTrueColor = null): array

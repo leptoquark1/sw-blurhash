@@ -3,10 +3,11 @@
 namespace Eyecook\Blurhash\Hash;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
+use Eyecook\Blurhash\Configuration\ConfigService;
 use Eyecook\Blurhash\Hash\Media\MediaHashId;
 use Eyecook\Blurhash\Hash\Media\MediaHashIdFactory;
 use Eyecook\Blurhash\Hash\Media\MediaHashMeta;
-use Eyecook\Blurhash\Configuration\ConfigService;
 use League\Flysystem\FilesystemInterface;
 use Shopware\Core\Content\Media\Aggregate\MediaThumbnail\MediaThumbnailEntity;
 use Shopware\Core\Content\Media\MediaEntity;
@@ -31,7 +32,7 @@ class HashMediaService
     protected RetryableQuery $query;
 
     /**
-     * @throws \Doctrine\DBAL\Exception
+     * @throws Exception
      */
     public function __construct(
         ConfigService $config,
@@ -61,16 +62,16 @@ class HashMediaService
         }
 
         try {
-            $path = $this->getPhysicalFilePath($media, $mediaHashId);
-            $fileContent = $this->getFileSystem($media)->read($path);
+            $filename = $this->getPhysicalFilePath($media);
         } catch (FileNotFoundException $e) {
             return null;
         }
 
-        $this->hashGenerator->generate($mediaHashId, $fileContent);
-        $fileContent = null;
+        $this->hashGenerator->generate($mediaHashId, $filename);
 
-        $this->persistMediaHash($mediaHashId);
+        if (empty($mediaHashId->getHash()) === false) {
+            $this->persistMediaHash($mediaHashId);
+        }
 
         return $mediaHashId->getHash();
     }
@@ -85,18 +86,19 @@ class HashMediaService
     /**
      * @throws FileNotFoundException
      */
-    protected function getPhysicalFilePath(MediaEntity $media, MediaHashId $mediaHashId): string
+    protected function getPhysicalFilePath(MediaEntity $media): string
     {
         $thresholdThumbnail = $this->getThresholdThumbnail($media);
+        $fileSystem = $this->getFileSystem($media);
         $path = $thresholdThumbnail
             ? $this->urlGenerator->getRelativeThumbnailUrl($media, $thresholdThumbnail)
             : $this->urlGenerator->getRelativeMediaUrl($media);
 
-        if ($this->getFileSystem($media)->has($path) === false) {
+        if ($fileSystem->has($path) === false) {
             throw new FileNotFoundException('Filepath cannot be resolved by the filesystem', 0, null, $path);
         }
 
-        return $path;
+        return $fileSystem->getAdapter()->applyPathPrefix($path);
     }
 
     protected function getThresholdThumbnail(MediaEntity $media): ?MediaThumbnailEntity
@@ -108,17 +110,18 @@ class HashMediaService
         $isLandscape = $media->getMetaData()['width'] > $media->getMetaData()['height'];
         $threshold = $isLandscape ? $this->config->getThumbnailThresholdWidth() : $this->config->getThumbnailThresholdHeight();
 
-        $filtered = $media->getThumbnails()->filter(function(MediaThumbnailEntity $thumb) use ($isLandscape, $threshold) {
+        $filtered = $media->getThumbnails()->filter(function (MediaThumbnailEntity $thumb) use ($isLandscape, $threshold) {
             return $isLandscape ? $thumb->getWidth() < $threshold : $thumb->getHeight() < $threshold;
         });
 
-        $filtered->sort(static function(MediaThumbnailEntity $a, MediaThumbnailEntity $b) use ($isLandscape) {
+        $filtered->sort(static function (MediaThumbnailEntity $a, MediaThumbnailEntity $b) use ($isLandscape) {
             $ag = $isLandscape ? $a->getWidth() : $a->getHeight();
             $bg = $isLandscape ? $b->getWidth() : $b->getHeight();
 
             if ($ag === $bg) {
                 return 0;
             }
+
             return $ag > $bg ? -1 : 1;
         });
 
@@ -145,15 +148,15 @@ class HashMediaService
     }
 
     /**
-     * @throws \Doctrine\DBAL\Exception
+     * @throws Exception
      */
     private function initQuery(): void
     {
         $statement = 'UPDATE media SET meta_data = JSON_SET(meta_data, '
-            .'\'$.'.MediaHashMeta::$PROP_HASH.'\', :'.MediaHashMeta::$PROP_HASH.','
-            .'\'$.'.MediaHashMeta::$PROP_WIDTH.'\', :'.MediaHashMeta::$PROP_WIDTH.','
-            .'\'$.'.MediaHashMeta::$PROP_HEIGHT.'\', :'.MediaHashMeta::$PROP_HEIGHT
-            .') WHERE id = :id';
+            . '\'$.' . MediaHashMeta::$PROP_HASH . '\', :' . MediaHashMeta::$PROP_HASH . ','
+            . '\'$.' . MediaHashMeta::$PROP_WIDTH . '\', :' . MediaHashMeta::$PROP_WIDTH . ','
+            . '\'$.' . MediaHashMeta::$PROP_HEIGHT . '\', :' . MediaHashMeta::$PROP_HEIGHT
+            . ') WHERE id = :id';
 
         $query = $this->connection->prepare($statement);
 

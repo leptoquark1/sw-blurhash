@@ -15,10 +15,10 @@ use Eyecook\Blurhash\Hash\Media\MediaHashId;
 interface HashGeneratorInterface
 {
     /**
-     * Generates the Blurhash using the provided image data and given hashId is updated.
+     * Generates the Blurhash using the provided image data or file path and given hashId is updated.
      *
      * @param MediaHashId $hashId The referenced hash object
-     * @param string|null $imageData A string containing the image data
+     * @param string $filename A string representing the absolute path to the file
      */
-    public function generate(MediaHashId $hashId, string &$imageData): void;
+    public function generate(MediaHashId $hashId, string $filename): void;
 }

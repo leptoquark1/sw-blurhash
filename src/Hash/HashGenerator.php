@@ -4,6 +4,7 @@ namespace Eyecook\Blurhash\Hash;
 
 use Eyecook\Blurhash\Configuration\ConfigService;
 use Eyecook\Blurhash\Hash\Media\MediaHashId;
+use RuntimeException;
 
 /**
  * Generates a Blurhash for given image data
@@ -22,9 +23,14 @@ class HashGenerator implements HashGeneratorInterface
         $this->imageAdapter = $imageAdapter;
     }
 
-    public function generate(MediaHashId $hashId, string &$imageData): void
+    public function generate(MediaHashId $hashId, string $filename): void
     {
-        $image = $this->imageAdapter->createImage($imageData);
+        $image = $this->imageAdapter->createImage($filename);
+
+        if (is_resource($image) === false) {
+            throw new RuntimeException('Image resource stream cannot be bind from filename ' . $filename, ['hashId' => $hashId]);
+        }
+
         $height = $this->imageAdapter->getImageHeight($image);
         $width = $this->imageAdapter->getImageWidth($image);
 

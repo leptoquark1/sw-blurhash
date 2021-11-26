@@ -35,7 +35,8 @@
   },
   "suggest": {
     "shopware/storefront": "Require '*'. Blurhash Storefront integration",
-    "shopware/administration": "Require '*'. Easy Blurhash set up and configuration"
+    "shopware/administration": "Require '*'. Easy Blurhash set up and configuration",
+    "ext-parallel": "Faster generation processing by using multiple threads"
   },
   "conflict": {
     "shopware/storefront": "<6.4,>=7",
