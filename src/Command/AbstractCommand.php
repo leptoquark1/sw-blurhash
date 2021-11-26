@@ -75,6 +75,10 @@ abstract class AbstractCommand extends Command
         return $result;
     }
 
-    protected function initializeCommand(): void {}
+    protected function initializeCommand(): void
+    {
+        // -
+    }
+
     abstract public function handle(): ?int;
 }

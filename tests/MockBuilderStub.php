@@ -56,4 +56,16 @@ trait MockBuilderStub
 
         return $builder->getMock();
     }
+
+    /**
+     * @psalm-template RealInstanceType of object
+     * @psalm-param class-string<RealInstanceType> $className
+     * @psalm-return RealInstanceType
+     */
+    private function getPreparedClassInstance(string $className, $mockArgs = []): object
+    {
+        $args = $this->getMockConstructorArgs($className, $mockArgs);
+
+        return new $className(...$args);
+    }
 }
