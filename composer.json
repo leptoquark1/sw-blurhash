@@ -14,7 +14,8 @@
   "scripts": {
     "unit": "./bin/phpunit.sh",
     "coverage": "./bin/coverage.sh",
-    "prepare-release": "standard-version"
+    "prepare-readme": "standard-version --skip.commit --skip.tag --skip.bump -i CHANGELOG_SEMANTIC.md",
+    "prepare-release": "standard-version --commit-all --sign --skip.changelog"
   },
   "autoload": {
     "psr-4": {
@@ -43,13 +44,17 @@
   "extra": {
     "shopware-plugin-class": "Eyecook\\Blurhash\\EyecookBlurhash",
     "copyright": "David Fecke (leptoquark)",
+    "manufacturerLink": {
+      "de-DE": "https://eyecook.net",
+      "en-GB": "https://eyecook.net"
+    },
     "label": {
       "de-DE": "Blurhash - Bilder anteasern!",
       "en-GB": "Blurhash - Teaser your Images!"
     },
     "description": {
-      "de-DE": "Die wohl kompakteste Form einer repräsantiven Vorschau für ein Bild, die vorstellbar ist",
-      "en-GB": "Probably the most compact and representative form of placeholder for images in existence"
+      "de-DE": "Nicht nur ein Platzhalter, sondern ein vollwertiges Teaser-Bild - Schwache Verbindung? Kein Problem mit der wohl kompaktesten und repräsentativsten Form von Platzhaltern für Bilder!",
+      "en-GB": "Not a just placeholder, but a wholesome Teaser Image - Weak connection? No problem with  the probably most compact and representative form of placeholder for images in existence!"
     },
     "supportLink": {
       "de-DE": "https://github.com/leptoquark1/sw-blurhash/issues",
