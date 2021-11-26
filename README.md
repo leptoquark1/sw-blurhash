@@ -197,4 +197,6 @@ bin/console ec:blurhash:generate product --all --sync
 
 ## Licence
 
-This project was created by David Fecke (leptoquark1) and is **licensed under the MIT License**.
+This software is created by David Fecke (leptoquark1) and licensed under [Apache 2](https://github.com/leptoquark1/sw-blurhash/blob/main/LICENSE).
+
+Initial concept and underlying structure is derived from an [algorithm](https://github.com/woltapp/blurhash/blob/master/Algorithm.md) original created by [Wolt Enterprises](https://github.com/woltapp/blurhash), licensed under [MIT License](https://github.com/woltapp/blurhash/blob/master/License.md).
