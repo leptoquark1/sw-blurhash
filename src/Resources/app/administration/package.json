@@ -1,7 +1,7 @@
 {
-  "name": "ecblurhash",
+  "name": "eyecook-blurhash",
   "version": "1.0.0",
-  "description": "Administration for EcBlurhash",
+  "description": "Administration for Blurhash for Shopware 6",
   "main": "index.js",
   "author": "David Fecke (leptoquark1)",
   "license": "Apache-2.0"

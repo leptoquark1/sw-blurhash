@@ -4,13 +4,13 @@
     {{ parent() }}
 
     {% if not ecbConfEqualsConst('integrationMode', 'VALUE_INTEGRATION_MODE_NONE') %}
-        <link rel="preload" as="image" href="{{ asset('bundles/ecblurhash/storefront/assets/images/ecb-spinner.svg') }}">
+        <link rel="preload" as="image" href="{{ asset('storefront/assets/images/ecb-spinner.svg', '@EyecookBlurhash') }}">
     {% endif %}
 
     {% if ecbConfEqualsConst('integrationMode', 'VALUE_INTEGRATION_MODE_CUSTOM') %}
-        <script src="{{ asset('bundles/ecblurhash/ecb-decode.js', 'asset') }}"></script>
+        <script src="{{ asset('ecb-decode.js', '@EyecookBlurhash') }}"></script>
     {% elseif ecbConfEqualsConst('integrationMode', 'VALUE_INTEGRATION_MODE_EMULATED') %}
-        <script src="{{ asset('bundles/ecblurhash/ecb-emulated.js', 'asset') }}"></script>
+        <script src="{{ asset('ecb-emulated.js', '@EyecookBlurhash') }}"></script>
     {% endif %}
 
 {% endblock %}
