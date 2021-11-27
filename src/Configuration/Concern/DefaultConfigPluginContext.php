@@ -49,7 +49,7 @@ trait DefaultConfigPluginContext
         $connection = $this->container->get(Connection::class);
 
         $configValue = $connection->createQueryBuilder()
-            ->select(['configuration_value->"$._value"'])
+            ->select(["JSON_UNQUOTE(JSON_EXTRACT(`configuration_value`, '$._value'))"])
             ->from('system_config')
             ->where('configuration_key = :config_key')
             ->setParameter('config_key', static::$FULL_PATH_EXCLUDED_TAGS)
