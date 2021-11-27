@@ -1,5 +1,4 @@
 import template from './quick-action.html.twig'
-import './quick-action.scss'
 
 const { Component } = Shopware;
 

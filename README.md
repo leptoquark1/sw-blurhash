@@ -50,7 +50,7 @@ However, this does not illustrate the enormous clout that this particular featur
 
 ## Claim for Shopware 6
 
-The target of `EcBlurhash` is, to integrate the original Blurhash functionality and manage its context in the Shopware 6 ecosystem.
+The target of `EyecookBlurhash` is, to integrate the original Blurhash functionality and manage its context in the Shopware 6 ecosystem.
 
 **Optimized Performance & Resources**
 <br> Generate as efficiently as possible using PHP and Shopware peer dependencies
@@ -163,8 +163,8 @@ You are free to use existing chunk bundles for your storefront integration.
 
 | Name | Path | Description | 
 | ---- | ---- | ----------- |
-| Decode | `bundles/ecblurhash/ecb-decode.js` | Straight basics to create a ready-to-use image resource from a blurhash added to the global window object |
-| Helper | `bundles/ecblurhash/ecb-helper.js` | Some useful helper that might be needed added to window property `ecbHelper` |
+| Decode | `bundles/eyecookblurhash/ecb-decode.js` | Straight basics to create a ready-to-use image resource from a blurhash added to the global window object |
+| Helper | `bundles/eyecookblurhash/ecb-helper.js` | Some useful helper that might be needed added to window property `ecbHelper` |
 
 ## Commands (CLI)
 
