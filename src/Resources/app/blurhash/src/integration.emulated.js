@@ -33,7 +33,7 @@ import { decodeHashByHashMeta, extractBlurhashMetaFromNode, getMutationObserver,
         };
       } else {
         // When previous image is complete we are done here too
-        applySrcDataAttributes(meta);
+        applySrcDataAttributes();
       }
 
       return prevImg;
@@ -43,7 +43,7 @@ import { decodeHashByHashMeta, extractBlurhashMetaFromNode, getMutationObserver,
     const img = new Image();
     img.onload = function () {
       img.onload = null;
-      applySrcDataAttributes(meta);
+      applySrcDataAttributes();
     }
     // take the place of the original and load the image by it's srcset
     img.srcset = meta.srcset;
