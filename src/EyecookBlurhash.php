@@ -20,13 +20,13 @@ class EyecookBlurhash extends Plugin
 
     public function postInstall(InstallContext $installContext): void
     {
-        if ($installContext->isAutoMigrate()) {
-            $this->addDefaultExcludedTag();
-        }
-
         if (!\function_exists('imagecreatefromstring')) {
             //This may only indicate as a warning, since the adapter can be overwritten
             throw new LogicException('This Plugin requires GD extension to work without a custom adapter! You may run into errors.');
+        }
+
+        if ($installContext->isAutoMigrate()) {
+            $this->addDefaultExcludedTag();
         }
     }
 

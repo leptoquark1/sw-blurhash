@@ -64,15 +64,30 @@ class Migration1631297401CreateDefaultTagTest extends TestCase
      */
     public function testDown(): void
     {
-        $resultBefore = $this->fetchDefaultTagCount();
-        if ($resultBefore[0] === 0) {
+        [$mediaId] = $this->connection->executeQuery('SELECT id FROM media LIMIT 1')->fetchFirstColumn();
+
+        $tagsResultBefore = $this->fetchDefaultTagCount();
+        if ($tagsResultBefore === 0) {
             $this->migration->up();
         }
 
-        $this->migration->down();
-        $resultAfter = $this->fetchDefaultTagCount();
+        $defaultTagId = $this->fetchDefaultTag()[0]['id'] ?? null;
+        $mediaTagsCreated = $this->connection->executeStatement(
+            'INSERT INTO `media_tag` (`media_id`, `tag_id`) VALUES (:mid, :tid)',
+            ['mid' => $mediaId, 'tid' => $defaultTagId]
+        );
 
-        self::assertEquals(0, $resultAfter[0]);
+        self::assertEquals(1, $mediaTagsCreated);
+
+        $this->migration->down();
+
+        $tagsResultAfter = $this->fetchDefaultTagCount();
+        $mediaTagsAfter = $this->connection
+            ->executeQuery('SELECT `media_id` FROM media_tag WHERE `tag_id` = :tid', ['tid' => $defaultTagId])
+            ->rowCount();
+
+        self::assertEquals(0, $mediaTagsAfter);
+        self::assertEquals(0, $tagsResultAfter);
     }
 
     private function fetchDefaultTag($ignoreIds = []): array
@@ -91,15 +106,15 @@ class Migration1631297401CreateDefaultTagTest extends TestCase
         return $builder->execute()->fetchAllAssociative();
     }
 
-    private function fetchDefaultTagCount(): array
+    private function fetchDefaultTagCount(): int
     {
         return $this->connection->createQueryBuilder()
-            ->select(['count(id) as count'])
+            ->select(['id'])
             ->from('tag')
             ->where('name = :tag_name')
             ->setParameter('tag_name', Config::DEFAULT_TAG_NAME)
             ->setMaxResults(1)
             ->execute()
-            ->fetchFirstColumn();
+            ->rowCount();
     }
 }

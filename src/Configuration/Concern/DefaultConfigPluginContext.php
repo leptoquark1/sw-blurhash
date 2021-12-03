@@ -6,14 +6,12 @@ use Doctrine\DBAL\Connection;
 use Eyecook\Blurhash\Configuration\Config;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * @package Eyecook\Blurhash
  * @author David Fecke (+leptoquark1)
  * @internal
  *
- * @property-read ContainerInterface container
  * @see \Symfony\Component\DependencyInjection\ContainerAwareTrait
  */
 trait DefaultConfigPluginContext
@@ -45,10 +43,7 @@ trait DefaultConfigPluginContext
 
     private function fetchCurrentExcludedTagConfig()
     {
-        /** @var Connection $connection */
-        $connection = $this->container->get(Connection::class);
-
-        $configValue = $connection->createQueryBuilder()
+        $configValue = $this->_getConnection()->createQueryBuilder()
             ->select(["JSON_UNQUOTE(JSON_EXTRACT(`configuration_value`, '$._value'))"])
             ->from('system_config')
             ->where('configuration_key = :config_key')
@@ -69,15 +64,38 @@ trait DefaultConfigPluginContext
 
     private function fetchDefaultExcludedTagId(): ?string
     {
-        /** @var Connection $connection */
-        $connection = $this->container->get(Connection::class);
-
-        return $connection->createQueryBuilder()
+        $result = $this->_getConnection()->createQueryBuilder()
             ->select(['LOWER(HEX(id)) as id'])
             ->from('tag')
             ->where('name = :tag_name')
             ->setParameter('tag_name', Config::DEFAULT_TAG_NAME)
             ->execute()
             ->fetchOne();
+
+        if ($result === false) {
+            return null;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @throws \RuntimeException
+     */
+    private function _getConnection(): Connection
+    {
+        if (property_exists($this, 'connection')) {
+            return $this->connection;
+        }
+
+        if (property_exists($this, 'container')) {
+            return $this->container->get(Connection::class);
+        }
+
+        if (method_exists($this, 'getContainer')) {
+            return $this->getContainer()->get(Connection::class);
+        }
+
+        throw new \RuntimeException('No Connection found in ' . get_class($this));
     }
 }
