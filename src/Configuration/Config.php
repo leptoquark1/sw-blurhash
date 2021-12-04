@@ -75,4 +75,18 @@ final class Config
                 : $value;
         });
     }
+
+    /**
+     * Validate configuration for thumbnail threshold inputs (height and width)
+     *
+     * @internal
+     */
+    public static function validateThumbnailThresholdValue(int $default): \Closure
+    {
+        return (static function ($value) use ($default): int {
+            return (is_int($value) === false || $value < 0)
+                ? $default
+                : $value;
+        });
+    }
 }

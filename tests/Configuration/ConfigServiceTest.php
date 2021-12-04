@@ -20,6 +20,11 @@ class ConfigServiceTest extends TestCase
 {
     use ConfigMockStub;
 
+    protected const COMPONENTS_X_DEFAULT = 5;
+    protected const COMPONENTS_Y_DEFAULT = 4;
+    protected const THUMBNAIL_THRESHOLD_WIDTH_DEFAULT = 1400;
+    protected const THUMBNAIL_THRESHOLD_HEIGHT_DEFAULT = 1080;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -136,7 +141,7 @@ class ConfigServiceTest extends TestCase
     {
         $this->unsetSystemConfigMock(Config::PATH_COMPONENTS_X);
 
-        self::assertEquals(4, $this->configService->getComponentsX());
+        self::assertEquals(self::COMPONENTS_X_DEFAULT, $this->configService->getComponentsX());
     }
 
     public function testGetComponentsXUsingSystemConfig(): void
@@ -149,26 +154,26 @@ class ConfigServiceTest extends TestCase
     public function testGetComponentsXInvalidValueFallbackDefault(): void
     {
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_X, 12);
-        self::assertEquals(4, $this->configService->getComponentsX());
+        self::assertEquals(self::COMPONENTS_X_DEFAULT, $this->configService->getComponentsX());
 
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_X, 0);
-        self::assertEquals(4, $this->configService->getComponentsX());
+        self::assertEquals(self::COMPONENTS_X_DEFAULT, $this->configService->getComponentsX());
 
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_X, -1);
-        self::assertEquals(4, $this->configService->getComponentsX());
+        self::assertEquals(self::COMPONENTS_X_DEFAULT, $this->configService->getComponentsX());
 
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_X, true);
-        self::assertEquals(4, $this->configService->getComponentsX());
+        self::assertEquals(self::COMPONENTS_X_DEFAULT, $this->configService->getComponentsX());
 
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_X, 'abc');
-        self::assertEquals(4, $this->configService->getComponentsX());
+        self::assertEquals(self::COMPONENTS_X_DEFAULT, $this->configService->getComponentsX());
     }
 
     public function testGetComponentsYDefault(): void
     {
         $this->unsetSystemConfigMock(Config::PATH_COMPONENTS_Y);
 
-        self::assertEquals(3, $this->configService->getComponentsY());
+        self::assertEquals(self::COMPONENTS_Y_DEFAULT, $this->configService->getComponentsY());
     }
 
     public function testGetComponentsYUsingSystemConfig(): void
@@ -181,26 +186,26 @@ class ConfigServiceTest extends TestCase
     public function testGetComponentsYInvalidValueFallbackDefault(): void
     {
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_Y, 12);
-        self::assertEquals(3, $this->configService->getComponentsY());
+        self::assertEquals(self::COMPONENTS_Y_DEFAULT, $this->configService->getComponentsY());
 
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_Y, 0);
-        self::assertEquals(3, $this->configService->getComponentsY());
+        self::assertEquals(self::COMPONENTS_Y_DEFAULT, $this->configService->getComponentsY());
 
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_Y, -1);
-        self::assertEquals(3, $this->configService->getComponentsY());
+        self::assertEquals(self::COMPONENTS_Y_DEFAULT, $this->configService->getComponentsY());
 
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_Y, true);
-        self::assertEquals(3, $this->configService->getComponentsY());
+        self::assertEquals(self::COMPONENTS_Y_DEFAULT, $this->configService->getComponentsY());
 
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_Y, 'abc');
-        self::assertEquals(3, $this->configService->getComponentsY());
+        self::assertEquals(self::COMPONENTS_Y_DEFAULT, $this->configService->getComponentsY());
     }
 
     public function testGetThumbnailThresholdWidthDefault(): void
     {
         $this->unsetSystemConfigMock(Config::PATH_THUMB_THRESHOLD_WIDTH);
 
-        self::assertEquals(1920, $this->configService->getThumbnailThresholdWidth());
+        self::assertEquals(self::THUMBNAIL_THRESHOLD_WIDTH_DEFAULT, $this->configService->getThumbnailThresholdWidth());
     }
 
     public function testGetThumbnailThresholdWidthUsingSystemConfig(): void
@@ -214,7 +219,7 @@ class ConfigServiceTest extends TestCase
     {
         $this->unsetSystemConfigMock(Config::PATH_THUMB_THRESHOLD_HEIGHT);
 
-        self::assertEquals(1080, $this->configService->getThumbnailThresholdHeight());
+        self::assertEquals(self::THUMBNAIL_THRESHOLD_HEIGHT_DEFAULT, $this->configService->getThumbnailThresholdHeight());
     }
 
     public function testGetThumbnailThresholdHeightUsingSystemConfig(): void

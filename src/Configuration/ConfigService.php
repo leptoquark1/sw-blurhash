@@ -24,12 +24,12 @@ class ConfigService
 
     public function isPluginManualMode(): bool
     {
-        return (bool) $this->loadConfig(Config::PATH_MANUAL_MODE);
+        return (bool)$this->loadConfig(Config::PATH_MANUAL_MODE);
     }
 
     public function isIncludedPrivate(): bool
     {
-        return (bool) $this->loadConfig(Config::PATH_INCLUDE_PRIVATE, true);
+        return (bool)$this->loadConfig(Config::PATH_INCLUDE_PRIVATE, true);
     }
 
     public function getExcludedFolders(): array
@@ -46,7 +46,7 @@ class ConfigService
     {
         return $this->loadConfig(
             Config::PATH_COMPONENTS_X,
-            Config::validateComponentValue(4)
+            Config::validateComponentValue(5)
         );
     }
 
@@ -54,18 +54,24 @@ class ConfigService
     {
         return $this->loadConfig(
             Config::PATH_COMPONENTS_Y,
-            Config::validateComponentValue(3)
+            Config::validateComponentValue(4)
         );
     }
 
     public function getThumbnailThresholdWidth()
     {
-        return $this->loadConfig(Config::PATH_THUMB_THRESHOLD_WIDTH, 1920);
+        return $this->loadConfig(
+            Config::PATH_THUMB_THRESHOLD_WIDTH,
+            Config::validateThumbnailThresholdValue(1400)
+        );
     }
 
     public function getThumbnailThresholdHeight()
     {
-        return $this->loadConfig(Config::PATH_THUMB_THRESHOLD_HEIGHT, 1080);
+        return $this->loadConfig(
+            Config::PATH_THUMB_THRESHOLD_HEIGHT,
+            Config::validateThumbnailThresholdValue(1080)
+        );
     }
 
     public function getIntegrationMode(): string
@@ -86,7 +92,8 @@ class ConfigService
         return $this->isAdminWorkerEnabled;
     }
 
-    public function getRaw(string $key) {
+    public function getRaw(string $key)
+    {
         return $this->config[$key] ?? $this->systemConfig->get(Config::PLUGIN_CONFIG_DOMAIN . '.' . $key);
     }
 
@@ -96,13 +103,15 @@ class ConfigService
             $value = $this->getByConfigKey($key);
             $this->config[$key] = is_callable($default) ? $default($value) : ($value ?? $default);
         }
+
         return $this->config[$key] ?? null;
     }
 
     /**
      * @return array|bool|float|int|string|null
      */
-    private function getByConfigKey(string $key) {
+    private function getByConfigKey(string $key)
+    {
         return $this->systemConfig->get(Config::PLUGIN_CONFIG_DOMAIN . '.' . $key);
     }
 }

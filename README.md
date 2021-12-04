@@ -101,20 +101,20 @@ This configuration is the essential part if you are using a Theme that make use 
 
 Specify which images are either allowed or not allowed for processing.
 
-| Configuration | Description | Default |
-| ------------- | ----------- | ------- |
-| Include protected Images | Protected images are those that are not accessible to everyone through a public URL | Yes |
-| Excluded Folders | Images in these folders are ignored. | - |
+| Configuration | Description | Default       |
+| ------------- | ----------- |---------------|
+| Include protected Images | Protected images are those that are not accessible to everyone through a public URL | No            |
+| Excluded Folders | Images in these folders are ignored. | __None__      |
 | Excluded Tags | Images with these tags are ignored. | 'No Blurhash' |
 
 ### Performance
 
 These configurations have a direct impact on performance. Keep this in mind when adjusting these values.
 
-| Configuration | Type | Allowed values | Default | Description |
-| ------------- | ---- | -------------- | ------- | ----------- |
-| Max. Height (Thumbnail Threshold) | Integer | (unsigned) | 1000 | If this value is exceeded, a thumbnail is used instead of the original image |
-| Max. Width (Thumbnail Threshold) | Integer | (unsigned) | 1000 | If this value is exceeded, a thumbnail is used instead of the original image |
+| Configuration | Type | Allowed values | Default | Description                                                                            |
+| ------------- | ---- | -------------- |---------|----------------------------------------------------------------------------------------|
+| Max. Width (Thumbnail Threshold) | Integer | (unsigned) | 1400    | If this value (pixels) is exceeded, a thumbnail is used instead of the original image  |
+| Max. Height (Thumbnail Threshold) | Integer | (unsigned) | 1080    | If this value (pixels) is exceeded, a thumbnail is used instead of the original image |
 
 ### Encoding
 
@@ -129,9 +129,9 @@ You can adjust the level of detail of the blurred result.
 To calculate the hash, components are extracted from the source image and represent something like a compressed colour spectrum of the original. You can specify the number of these extracted components vertically and horizontally.
 
 | Configuration | Type | Allowed values | Default |
-| ------------- | ---- | -------------- | ------- |
-| X-Components | Integer | 1-9 (unsigned) | 4 |
-| Y-Components | Integer | 1-9 (unsigned) | 3 |
+| ------------- | ---- | -------------- |---------|
+| X-Components | Integer | 1-9 (unsigned) | 5       |
+| Y-Components | Integer | 1-9 (unsigned) | 4       |
 
 Whereby the principle applies: A **higher** value results in a **finer** spectrum!
 

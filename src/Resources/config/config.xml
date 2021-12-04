@@ -41,7 +41,7 @@
             <label lang="de-DE">Geschützte Bilder berücksichtigen</label>
             <helpText>Protected images are those that are not accessible to everyone through a public URL</helpText>
             <helpText lang="de-DE">Geschützte Bilder sind solche, die nicht über eine öffentliche URL für jedermann erreichbar sind.</helpText>
-            <defaultValue>true</defaultValue>
+            <defaultValue>false</defaultValue>
         </input-field>
 
         <component name="sw-entity-multi-id-select">
@@ -76,19 +76,23 @@
             <label>Max. Height (Thumbnail-Threshold)</label>
             <label lang="de-DE">Maximale Höhe (Fallback Thumbnail)</label>
             <placeholder>(Default, 1080px)</placeholder>
+            <defaultValue>1080</defaultValue>
+            <required>false</required>
             <placeholder lang="de-DE">(Standard, 1080px)</placeholder>
-            <helpText>If this value is exceeded, a thumbnail is used instead of the original image.</helpText>
-            <helpText lang="de-DE">Wird dieser Wert überschritten, dann wird ein Thumbnail anstatt des original Bildes verwendet.</helpText>
+            <helpText>If this value (pixels) is exceeded, a thumbnail is used instead of the original image. Unit is pixels</helpText>
+            <helpText lang="de-DE">Wird dieser Wert (pixel) überschritten, dann wird ein Thumbnail anstatt des original Bildes verwendet.</helpText>
         </input-field>
 
         <input-field type="int">
             <name>thumbnailThresholdWidth</name>
             <label>Max. Width (Thumbnail-Threshold)</label>
             <label lang="de-DE">Maximale Breite (Fallback Thumbnail)</label>
-            <placeholder>(Default, 1920px)</placeholder>
-            <placeholder lang="de-DE">(Standard, 1920px)</placeholder>
-            <helpText>If this value is exceeded, a thumbnail is used instead of the original image.</helpText>
-            <helpText lang="de-DE">Wird dieser Wert überschritten, dann wird ein Thumbnail anstatt des original Bildes verwendet.</helpText>
+            <defaultValue>1400</defaultValue>
+            <required>false</required>
+            <placeholder>(Default, 1400px)</placeholder>
+            <placeholder lang="de-DE">(Standard, 1400px)</placeholder>
+            <helpText>If this value (pixels) is exceeded, a thumbnail is used instead of the original image.</helpText>
+            <helpText lang="de-DE">Wird dieser Wert (pixel) überschritten, dann wird ein Thumbnail anstatt des original Bildes verwendet.</helpText>
         </input-field>
     </card>
 
@@ -109,7 +113,7 @@
             <name>componentsX</name>
             <label>Number of vertical components (X-Components)</label>
             <label lang="de-DE">Anzahl vertikaler Komponenten (X Komponenten)</label>
-            <defaultValue>4</defaultValue>
+            <defaultValue>5</defaultValue>
             <helpText>The higher the value, the finer the spectrum. Only unsigned integers between 1-9 are allowed here.</helpText>
             <helpText lang="de-DE">Um so höher der Wert, um so feiner das Spektrum. Nur ganze Zahlen zwischen 1-9 sind hier erlaubt.</helpText>
         </input-field>
@@ -118,7 +122,7 @@
             <name>componentsY</name>
             <label>Number of horizontal components (Y-Components)</label>
             <label lang="de-DE">Anzahl horizontaler Komponenten (Y Komponenten)</label>
-            <defaultValue>3</defaultValue>
+            <defaultValue>4</defaultValue>
             <helpText>The higher the value, the finer the spectrum. Only unsigned integers between 1-9 are allowed here</helpText>
             <helpText lang="de-DE">Um so höher der Wert, um so feiner das Spektrum. Nur ganze Zahlen zwischen 1-9 sind hier erlaubt</helpText>
         </input-field>
