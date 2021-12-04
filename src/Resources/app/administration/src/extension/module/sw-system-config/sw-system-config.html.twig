@@ -1,9 +1,0 @@
-{% block sw_system_config %}
-    <template v-if="namespace !== 'EyecookBlurhash'">
-        {% parent %}
-    </template>
-
-    <template v-else>
-        <sw-system-config :domain="domain" ref="systemConfig"></sw-system-config>
-    </template>
-{% endblock %}
