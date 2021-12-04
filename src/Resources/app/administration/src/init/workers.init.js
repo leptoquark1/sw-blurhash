@@ -7,13 +7,21 @@
 
 function registerHashMiddleware(factory) {
   const ids = {};
-  const name = 'Eyecook\\Blurhash\Message\\GenerateHashMessage';
+  const name = 'Eyecook\\Blurhash\\Message\\GenerateHashMessage';
   const fn = function (next, { entry, $root, notification }) {
+
+    const dispatchReload = entry.size === 0 && ids.hasOwnProperty('blurhashes');
+
     messageQueueNotification('blurhashes', ids, next, entry, $root, notification, {
-          title: 'ecBlurhash.notification-center.worker-listener.hashGeneration.title',
-          message: 'ecBlurhash.notification-center.worker-listener.hashGeneration.message',
-          success: 'ecBlurhash.notification-center.worker-listener.hashGeneration.success'
-      });
+      title: 'ecBlurhash.notification-center.worker-listener.hashGeneration.title',
+      message: 'ecBlurhash.notification-center.worker-listener.hashGeneration.message',
+      success: 'ecBlurhash.notification-center.worker-listener.hashGeneration.success',
+      foregroundSuccessMessage: 'ecBlurhash.notification-center.worker-listener.hashGeneration.success',
+    });
+
+    if (dispatchReload) {
+      window.dispatchEvent(new Event('eyecook_blurhash_generated'));
+    }
   };
   factory.register('GenerateHashMessage', { name, fn });
 
@@ -35,18 +43,18 @@ function registerHashMiddleware(factory) {
  * @internal
  */
 function middlewareFunctionWrapper(name, fn) {
-    return (next, data) => {
-      const entry = data.queue.find(
-            (q) => q.name === name
-        ) || null;
-        const mergedData = { ...data, ...{ entry, name } };
+  return (next, data) => {
+    const entry = data.queue.find(
+      (q) => q.name === name
+    ) || null;
+    const mergedData = { ...data, ...{ entry, name } };
 
-        if (entry === null) {
-            next();
-        } else {
-            fn.call(null, next, mergedData);
-        }
-    };
+    if (entry === null) {
+      next();
+    } else {
+      fn.call(null, next, mergedData);
+    }
+  };
 }
 
 /**
@@ -57,69 +65,69 @@ function middlewareFunctionWrapper(name, fn) {
  * @internal
  */
 function messageQueueNotification(key, ids, next, entry, $root, notification, messages, multiplier = 1) {
-    let notificationId = null;
-    let didSendForegroundMessage = false;
+  let notificationId = null;
+  let didSendForegroundMessage = false;
 
-    if (ids.hasOwnProperty((key))) {
-        notificationId = ids[key].notificationId;
-        didSendForegroundMessage = ids[key].didSendForegroundMessage;
-    }
+  if (ids.hasOwnProperty((key))) {
+    notificationId = ids[key].notificationId;
+    didSendForegroundMessage = ids[key].didSendForegroundMessage;
+  }
 
-    if (entry.size) {
-        entry.size *= multiplier;
-    }
+  if (entry.size) {
+    entry.size *= multiplier;
+  }
 
-    const config = {
-        title: $root.$tc(messages.title),
-        message: $root.$tc(messages.message, entry.size),
-        variant: 'info',
-        metadata: {
-            size: entry.size
-        },
-        growl: false,
-        isLoading: true
-    };
+  const config = {
+    title: $root.$tc(messages.title),
+    message: $root.$tc(messages.message, entry.size),
+    variant: 'info',
+    metadata: {
+      size: entry.size
+    },
+    growl: false,
+    isLoading: true
+  };
 
-    // Create new notification
-    if (entry.size && notificationId === null) {
-        notification.create(config).then((uuid) => {
-            notificationId = uuid;
+  // Create new notification
+  if (entry.size && notificationId === null) {
+    notification.create(config).then((uuid) => {
+      notificationId = uuid;
 
-            ids[key] = {
-                notificationId,
-                didSendForegroundMessage: false
-            };
-        });
-        next();
-    }
-
-    // Update existing notification
-    if (notificationId !== null) {
-        config.uuid = notificationId;
-
-        if (entry.size === 0) {
-            config.title = $root.$tc(messages.title);
-            config.message = $root.$t(messages.success);
-            config.isLoading = false;
-
-            if (messages.foregroundSuccessMessage && !didSendForegroundMessage) {
-                const foreground = Object.assign({}, config);
-                foreground.message = $root.$t(messages.foregroundSuccessMessage);
-                delete foreground.uuid;
-                delete foreground.isLoading;
-                foreground.growl = true;
-                foreground.variant = 'success';
-                notification.create(foreground);
-
-                ids[key] = {
-                    notificationId,
-                    didSendForegroundMessage: true
-                };
-            }
-
-            delete ids[key];
-        }
-        notification.update(config);
-    }
+      ids[key] = {
+        notificationId,
+        didSendForegroundMessage: false
+      };
+    });
     next();
+  }
+
+  // Update existing notification
+  if (notificationId !== null) {
+    config.uuid = notificationId;
+
+    if (entry.size === 0) {
+      config.title = $root.$tc(messages.title);
+      config.message = $root.$t(messages.success);
+      config.isLoading = false;
+
+      if (messages.foregroundSuccessMessage && !didSendForegroundMessage) {
+        const foreground = Object.assign({}, config);
+        foreground.message = $root.$t(messages.foregroundSuccessMessage);
+        delete foreground.uuid;
+        delete foreground.isLoading;
+        foreground.growl = true;
+        foreground.variant = 'success';
+        notification.create(foreground);
+
+        ids[key] = {
+          notificationId,
+          didSendForegroundMessage: true
+        };
+      }
+
+      delete ids[key];
+    }
+    notification.update(config);
+  }
+  next();
 }
