@@ -9,8 +9,8 @@ Component.override('sw-media-quickinfo', {
   inject: ['ecbValidationApiService', 'ecbGenerationApiService'],
 
   mixins: [
-      Mixin.getByName('notification'),
-      Mixin.getByName('ecb-blurhash'),
+    Mixin.getByName('notification'),
+    Mixin.getByName('ecb-blurhash'),
   ],
 
   data() {
@@ -72,7 +72,14 @@ Component.override('sw-media-quickinfo', {
         this.isEcbValid = result.valid;
         this.ecbValidationError = result.message;
       } catch (err) {
-        this.createNotificationError({ message: err.message });
+        let message = err.message;
+
+        if (err.response?.status === 424) {
+          const data = err.response.data;
+          const code = data.errors[0]?.code || 'UnknownError';
+          message = this.$t(`ecBlurhash.errors.${code}`,);
+        }
+        this.createNotificationError({ message });
       }
 
       setTimeout(() => {
@@ -95,7 +102,8 @@ Component.override('sw-media-quickinfo', {
 
         if (err.response?.status === 424) {
           const data = err.response.data;
-          message = this.$t(`ecBlurhash.errors.${data.errors[0]?.code}`);
+          const code = data.errors[0]?.code || 'UnknownError';
+          message = this.$t(`ecBlurhash.errors.${code}`,);
         }
 
         this.createNotificationError({ message });

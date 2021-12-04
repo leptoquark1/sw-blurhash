@@ -74,7 +74,14 @@ Component.override('sw-media-folder-info', {
         await this.ecbGenerationApiService.fetchGenerateByFolderId(this.mediaFolder.id, all);
         this.hasEcbGenerated = true;
       } catch (err) {
-        this.createNotificationError({ message: err.message });
+        let message = err.message;
+
+        if (err.response?.status === 424) {
+          const data = err.response.data;
+          const code = data.errors[0]?.code || 'UnknownError';
+          message = this.$t(`ecBlurhash.errors.${code}`,);
+        }
+        this.createNotificationError({ message });
       }
 
       this.isEcbGenerating = false;

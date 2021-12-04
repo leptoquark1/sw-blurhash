@@ -44,9 +44,9 @@
           "success": "Blurhashes wurden generiert."
         }
       }
+    },
+    "errors": {
+      "EYECOOK_BLURHASH__ILLEGAL_MANUAL_MODE_LEVERAGE": "Wenn der 'Admin Worker' deaktiviert ist, können im 'Handbetrieb'-Modus keine Blurhashes verarbeitet werden."
     }
-  },
-  "errors": {
-    "EYECOOK_BLURHASH__ILLEGAL_MANUAL_MODE_LEVERAGE": "Wenn der 'Admin Worker' deaktiviert ist, können im 'Handbetrieb'-Modus keine Blurhashes verarbeitet werden."
   }
 }
