@@ -20,11 +20,15 @@
         "refreshAll": "Refresh All",
         "folder": {
           "help": "Generate missing Blurhashes for media in this folder",
-          "helpForce": "Generate and overwrite existing Blurhashes for media in this folder"
+          "helpForce": "Generate and overwrite existing Blurhashes for media in this folder",
+          "notificationOnGenerate": "The images of the folder '{folderName}' were submitted for hash generation.",
+          "notificationOnForceGenerate": "The images of the folder '{folderName}' were submitted for hash regeneration. Existing hashes will be overridden."
         },
         "media": {
           "help": "Generate Blurhash for this media",
-          "helpForce": "Generate and overwrite existing Blurhash for this media"
+          "helpForce": "Generate and overwrite existing Blurhash for this media",
+          "notificationOnGenerate": "The image '{mediaName}' was submitted for hash generation.",
+          "notificationOnForceGenerate": "The image '{mediaName}' was submitted for hash regeneration."
         }
       },
       "exclusion": {
@@ -40,8 +44,8 @@
       "worker-listener": {
         "hashGeneration": {
           "title": "Blurhash generation",
-          "message": "No Blurhashes remaining. | One Blurhash remaining ... | {n} Blurhashes remaining ...",
-          "success": "Blurhashes have been generated."
+          "message": "No hash remaining. | One hash remaining ... | {n} hashes remaining ...",
+          "success": "All hashes have been generated."
         }
       }
     },

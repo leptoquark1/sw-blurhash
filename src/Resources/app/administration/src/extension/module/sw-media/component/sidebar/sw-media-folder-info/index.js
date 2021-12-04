@@ -73,6 +73,12 @@ Component.override('sw-media-folder-info', {
       try {
         await this.ecbGenerationApiService.fetchGenerateByFolderId(this.mediaFolder.id, all);
         this.hasEcbGenerated = true;
+
+        const message = all
+          ? 'ecBlurhash.general.generation.folder.notificationOnForceGenerate'
+          : 'ecBlurhash.general.generation.folder.notificationOnGenerate'
+
+        this.createNotificationInfo({ title: 'Blurhash', message: this.$tc(message, 0, { folderName: this.mediaFolder.name }) });
       } catch (err) {
         let message = err.message;
 

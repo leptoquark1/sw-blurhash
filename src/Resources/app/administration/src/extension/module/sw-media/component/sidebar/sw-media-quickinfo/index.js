@@ -97,6 +97,12 @@ Component.override('sw-media-quickinfo', {
       try {
         await this.ecbGenerationApiService.fetchGenerateByMediaId(this.item.id);
         this.hasEcbGenerated = true;
+
+        const message = this.hasItemBlurhash
+          ? 'ecBlurhash.general.generation.media.notificationOnForceGenerate'
+          : 'ecBlurhash.general.generation.media.notificationOnGenerate'
+
+        this.createNotificationInfo({ title: 'Blurhash', message: this.$tc(message, 0, { mediaName: this.item.fileName }) });
       } catch (err) {
         let message = err.message;
 
