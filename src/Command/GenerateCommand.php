@@ -30,9 +30,9 @@ use UnexpectedValueException;
 /**
  * CLI command for Blurhash processing
  *
- * Process or enqueue Blurhash generation for either only missing or renew all existing.
+ * Generate Blurhashes for your images.
  *
- * Example to regenerate all hashes for only Product Images:
+ * Example to regenerate all hashes for product images:
  *
  * ```bash
  *   bin/console ec:blurhash:generate product --all
@@ -68,11 +68,11 @@ class GenerateCommand extends AbstractCommand
 
     protected function configure(): void
     {
-        $this->setDescription('Generate or enqueue Blurhashes for either only missing or refresh existing.')
+        $this->setDescription('Generate Blurhashes for your images.')
             ->addOption('all', 'a', InputOption::VALUE_NONE, 'Include images that already have a hash.')
-            ->addOption('sync', 's', InputOption::VALUE_NONE, 'Rather work now than by message worker.')
-            ->addOption('dryRun', 'd', InputOption::VALUE_NONE, 'Skip generation, just show how many media entities will be affected')
-            ->addArgument('entities', InputArgument::IS_ARRAY, 'Restrict to specific models. (Comma separated)', null);
+            ->addOption('sync', 's', InputOption::VALUE_NONE, 'Process the generation in this thread.')
+            ->addOption('dryRun', 'd', InputOption::VALUE_NONE, 'Just show how many media entities will be affected')
+            ->addArgument('entities', InputArgument::IS_ARRAY, 'Restrict to specific entities. (Comma separated)', null);
     }
 
     protected function initializeCommand(): void
