@@ -1,8 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace Eyecook\Blurhash\Hash\Media;
+namespace Eyecook\Blurhash\Hash\Media\DataAbstractionLayer;
 
 use Eyecook\Blurhash\Configuration\ConfigService;
+use Eyecook\Blurhash\Hash\Filter\HasHashFilter;
+use Eyecook\Blurhash\Hash\Filter\NoHashFilter;
+use Eyecook\Blurhash\Hash\Media\MediaTypesEnum;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -48,6 +51,34 @@ class HashMediaProvider
         $criteria->addAssociation('mediaFolder');
         $criteria->addAssociation('thumbnails');
         $criteria->addAssociation('tags');
+    }
+
+    public function searchMediaWithHash(Context $context, ?Criteria $criteria = null): EntitySearchResult
+    {
+        $criteria = self::buildCriteria($criteria)->addFilter(new HasHashFilter());
+
+        return $this->mediaRepository->search($criteria, $context);
+    }
+
+    public function searchMediaIdsWithHash(Context $context, ?Criteria $criteria = null): IdSearchResult
+    {
+        $criteria = self::buildCriteria($criteria)->addFilter(new HasHashFilter());
+
+        return $this->mediaRepository->searchIds($criteria, $context);
+    }
+
+    public function searchMediaWithoutHash(Context $context, ?Criteria $criteria = null): EntitySearchResult
+    {
+        $criteria = self::buildCriteria($criteria)->addFilter(new NoHashFilter());
+
+        return $this->mediaRepository->search($criteria, $context);
+    }
+
+    public function searchMediaIdsWithoutHash(Context $context, ?Criteria $criteria = null): IdSearchResult
+    {
+        $criteria = self::buildCriteria($criteria)->addFilter(new NoHashFilter());
+
+        return $this->mediaRepository->searchIds($criteria, $context);
     }
 
     public function searchValidMedia(Context $context, ?Criteria $criteria = null): EntitySearchResult

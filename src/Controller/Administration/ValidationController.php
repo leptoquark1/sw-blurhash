@@ -3,7 +3,7 @@
 namespace Eyecook\Blurhash\Controller\Administration;
 
 use Eyecook\Blurhash\Controller\AbstractApiController;
-use Eyecook\Blurhash\Hash\Media\HashMediaProvider;
+use Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaProvider;
 use Eyecook\Blurhash\Hash\Media\MediaValidator;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\Exception\EntityNotFoundException;

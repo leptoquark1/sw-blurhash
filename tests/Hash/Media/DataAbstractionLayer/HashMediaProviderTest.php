@@ -1,15 +1,18 @@
 <?php declare(strict_types=1);
 
-namespace Eyecook\Blurhash\Test\Hash\Media;
+namespace Eyecook\Blurhash\Test\Hash\Media\DataAbstractionLayer;
 
 use Eyecook\Blurhash\Configuration\Config;
-use Eyecook\Blurhash\Hash\Media\HashMediaProvider;
+use Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaProvider;
 use Eyecook\Blurhash\Hash\Media\MediaValidator;
 use Eyecook\Blurhash\Test\ConfigMockStub;
+use Eyecook\Blurhash\Test\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
+use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
+use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
 
 /**
@@ -18,7 +21,7 @@ use Shopware\Core\Framework\Uuid\Uuid;
  */
 class HashMediaProviderTest extends TestCase
 {
-    use ConfigMockStub;
+    use ConfigMockStub, IntegrationTestBehaviour, HashMediaFixtures;
 
     protected Context $context;
     protected EntityRepositoryInterface $mediaRepository;
@@ -29,7 +32,7 @@ class HashMediaProviderTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->context = Context::createDefaultContext();
+        $this->context = $this->entityFixtureContext;
         $this->mediaRepository = $this->getContainer()->get('media.repository');
         $this->mediaFolderRepository = $this->getContainer()->get('media_folder.repository');
         $this->tagRepository = $this->getContainer()->get('tag.repository');
@@ -66,6 +69,138 @@ class HashMediaProviderTest extends TestCase
         $this->setSystemConfigMock(Config::PATH_EXCLUDED_FOLDERS, []);
         $collection = $this->provider->searchValidMedia($this->context, new Criteria([$excludedByFolderMediaId]));
         self::assertCount(1, $collection);
+    }
+
+    public function testSearchMediaWithHash(): void
+    {
+        $media1WithHash = $this->getValidExistingMediaForHash();
+        $media2WithHash = $this->getValidExistingMediaForHash();
+        $media1WithoutHash = $this->getValidExistingMediaForHash(false);
+        $media2WithoutHash = $this->getValidExistingMediaForHash(false);
+
+        $result = $this->provider->searchMediaWithHash($this->context);
+
+        self::assertContains($media1WithHash->getId(), $result->getIds());
+        self::assertContains($media2WithHash->getId(), $result->getIds());
+        self::assertNotContains($media1WithoutHash->getId(), $result->getIds());
+        self::assertNotContains($media2WithoutHash->getId(), $result->getIds());
+
+        $mediaWithHashByFolder = $this->getValidExistingMediaForHash(true, true);
+
+        $folderWithHashCriteria = new Criteria();
+        $folderWithHashCriteria->addFilter(new EqualsFilter('mediaFolderId', $mediaWithHashByFolder->getMediaFolderId()));
+
+        $resultByFolder = $this->provider->searchMediaWithHash($this->context, $folderWithHashCriteria);
+
+        self::assertContains($mediaWithHashByFolder->getId(), $resultByFolder->getIds());
+
+        $mediaWithoutHashByFolder = $this->getValidExistingMediaForHash(false, true);
+
+        $folderWithoutHashCriteria = new Criteria();
+        $folderWithoutHashCriteria->addFilter(new EqualsFilter('mediaFolderId', $mediaWithoutHashByFolder->getMediaFolderId()));
+
+        $resultWithoutHashByFolder = $this->provider->searchMediaWithHash($this->context, $folderWithoutHashCriteria);
+
+        self::assertNotContains($mediaWithoutHashByFolder->getId(), $resultWithoutHashByFolder->getIds());
+    }
+
+    public function testSearchMediaIdsWithHash(): void
+    {
+        $media1WithHash = $this->getValidExistingMediaForHash();
+        $media2WithHash = $this->getValidExistingMediaForHash();
+        $media1WithoutHash = $this->getValidExistingMediaForHash(false);
+        $media2WithoutHash = $this->getValidExistingMediaForHash(false);
+
+        $result = $this->provider->searchMediaIdsWithHash($this->context);
+
+        self::assertContains($media1WithHash->getId(), $result->getIds());
+        self::assertContains($media2WithHash->getId(), $result->getIds());
+        self::assertNotContains($media1WithoutHash->getId(), $result->getIds());
+        self::assertNotContains($media2WithoutHash->getId(), $result->getIds());
+
+        $mediaWithHashByFolder = $this->getValidExistingMediaForHash(true, true);
+
+        $folderWithHashCriteria = new Criteria();
+        $folderWithHashCriteria->addFilter(new EqualsFilter('mediaFolderId', $mediaWithHashByFolder->getMediaFolderId()));
+
+        $resultByFolder = $this->provider->searchMediaIdsWithHash($this->context, $folderWithHashCriteria);
+
+        self::assertContains($mediaWithHashByFolder->getId(), $resultByFolder->getIds());
+
+        $mediaWithoutHashByFolder = $this->getValidExistingMediaForHash(false, true);
+
+        $folderWithoutHashCriteria = new Criteria();
+        $folderWithoutHashCriteria->addFilter(new EqualsFilter('mediaFolderId', $mediaWithoutHashByFolder->getMediaFolderId()));
+
+        $resultWithoutHashByFolder = $this->provider->searchMediaIdsWithHash($this->context, $folderWithoutHashCriteria);
+
+        self::assertNotContains($mediaWithoutHashByFolder->getId(), $resultWithoutHashByFolder->getIds());
+    }
+
+    public function testSearchMediaWithoutHash(): void
+    {
+        $media1WithHash = $this->getValidExistingMediaForHash();
+        $media2WithHash = $this->getValidExistingMediaForHash();
+        $media1WithoutHash = $this->getValidExistingMediaForHash(false);
+        $media2WithoutHash = $this->getValidExistingMediaForHash(false);
+
+        $result = $this->provider->searchMediaWithoutHash($this->context);
+
+        self::assertNotContains($media1WithHash->getId(), $result->getIds());
+        self::assertNotContains($media2WithHash->getId(), $result->getIds());
+        self::assertContains($media1WithoutHash->getId(), $result->getIds());
+        self::assertContains($media2WithoutHash->getId(), $result->getIds());
+
+        $mediaWithHashByFolder = $this->getValidExistingMediaForHash(true, true);
+
+        $folderWithHashCriteria = new Criteria();
+        $folderWithHashCriteria->addFilter(new EqualsFilter('mediaFolderId', $mediaWithHashByFolder->getMediaFolderId()));
+
+        $resultByFolder = $this->provider->searchMediaWithoutHash($this->context, $folderWithHashCriteria);
+
+        self::assertNotContains($mediaWithHashByFolder->getId(), $resultByFolder->getIds());
+
+        $mediaWithoutHashByFolder = $this->getValidExistingMediaForHash(false, true);
+
+        $folderWithoutHashCriteria = new Criteria();
+        $folderWithoutHashCriteria->addFilter(new EqualsFilter('mediaFolderId', $mediaWithoutHashByFolder->getMediaFolderId()));
+
+        $resultWithoutHashByFolder = $this->provider->searchMediaWithoutHash($this->context, $folderWithoutHashCriteria);
+
+        self::assertContains($mediaWithoutHashByFolder->getId(), $resultWithoutHashByFolder->getIds());
+    }
+
+    public function testSearchMediaIdsWithoutHash(): void
+    {
+        $media1WithHash = $this->getValidExistingMediaForHash();
+        $media2WithHash = $this->getValidExistingMediaForHash();
+        $media1WithoutHash = $this->getValidExistingMediaForHash(false);
+        $media2WithoutHash = $this->getValidExistingMediaForHash(false);
+
+        $result = $this->provider->searchMediaIdsWithoutHash($this->context);
+
+        self::assertNotContains($media1WithHash->getId(), $result->getIds());
+        self::assertNotContains($media2WithHash->getId(), $result->getIds());
+        self::assertContains($media1WithoutHash->getId(), $result->getIds());
+        self::assertContains($media2WithoutHash->getId(), $result->getIds());
+
+        $mediaWithHashByFolder = $this->getValidExistingMediaForHash(true, true);
+
+        $folderWithHashCriteria = new Criteria();
+        $folderWithHashCriteria->addFilter(new EqualsFilter('mediaFolderId', $mediaWithHashByFolder->getMediaFolderId()));
+
+        $resultByFolder = $this->provider->searchMediaIdsWithoutHash($this->context, $folderWithHashCriteria);
+
+        self::assertNotContains($mediaWithHashByFolder->getId(), $resultByFolder->getIds());
+
+        $mediaWithoutHashByFolder = $this->getValidExistingMediaForHash(false, true);
+
+        $folderWithoutHashCriteria = new Criteria();
+        $folderWithoutHashCriteria->addFilter(new EqualsFilter('mediaFolderId', $mediaWithoutHashByFolder->getMediaFolderId()));
+
+        $resultWithoutHashByFolder = $this->provider->searchMediaIdsWithoutHash($this->context, $folderWithoutHashCriteria);
+
+        self::assertContains($mediaWithoutHashByFolder->getId(), $resultWithoutHashByFolder->getIds());
     }
 
     public function testSearchValidMediaExcludeTags(): void

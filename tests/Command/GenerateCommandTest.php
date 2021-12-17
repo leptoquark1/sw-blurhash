@@ -6,7 +6,7 @@ use Eyecook\Blurhash\Command\GenerateCommand;
 use Eyecook\Blurhash\Configuration\Config;
 use Eyecook\Blurhash\Configuration\ConfigService;
 use Eyecook\Blurhash\Hash\HashMediaService;
-use Eyecook\Blurhash\Hash\Media\HashMediaProvider;
+use Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaProvider;
 use Eyecook\Blurhash\Test\ConfigMockStub;
 use Eyecook\Blurhash\Test\HashMediaFixtures;
 use Eyecook\Blurhash\Test\MockBuilderStub;
