@@ -5,7 +5,7 @@ namespace Eyecook\Blurhash\Controller\Administration;
 use Eyecook\Blurhash\Controller\AbstractApiController;
 use Eyecook\Blurhash\Exception\IllegalManualModeLeverageException;
 use Eyecook\Blurhash\Hash\Filter\NoHashFilter;
-use Eyecook\Blurhash\Hash\Media\HashMediaProvider;
+use Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaProvider;
 use Eyecook\Blurhash\Hash\Media\MediaValidator;
 use Eyecook\Blurhash\Message\GenerateHashMessage;
 use Shopware\Core\Framework\Context;

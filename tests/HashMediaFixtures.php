@@ -3,6 +3,7 @@
 namespace Eyecook\Blurhash\Test;
 
 use DateTime;
+use Eyecook\Blurhash\Hash\Media\MediaHashMeta;
 use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Content\Media\MediaType\ImageType;
 use Shopware\Core\Content\Test\Media\MediaFixtures;
@@ -69,7 +70,9 @@ trait HashMediaFixtures
         ];
 
         if ($withBlurhash) {
-            $data['metaData']['blurhash'] = '1';
+            $data['metaData'][MediaHashMeta::$PROP_HASH] = '1';
+            $data['metaData'][MediaHashMeta::$PROP_HEIGHT] = '1';
+            $data['metaData'][MediaHashMeta::$PROP_WIDTH] = '1';
         }
 
         if ($withFolder) {

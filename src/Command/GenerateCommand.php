@@ -5,7 +5,7 @@ namespace Eyecook\Blurhash\Command;
 use Exception;
 use Eyecook\Blurhash\Hash\Filter\NoHashFilter;
 use Eyecook\Blurhash\Hash\HashMediaService;
-use Eyecook\Blurhash\Hash\Media\HashMediaProvider;
+use Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaProvider;
 use Eyecook\Blurhash\Message\GenerateHashMessage;
 use Shopware\Core\Content\Media\Aggregate\MediaFolder\MediaFolderEntity;
 use Shopware\Core\Content\Media\MediaCollection;
