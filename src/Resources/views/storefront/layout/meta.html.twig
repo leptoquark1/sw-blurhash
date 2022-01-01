@@ -4,7 +4,7 @@
     {{ parent() }}
 
     {% if not ecbConfEqualsConst('integrationMode', 'VALUE_INTEGRATION_MODE_NONE') %}
-        <link rel="preload" as="image" href="{{ asset('storefront/assets/images/ecb-spinner.svg', '@EyecookBlurhash') }}">
+        <link rel="preload" as="image" href="{{ absolute_url('/bundles/eyecookblurhash/storefront/assets/images/ecb-spinner.svg') }}">
     {% endif %}
 
     {% if ecbConfEqualsConst('integrationMode', 'VALUE_INTEGRATION_MODE_CUSTOM') %}
