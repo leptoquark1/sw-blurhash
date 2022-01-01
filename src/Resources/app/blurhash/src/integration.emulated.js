@@ -8,47 +8,67 @@ import { decodeHashByHashMeta, extractBlurhashMetaFromNode, getMutationObserver,
 
   /**
    * @param {HashMeta} meta
+   * @return {string}
+   */
+  function getKeyFromMeta(meta) {
+    return meta.srcset + meta.node.width + '/' + meta.node.height;
+  }
+
+  /**
+   * @param {HashMeta} meta
+   */
+  function applySrcDataAttributes(meta) {
+    // Set original node src and srcset from data attributes
+    meta.node.srcset = meta.srcset;
+    meta.node.src = getNodeAttribute(meta.node, 'data-src');
+    meta.node.removeAttribute('data-srcset');
+    meta.node.removeAttribute('data-src');
+  }
+
+  /**
+   * @param {HashMeta} meta
    * @return {HTMLImageElement}
    */
   function createPseudoImageFromMeta(meta) {
-    const key = meta.srcset;
+    const key = getKeyFromMeta(meta);
 
-    function applySrcDataAttributes() {
-      // Set original node src and srcset from data attributes
-      meta.node.srcset = meta.srcset;
-      meta.node.src = getNodeAttribute(meta.node, 'data-src');
-      meta.node.removeAttribute('data-srcset');
-    }
-
-    // Check if there is an image just like the given srcset
+    // Check if there is an image just like the given element (group same)
     if (loadingImages.hasOwnProperty(key)) {
-      const prevImg = loadingImages[key];
+      const prevImg = loadingImages[key].image;
 
-      if (!loadingImages[key].complete) {
+      if (loadingImages[key].node.isEqualNode(meta.node)) {
+        // Prevent the handling of exact same nodes
+        return prevImg;
+      }
+
+      if (!prevImg.complete) {
         // Stack existing callback to have it call another for this node
         const prevOnload = prevImg.onload;
         prevImg.onload = function () {
           prevOnload.call(this);
-          applySrcDataAttributes.call(this);
+          applySrcDataAttributes(meta);
         };
       } else {
         // When previous image is complete we are done here too
-        applySrcDataAttributes();
+        applySrcDataAttributes(meta);
       }
 
       return prevImg;
     }
 
     // Create a new pseudo image that refer to our original when finished loading
-    const img = new Image();
+    const img = new Image(meta.node.width, meta.node.height);
     img.onload = function () {
       img.onload = null;
-      applySrcDataAttributes();
+      applySrcDataAttributes(meta);
     }
-    // take the place of the original and load the image by it's srcset
+    // take the place of the original and load the image by its srcset
     img.srcset = meta.srcset;
 
-    return loadingImages[key] = img;
+    // Memoize
+    loadingImages[key] = { image: img, node: meta.node };
+
+    return img;
   }
 
   /**
@@ -64,7 +84,6 @@ import { decodeHashByHashMeta, extractBlurhashMetaFromNode, getMutationObserver,
 
       // Reset all attributes and clean up
       this.removeAttribute('data-ecb-bh');
-      this.removeAttribute('data-blurhash');
       this.removeAttribute('data-ow');
       this.removeAttribute('data-oh');
     }
@@ -76,12 +95,14 @@ import { decodeHashByHashMeta, extractBlurhashMetaFromNode, getMutationObserver,
    */
   function onBlurhashImageLoad(meta) {
     return function () {
+
       // Indicate that this have a valid Blurhash src
       this.setAttribute('data-ecb-bh', '1');
       this.onload = onFinalImageLoad(meta);
 
-      // Apply original srcset to trigger native browser to fetch original src
-      if (!this.srcset) {
+      // Apply original srcset to trigger native browser to fetch original src in fallback case
+      const key = getKeyFromMeta(meta);
+      if (loadingImages.hasOwnProperty(key) && loadingImages[key].image.complete && !this.srcset) {
         this.srcset = meta.srcset;
       }
     }
@@ -171,6 +192,10 @@ import { decodeHashByHashMeta, extractBlurhashMetaFromNode, getMutationObserver,
     }
   }
 
+  function isImageExcluded(node) {
+    return (node.parentElement && node.parentElement.classList.contains('image-zoom-container')) || node.classList.contains('js-load-img');
+  }
+
   /**
    * @param {HTMLImageElement} node
    */
@@ -180,6 +205,13 @@ import { decodeHashByHashMeta, extractBlurhashMetaFromNode, getMutationObserver,
     // Early return when invalid data
     if (!meta || !meta.hash) return;
 
+    // Some images are excluded
+    if (isImageExcluded(meta.node)) {
+      applySrcDataAttributes(meta);
+      onFinalImageLoad(meta).call(meta.node);
+      return;
+    }
+
     // Add final callback to the target node
     meta.node.onload = function () {
       this.onload = onFinalImageLoad(meta);
@@ -187,10 +219,7 @@ import { decodeHashByHashMeta, extractBlurhashMetaFromNode, getMutationObserver,
 
     if (isAncestorsVisible(meta.node) && isInViewport(meta.node)) {
       decodeHashForImage(meta);
-      // Preload the image (but not by the original element)
-      createPseudoImageFromMeta(meta);
     } else {
-      // Postpone all other images
       addPostponedImageNode(meta);
     }
   }
@@ -219,20 +248,6 @@ import { decodeHashByHashMeta, extractBlurhashMetaFromNode, getMutationObserver,
   }
 
   /**
-   * @return {void}
-   */
-  function cleanUp() {
-    for (let hashProp in loadingImages) {
-      if (loadingImages.hasOwnProperty(hashProp)) {
-        let img = loadingImages[hashProp];
-        if (img.complete) {
-          img = null;
-        }
-      }
-    }
-  }
-
-  /**
    * @param {MutationCallback} mutations
    */
   function mutationHandler(mutations) {
@@ -253,7 +268,7 @@ import { decodeHashByHashMeta, extractBlurhashMetaFromNode, getMutationObserver,
     }
 
     // Listen for further mutations of the DOM to be able to handle upcoming images
-    getMutationObserver(mutationHandler).observe(document.body, { childList: true, subtree: true });
+    getMutationObserver(mutationHandler).observe(document.body, { childList: true, subtree: true, attributeFilter: ['data-blurhash'] });
   }
 
   /**
@@ -264,8 +279,6 @@ import { decodeHashByHashMeta, extractBlurhashMetaFromNode, getMutationObserver,
 
     if (state === 'interactive') {
       onDomInteractive();
-    } else if (state === 'complete') {
-      cleanUp();
     }
   }
 
