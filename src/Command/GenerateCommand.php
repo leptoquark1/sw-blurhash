@@ -163,7 +163,7 @@ class GenerateCommand extends AbstractCommand
         }, $choiceMap);
 
         $question = new ChoiceQuestion(
-            'You have selected the root media folder as entry point. There are the following other options?',
+            "Please specify a scope. This may help speed up the generation process:\n",
             $choices,
             'root',
         );
