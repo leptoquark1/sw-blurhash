@@ -160,8 +160,12 @@ import { decodeHashByHashMeta, extractBlurhashMetaFromNode, getMutationObserver,
     // Decouple image loading from this node
     const pseudoImage = createPseudoImageFromMeta(meta);
 
-    if ((previousResult === null || typeof previousResult === 'string')) {
-      // Encode with this hash did run before; call specific node callback
+    if (pseudoImage.complete) {
+      return
+    }
+
+    if (previousResult === null || typeof previousResult === 'string') {
+      // Decode with this key already run; call specific node callback
       onDecode(meta)(previousResult);
     } else if (Array.isArray(previousResult) && previousResult.includes(meta.node) === false) {
       // Encode with this hash is currently running
