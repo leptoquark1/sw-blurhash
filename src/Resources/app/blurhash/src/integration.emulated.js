@@ -11,7 +11,7 @@ import { decodeHashByHashMeta, extractBlurhashMetaFromNode, getMutationObserver,
    * @return {string}
    */
   function getKeyFromMeta(meta) {
-    return meta.srcset + meta.node.width + '/' + meta.node.height;
+    return meta.srcset + meta.node.sizes;
   }
 
   /**
@@ -63,6 +63,7 @@ import { decodeHashByHashMeta, extractBlurhashMetaFromNode, getMutationObserver,
       applySrcDataAttributes(meta);
     }
     // take the place of the original and load the image by its srcset
+    img.sizes = meta.node.sizes;
     img.srcset = meta.srcset;
 
     // Memoize
