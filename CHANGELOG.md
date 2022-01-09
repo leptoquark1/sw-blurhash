@@ -1,3 +1,15 @@
+## 4.0.1
+
+This patch solves critical issues with the emulated integration.
+
+### Bug Fixes
+
+- Already decoded elements may not display final image (e.g. offcanvas cart)
+- Deferred loading on images with same blurhash (e.g. product-detail page)
+- Responsive image preload
+- Spinner icon was fetched twice
+ 
+
 # 4.0.0
 
 ### Features

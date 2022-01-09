@@ -1,3 +1,15 @@
+## 4.0.1
+
+Dieser Patch behebt einige wichtige Probleme in der emulierten Integration.
+
+### Fehlerbehebungen
+
+- Bereits dekodierte Elemente zeigen möglicherweise nicht das fertige Bild an (z. B. Off-Canvas-Warenkorb)
+- Verzögertes Laden von Bildern mit gleichem Blurhash (z. B. Produkt-Detailseite)
+- Vorladen von Bilder in der richtigen Auflösung (Responsive)
+- Doppeltes laden des Lade-Spinner-Icons
+
+
 # 4.0.0
 
 ### Features
