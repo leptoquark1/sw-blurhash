@@ -5,6 +5,8 @@ namespace Eyecook\Blurhash;
 use Doctrine\DBAL\Connection;
 use Eyecook\Blurhash\Configuration\Concern\DefaultConfigPluginContext;
 use Eyecook\Blurhash\Framework\PluginHelper;
+use Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaUpdater;
+use Shopware\Core\Framework\DataAbstractionLayer\Doctrine\RetryableQuery;
 use Shopware\Core\Framework\Plugin;
 use Shopware\Core\Framework\Plugin\Context\InstallContext;
 use Shopware\Core\Framework\Plugin\Context\UninstallContext;
@@ -30,15 +32,17 @@ class EyecookBlurhash extends Plugin
         }
     }
 
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
     public function uninstall(UninstallContext $uninstallContext): void
     {
         if ($uninstallContext->keepUserData()) {
             return;
         }
 
-        /** @var Connection $connection */
-        $connection = $this->container->get(Connection::class);
-        PluginHelper::rollbackAllMigrations($this, $connection);
+        $this->deleteAllBlurhashMetaData();
+        $this->rollbackAllMigrations();
     }
 
     public function executeComposerCommands(): bool
@@ -49,5 +53,27 @@ class EyecookBlurhash extends Plugin
     public function rebuildContainer(): bool
     {
         return false;
+    }
+
+    private function rollbackAllMigrations(): void
+    {
+        /** @var Connection $connection */
+        $connection = $this->container->get(Connection::class);
+
+        PluginHelper::rollbackAllMigrations($this, $connection);
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    private function deleteAllBlurhashMetaData(): void
+    {
+        /** @var Connection $connection */
+        $connection = $this->container->get(Connection::class);
+
+        $statement = $connection->prepare(HashMediaUpdater::getRemoveStatement());
+
+        $query = new RetryableQuery($connection, $statement);
+        $query->execute();
     }
 }
