@@ -8,15 +8,11 @@ use Eyecook\Blurhash\Configuration\ConfigService;
 use Eyecook\Blurhash\Hash\HashMediaService;
 use Eyecook\Blurhash\Hash\Media\HashMediaProvider;
 use Eyecook\Blurhash\Test\ConfigMockStub;
+use Eyecook\Blurhash\Test\HashMediaFixtures;
 use Eyecook\Blurhash\Test\MockBuilderStub;
 use PHPUnit\Framework\TestCase;
-use Shopware\Core\Content\Media\Aggregate\MediaFolder\MediaFolderEntity;
 use Shopware\Core\Content\Media\MediaEntity;
-use Shopware\Core\Content\Test\Media\MediaFixtures;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
-use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\NandFilter;
 use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -33,7 +29,7 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class GenerateCommandTest extends TestCase
 {
-    use IntegrationTestBehaviour, ConfigMockStub, MediaFixtures, MockBuilderStub;
+    use IntegrationTestBehaviour, ConfigMockStub, HashMediaFixtures, MockBuilderStub;
 
     protected static function normalizeOutput(CommandTester $tester): string
     {
@@ -167,41 +163,47 @@ class GenerateCommandTest extends TestCase
         $this->setSystemConfigMock(Config::PATH_EXCLUDED_FOLDERS, []);
         $this->setSystemConfigMock(Config::PATH_EXCLUDED_TAGS, []);
 
+        $testEntityName = 'test_media';
+
+        // Create a default folder for which entityName is used as command parameter
         /** @var EntityRepositoryInterface $mediaDefaultFolderRepository */
-        $mediaFolderRepository = $this->getContainer()->get('media_folder.repository');
-        $mediaFolderCriteria = (new Criteria())
-            ->addFilter(new NandFilter([new EqualsFilter('defaultFolderId', null)]))
-            ->addAssociation('defaultFolder')
-            ->setLimit(1);
+        $mediaDefaultFolderId = Uuid::randomHex();
+        self::getFixtureRepository('media_default_folder')->create([
+            [
+                'id' => $mediaDefaultFolderId,
+                'associationFields' => [],
+                'entity' => $testEntityName,
+            ]
+        ], $this->entityFixtureContext);
 
-        /** @var MediaFolderEntity $mediaFolder */
-        $mediaFolder = $mediaFolderRepository->search($mediaFolderCriteria, $this->entityFixtureContext)->first();
-        $defaultFolderEntity = $mediaFolder->getDefaultFolder()->getEntity();
+        // Create a Test MediaEntity with folder
+        $testMediaEntity = $this->getValidExistingMediaForHash(false, true);
 
-        $testFixture = $this->mediaFixtures['NamedMimeJpgEtxJpgWithFolderWithoutThumbnails'];
-        unset($testFixture['mediaFolder']);
-        $testFixture['mediaFolderId'] = $mediaFolder->getId();
-        $testFixture['metaData'] = ['width' => 1, 'height' => 1];
+        // That is updated with the previously created defaultFolderId
+        self::getFixtureRepository('media_folder')->update([
+            [
+                'id' => $testMediaEntity->getMediaFolderId(),
+                'defaultFolderId' => $mediaDefaultFolderId,
+            ]
+        ], $this->entityFixtureContext);
 
-        /** @var MediaEntity $testMediaEntity */
-        $testMediaEntity = $this->createFixture('ECBEA', [
-            'ECBEA' => $testFixture,
-        ], self::getFixtureRepository('media'));
+        $isTestMediaCb = $this->callback(function (MediaEntity $mediaEntity) use ($testMediaEntity) {
+            return $testMediaEntity->getId() === $mediaEntity->getId();
+        });
 
         $mockedHashMediaService = $this->createMock(HashMediaService::class);
-        $mockedHashMediaService->expects($this->atLeastOnce())
+        $mockedHashMediaService
+            ->expects($this->once()) // We expect exact one match in our folder
             ->method('processHashForMedia')
-            ->with($this->callback(function (MediaEntity $mediaEntity) use ($testMediaEntity) {
-                return $testMediaEntity->getId() === $mediaEntity->getId();
-            }));
+            ->with($isTestMediaCb);
 
         $command = $this->createCommandWithArgs([HashMediaService::class => $mockedHashMediaService]);
 
         $tester = new CommandTester($command);
-        $this->executeCommand($tester, ['entities' => [$defaultFolderEntity], '--sync' => 1]);
+        $this->executeCommand($tester, ['entities' => [$testEntityName], '--sync' => 1]);
 
         $output = self::normalizeOutput($tester);
-        static::assertStringContainsStringIgnoringCase($defaultFolderEntity, $output);
+        static::assertStringContainsStringIgnoringCase($testEntityName, $output);
     }
 
     public function testQuestionForEntities(): void
