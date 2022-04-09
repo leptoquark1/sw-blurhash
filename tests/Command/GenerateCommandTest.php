@@ -4,21 +4,18 @@ namespace Eyecook\Blurhash\Test\Command;
 
 use Eyecook\Blurhash\Command\GenerateCommand;
 use Eyecook\Blurhash\Configuration\Config;
-use Eyecook\Blurhash\Configuration\ConfigService;
 use Eyecook\Blurhash\Hash\HashMediaService;
 use Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaProvider;
+use Eyecook\Blurhash\Test\CommandStub;
 use Eyecook\Blurhash\Test\ConfigMockStub;
 use Eyecook\Blurhash\Test\HashMediaFixtures;
-use Eyecook\Blurhash\Test\MockBuilderStub;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
-use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
-use Symfony\Component\Console\Tester\CommandTester;
 
 /**
  * @covers \Eyecook\Blurhash\Command\GenerateCommand
@@ -29,17 +26,12 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class GenerateCommandTest extends TestCase
 {
-    use IntegrationTestBehaviour, ConfigMockStub, HashMediaFixtures, MockBuilderStub;
-
-    protected static function normalizeOutput(CommandTester $tester): string
-    {
-        $normalized = preg_replace('/\s+/', ' ', $tester->getDisplay(true));
-
-        return trim(preg_replace('/\s[!?]\s/', ' ', $normalized));
-    }
+    use ConfigMockStub, HashMediaFixtures, CommandStub;
 
     protected function setUp(): void
     {
+        $this->command = $this->getContainer()->get(GenerateCommand::class);
+
         $this->unsetSystemConfigMock(Config::PATH_MANUAL_MODE);
 
         $this->prepareMockConstructorArgs(GenerateCommand::class, [
@@ -141,6 +133,9 @@ class GenerateCommandTest extends TestCase
         static::assertEquals(Command::INVALID, $tester->getStatusCode());
     }
 
+    /**
+     * @covers \Eyecook\Blurhash\Command\Concern\AcceptEntitiesArgument
+     */
     public function testOutputOnUnknownEntity(): void
     {
         $tester = $this->createCommandTester();
@@ -193,43 +188,19 @@ class GenerateCommandTest extends TestCase
             ->method('processHashForMedia')
             ->with($isTestMediaCb);
 
-        $command = $this->createCommandWithArgs([HashMediaService::class => $mockedHashMediaService]);
+        $tester = $this->createCommandTesterWithArgs([HashMediaService::class => $mockedHashMediaService]);
 
-        $tester = new CommandTester($command);
         $this->executeCommand($tester, ['entities' => [$testEntityName], '--sync' => 1]);
 
         $output = self::normalizeOutput($tester);
         static::assertStringContainsStringIgnoringCase($testEntityName, $output);
     }
 
+    /**
+     * @covers \Eyecook\Blurhash\Command\Concern\AcceptEntitiesArgument
+     */
     public function testQuestionForEntities(): void
     {
         static::markTestIncomplete();
-    }
-
-    private function createCommandTester(): CommandTester
-    {
-        $command = $this->getContainer()->get(GenerateCommand::class);
-
-        $application = new Application($this->getKernel());
-        $application->add($command);
-
-        return new CommandTester($application->find('ec:blurhash:generate'));
-    }
-
-    private function executeCommand(CommandTester $tester, array $inputs = [], array $options = ['interactive' => false]): int
-    {
-        return $tester->execute($inputs, $options);
-    }
-
-    private function createCommandWithArgs($mockArgs = []): GenerateCommand
-    {
-        $command = $this->getPreparedClassInstance(GenerateCommand::class, $mockArgs);
-
-        /** @noinspection PhpParamsInspection */
-        $command->setContainer($this->getContainer());
-        $command->setConfigService($this->getContainer()->get(ConfigService::class));
-
-        return $command;
     }
 }
