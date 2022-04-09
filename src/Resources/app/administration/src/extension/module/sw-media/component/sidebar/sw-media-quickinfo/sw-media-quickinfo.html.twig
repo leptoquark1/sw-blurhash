@@ -13,10 +13,20 @@
                     <ecb-quick-action
                         @click="onEcbGenerateActionClick"
                         icon="default-object-paint"
-                        color="#fc427b"
                         :title="generationHelpText"
                         :text="generationText"
                         :disabled="canEcbGenerate === false || isEcbLoading"
+                    ></ecb-quick-action>
+                {% endblock %}
+
+                {% block sw_media_quickinfo_quickactions_content_blurhash_actions_remove %}
+                    <ecb-quick-action
+                        @click="onEcbRemoveActionClick"
+                        icon="default-action-trash"
+                        color="#fc427b"
+                        title="ecBlurhash.general.removal.media.help"
+                        text="ecBlurhash.general.removal.media.label"
+                        :disabled="isEcbLoading || !hasItemBlurhash"
                     ></ecb-quick-action>
                 {% endblock %}
             </template>

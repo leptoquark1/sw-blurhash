@@ -11,7 +11,7 @@ However, there are a few restrictions and pitfalls to consider:
 
 #### The Media Browser
 
-_Blurhash is where you manage your images_: With the media browser, you can access all the relevant actions to enrich images with a Blurhash.
+_Blurhash is where you manage your images_: With the Media Browser, you can access all the relevant actions to enrich images with a Blurhash.
 
 The sidebar does provide you with all relevant information and possible actions to execute on either an image or the whole folder.
 
@@ -21,27 +21,29 @@ The sidebar does provide you with all relevant information and possible actions 
 
 ##### Bulk in folder scope
 
-When a folder is selected you can generate hashes for all containing images (excl. sub-folders).
+When a folder is selected you can generate Blurhashes for all containing images (excl. sub-folders).
 
 Following actions are available:
 
-| Action        | Description                                                     |
-|---------------|-----------------------------------------------------------------|
-| `Generate`    | Generate missing hashes for media in this folder                |
-| `Refresh all` | Generate and overwrite existing hashes for media in this folder |
+| Action        | Description                                                                       |
+|---------------|-----------------------------------------------------------------------------------|
+| `Generate`    | Generate missing Blurhashes for all suitable images in this folder                |
+| `Refresh all` | Generate and overwrite existing Blurhashes for all suitable images in this folder |
+| `Remove all`  | Remove all generated Blurhashes from images this folder                           |
 
 ##### Media Scope
 
-Once a media item has been selected, it will be verified whether it is suitable for hash generation.
+Once a image has been selected, it will be verified whether it is suitable for Blurhash generation.
 
 > If the validation fails, a notice with the reason for the failure will be displayed.
 
 If the image is suitable, the following actions are available:
 
-| Action     | Description                              |
-|------------|------------------------------------------|
-| `Generate` | Generate a Hash for this media           |
-| `Refresh`  | Generate all and overwrite existing hash |
+| Action     | Description                                                 |
+|------------|-------------------------------------------------------------|
+| `Generate` | Generate a Blurhash for this image                          |
+| `Refresh`  | Generate all and overwrite existing Blurhash for this image |
+| `Remove`   | Remove an existing Blurhash from this image                 |
 
 #### Notifications
 
@@ -54,7 +56,7 @@ You can track the ongoing processing in the Notification-Center.
 Following Messages are available:
 
 - By Action: The processing of a folder was submitted
-- By Action: The processing of a media item was submitted
+- By Action: The processing of an image was submitted
 - While processing: the remaining items in the queue
 - The processing is finished
 

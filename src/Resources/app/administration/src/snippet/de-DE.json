@@ -14,6 +14,18 @@
           "notQualified": "Dieses Bild ist nicht für Blurhash geeignet. Grund: {reason}"
         }
       },
+      "removal": {
+        "folder": {
+          "label": "Alle entfernen",
+          "help": "Entferne alle generierten Blurhashes in diesem Ordner",
+          "notificationOnRemove": "Es wurden alle Blurhashes im Ordner '{folderName}' erfolgreich entfernt"
+        },
+        "media": {
+          "label": "Entfernen",
+          "help": "Entfernt den generierten Blurhash",
+          "notificationOnRemove": "Der Blurhash wurde erfolgreich von '{mediaName}' entfernt"
+        }
+      },
       "generation": {
         "start": "Generieren",
         "refresh": "Erneuern",

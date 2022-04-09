@@ -6,7 +6,7 @@ const { Component, Mixin } = Shopware;
 Component.override('sw-media-quickinfo', {
   template,
 
-  inject: ['ecbValidationApiService', 'ecbGenerationApiService'],
+  inject: ['ecbValidationApiService', 'ecbGenerationApiService', 'ecbRemovalApiService'],
 
   mixins: [
     Mixin.getByName('notification'),
@@ -57,6 +57,8 @@ Component.override('sw-media-quickinfo', {
         ? this.$t('ecBlurhash.general.generation.media.helpForce')
         : this.$t('ecBlurhash.general.generation.media.help')
     }
+
+
   },
 
   methods: {
@@ -117,5 +119,28 @@ Component.override('sw-media-quickinfo', {
 
       this.isEcbGenerating = false;
     },
+
+    async onEcbRemoveActionClick() {
+      if (this.isEcbLoading || this.hasItemBlurhash === false) {
+        return;
+      }
+
+      this.isEcbGenerating = true;
+
+      try {
+        await this.ecbRemovalApiService.fetchRemoveByMediaId(this.item.id);
+
+        this.createNotificationInfo({
+          title: 'Blurhash',
+          message: this.$tc('ecBlurhash.general.removal.media.notificationOnRemove', 0, { mediaName: this.item.fileName }),
+        });
+
+        setTimeout(() => this.emitRefreshMediaLibrary(), 2000);
+      } catch (err) {
+        this.createNotificationError({ message: err.message });
+      }
+
+      this.isEcbGenerating = false;
+    }
   },
 });

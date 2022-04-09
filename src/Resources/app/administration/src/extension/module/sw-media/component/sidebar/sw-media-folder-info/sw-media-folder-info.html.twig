@@ -15,7 +15,6 @@
                         <ecb-quick-action
                             @click="onGenerateMissingActionClick"
                             icon="default-object-paint"
-                            color="#fc427b"
                             title="ecBlurhash.general.generation.folder.help"
                             text="ecBlurhash.general.generation.start"
                             :disabled="canEcbGenerate === false || isEcbLoading"
@@ -29,6 +28,17 @@
                             title="ecBlurhash.general.generation.folder.helpForce"
                             text="ecBlurhash.general.generation.refreshAll"
                             :disabled="canEcbGenerate === false || isEcbLoading"
+                        ></ecb-quick-action>
+                    {% endblock %}
+
+                    {% block sw_media_quickinfo_folder_quickactions_content_blurhash_action_remove %}
+                        <ecb-quick-action
+                            @click="onRemoveAllActionClick"
+                            icon="default-action-trash"
+                            color="#fc427b"
+                            title="ecBlurhash.general.removal.folder.help"
+                            text="ecBlurhash.general.removal.folder.label"
+                            :disabled="isEcbLoading"
                         ></ecb-quick-action>
                     {% endblock %}
 

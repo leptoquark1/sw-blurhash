@@ -5,7 +5,7 @@ const { Component, Mixin } = Shopware;
 Component.override('sw-media-folder-info', {
   template,
 
-  inject: ['ecbValidationApiService', 'ecbGenerationApiService'],
+  inject: ['ecbValidationApiService', 'ecbGenerationApiService', 'ecbRemovalApiService'],
 
   mixins: [
     Mixin.getByName('notification'),
@@ -42,6 +42,35 @@ Component.override('sw-media-folder-info', {
 
     async onGenerateAllActionClick() {
       return this.ecbGenerate(true);
+    },
+
+    async onRemoveAllActionClick() {
+      if (this.isEcbLoading) {
+        return;
+      }
+
+      this.isEcbGenerating = true;
+
+      try {
+        await this.ecbRemovalApiService.fetchRemoveByFolderId(this.mediaFolder.id);
+
+        this.hasEcbGenerated = false;
+
+        this.createNotificationInfo({
+          title: 'Blurhash',
+          message: this.$tc('ecBlurhash.general.removal.folder.notificationOnRemove', 0, { folderName: this.mediaFolder.name })
+        });
+
+        setTimeout(() => {
+          this.$nextTick(() => {
+            this.$emit('media-item-replaced');
+          });
+        }, 2000);
+      } catch (err) {
+        this.createNotificationError({ message: err.message });
+      }
+
+      this.isEcbGenerating = false;
     },
 
     async ecbValidate() {
