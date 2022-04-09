@@ -7,6 +7,8 @@ use Eyecook\Blurhash\Hash\Media\MediaHashMeta;
 use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Content\Media\MediaType\ImageType;
 use Shopware\Core\Content\Test\Media\MediaFixtures;
+use Shopware\Core\Framework\Test\TestCaseBase\DatabaseTransactionBehaviour;
+use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
 
 /**
@@ -15,7 +17,9 @@ use Shopware\Core\Framework\Uuid\Uuid;
  */
 trait HashMediaFixtures
 {
-    use MediaFixtures;
+    use KernelTestBehaviour,
+        DatabaseTransactionBehaviour,
+        MediaFixtures;
 
     protected function getValidLocalMediaForHash(?string $fileExt = 'jpg', ?string $mimeType = 'image/jpeg', array $unset = []): MediaEntity
     {

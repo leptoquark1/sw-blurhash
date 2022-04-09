@@ -20,3 +20,4 @@
 - Commands (cli)
 
   - [Generate](commands.md#generate)
+  - [Remove](commands.md#remove)

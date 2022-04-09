@@ -85,6 +85,13 @@
             <tag name="console.command"/>
         </service>
 
+        <service id="Eyecook\Blurhash\Command\RemoveCommand" parent="Eyecook\Blurhash\Command\AbstractCommand">
+            <argument type="service" id="Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaProvider"/>
+            <argument type="service" id="Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaUpdater"/>
+
+            <tag name="console.command"/>
+        </service>
+
         <service id="Eyecook\Blurhash\Configuration\Twig\ConfigTwigExtension">
             <argument type="service" id="Eyecook\Blurhash\Configuration\ConfigService"/>
             <tag name="twig.extension"/>
