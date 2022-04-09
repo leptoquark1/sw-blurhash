@@ -14,6 +14,18 @@
           "notQualified": "This media is not qualified for Blurhash. Reason: {reason}"
         }
       },
+      "removal": {
+        "folder": {
+          "label": "Remove all",
+          "help": "Removes all generated Blurhashes in this folder",
+          "notificationOnRemove": "All Blurhashes of '{folderName}' were removed successfully"
+        },
+        "media": {
+          "label": "Remove",
+          "help": "Remove generated Blurhash",
+          "notificationOnRemove": "The Blurhash for '{mediaName}' was removed successfully"
+        }
+      },
       "generation": {
         "start": "Generate",
         "refresh": "Refresh",

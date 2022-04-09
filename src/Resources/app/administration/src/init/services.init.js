@@ -1,4 +1,5 @@
 import GenerationApiService from '../service/api/generation.api-service';
+import RemovalApiService from '../service/api/removal.api-service';
 import ValidationApiService from '../service/api/validation.api-service';
 
 const { Application } = Shopware;
@@ -6,6 +7,7 @@ const { Application } = Shopware;
 const apiServices = [
   GenerationApiService,
   ValidationApiService,
+  RemovalApiService,
 ];
 
 (function () {
