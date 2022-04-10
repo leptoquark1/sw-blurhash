@@ -35,11 +35,7 @@ class MediaValidatorTest extends TestCase
     {
         parent::setUp();
 
-        $this->setUpSystemConfigService();
-        $this->resetInternalSystemConfigCache();
-        $this->resetInternalConfigCache();
-
-        $this->context = Context::createDefaultContext();
+        $this->context = $this->entityFixtureContext;
         $this->mediaValidator = $this->getContainer()->get(MediaValidator::class);
     }
 

@@ -24,9 +24,6 @@ class AbstractApiControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->setUpSystemConfigService();
-        $this->resetInternalSystemConfigCache();
-        $this->resetInternalConfigCache();
         $this->unsetAdminWorkerEnabledMock();
 
         $this->mock = new TestApiController($this->getContainer());

@@ -26,15 +26,6 @@ class ValidationControllerTest extends TestCase
     protected const VALIDATE_MEDIA_ID_URL = '/api/_action/eyecook/blurhash/validator/media/';
     protected const VALIDATE_FOLDER_ID_URL = '/api/_action/eyecook/blurhash/validator/folder/';
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->initializeMediaFixtures();
-        $this->setUpSystemConfigService();
-        $this->resetInternalSystemConfigCache();
-    }
-    
     public function testValidateMediaResponseWithNonExistentEntity(): void
     {
         ['response' => $response] = $this->fetch(

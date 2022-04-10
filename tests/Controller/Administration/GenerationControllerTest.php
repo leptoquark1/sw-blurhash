@@ -34,9 +34,6 @@ class GenerationControllerTest extends TestCase
     {
         parent::setUp();
 
-        $this->initializeMediaFixtures();
-        $this->setUpSystemConfigService();
-        $this->resetInternalSystemConfigCache();
         $this->unsetAdminWorkerEnabledMock();
         $this->unsetSystemConfigMock(Config::PATH_MANUAL_MODE);
         $this->unsetSystemConfigMock(Config::PATH_EXCLUDED_FOLDERS);

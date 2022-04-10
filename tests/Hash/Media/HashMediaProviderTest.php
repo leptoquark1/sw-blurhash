@@ -36,10 +36,6 @@ class HashMediaProviderTest extends TestCase
         $this->provider = $this->getContainer()->get(HashMediaProvider::class);
         $this->validator = $this->getContainer()->get(MediaValidator::class);
 
-        $this->setUpSystemConfigService();
-        $this->resetInternalSystemConfigCache();
-        $this->resetInternalConfigCache();
-
         $this->setSystemConfigMock(Config::PATH_INCLUDE_PRIVATE, true);
         $this->setSystemConfigMock(Config::PATH_EXCLUDED_TAGS, []);
         $this->setSystemConfigMock(Config::PATH_EXCLUDED_FOLDERS, []);

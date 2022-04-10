@@ -5,7 +5,6 @@ namespace Eyecook\Blurhash\Test;
 use Eyecook\Blurhash\Configuration\Config;
 use Eyecook\Blurhash\Configuration\ConfigService;
 use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
-use Shopware\Core\Framework\Test\TestCaseBase\SystemConfigTestBehaviour;
 use Shopware\Core\System\SystemConfig\SystemConfigService;
 
 /**
@@ -14,31 +13,52 @@ use Shopware\Core\System\SystemConfig\SystemConfigService;
  */
 trait ConfigMockStub
 {
-    use SystemConfigTestBehaviour, KernelTestBehaviour;
+    use KernelTestBehaviour;
 
     private static ?bool $initialAdminWorkerEnabled = null;
     private static ?bool $initialProdModeValue = null;
-    protected SystemConfigService $systemConfigService;
-    protected ConfigService $configService;
 
-    public function setUpSystemConfigService(): void
+    public function getSystemConfigService(): SystemConfigService
     {
-        $this->systemConfigService = $this->getContainer()->get(SystemConfigService::class);
-        $this->configService = $this->getContainer()->get(ConfigService::class);
+        return $this->getContainer()->get(SystemConfigService::class);
+    }
+
+    public function getConfigService(): ConfigService
+    {
+        return $this->getContainer()->get(ConfigService::class);
+    }
+
+    /**
+     * @before
+     */
+    public function resetInternalConfigCacheBefore(?string $path = null): void
+    {
+        $reflection = new \ReflectionClass($this->getConfigService());
+
+        $property = $reflection->getProperty('config');
+        $property->setAccessible(true);
+
+        if ($path) {
+            $config = $property->getValue($this->getConfigService());
+            unset($config[$path]);
+            $property->setValue($this->getConfigService(), $config);
+        } else {
+            $property->setValue($this->getConfigService(), []);
+        }
     }
 
     protected function setProductionModeMock(bool $value): void
     {
-        $reflection = new \ReflectionClass($this->configService);
+        $reflection = new \ReflectionClass($this->getConfigService());
 
         $property = $reflection->getProperty('isProductionMode');
         $property->setAccessible(true);
 
         if (self::$initialProdModeValue === null) {
-            self::$initialProdModeValue = $property->getValue($this->configService);
+            self::$initialProdModeValue = $property->getValue($this->getConfigService());
         }
 
-        $property->setValue($this->configService, $value);
+        $property->setValue($this->getConfigService(), $value);
     }
 
     protected function unsetProductionModeMock(): void
@@ -50,16 +70,16 @@ trait ConfigMockStub
 
     protected function setAdminWorkerEnabledMock(bool $value): void
     {
-        $reflection = new \ReflectionClass($this->configService);
+        $reflection = new \ReflectionClass($this->getConfigService());
 
         $property = $reflection->getProperty('isAdminWorkerEnabled');
         $property->setAccessible(true);
 
         if (self::$initialAdminWorkerEnabled === null) {
-            self::$initialAdminWorkerEnabled = $property->getValue($this->configService);
+            self::$initialAdminWorkerEnabled = $property->getValue($this->getConfigService());
         }
 
-        $property->setValue($this->configService, $value);
+        $property->setValue($this->getConfigService(), $value);
     }
 
     protected function unsetAdminWorkerEnabledMock(): void
@@ -72,28 +92,12 @@ trait ConfigMockStub
     protected function setSystemConfigMock(string $path, $value): void
     {
         $configKey = Config::PLUGIN_CONFIG_DOMAIN . '.' . $path;
-        $this->systemConfigService->set($configKey, $value);
-        $this->resetInternalConfigCache($path);
+        $this->getSystemConfigService()->set($configKey, $value);
+        $this->resetInternalConfigCacheBefore($path);
     }
 
     protected function unsetSystemConfigMock(string $path): void
     {
         $this->setSystemConfigMock($path, null);
-    }
-
-    private function resetInternalConfigCache(?string $path = null): void
-    {
-        $reflection = new \ReflectionClass($this->configService);
-
-        $property = $reflection->getProperty('config');
-        $property->setAccessible(true);
-
-        if ($path) {
-            $config = $property->getValue($this->configService);
-            unset($config[$path]);
-            $property->setValue($this->configService, $config);
-        } else {
-            $property->setValue($this->configService, []);
-        }
     }
 }

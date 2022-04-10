@@ -43,10 +43,6 @@ class GenerateHashHandlerTest extends TestCase
     {
         parent::setUp();
 
-        $this->setUpSystemConfigService();
-        $this->resetInternalSystemConfigCache();
-        $this->resetInternalConfigCache();
-
         $this->handler = $this->getContainer()->get(GenerateHashHandler::class);
 
         $this->prepareMockConstructorArgs(GenerateHashHandler::class, [

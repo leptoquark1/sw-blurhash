@@ -30,7 +30,6 @@ class HashGeneratorTest extends TestCase
     {
         parent::setUp();
 
-        $this->setUpSystemConfigService();
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_X, 2);
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_Y, 1);
 

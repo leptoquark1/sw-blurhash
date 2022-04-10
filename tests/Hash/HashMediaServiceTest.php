@@ -33,10 +33,8 @@ class HashMediaServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->context = Context::createDefaultContext();
-        $this->setFixtureContext($this->context);
+        $this->context = $this->entityFixtureContext;
 
-        $this->setUpSystemConfigService();
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_X, 1);
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_Y, 1);
 

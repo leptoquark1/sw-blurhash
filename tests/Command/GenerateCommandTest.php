@@ -40,10 +40,6 @@ class GenerateCommandTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->setUpSystemConfigService();
-        $this->resetInternalSystemConfigCache();
-        $this->resetInternalConfigCache();
-
         $this->unsetSystemConfigMock(Config::PATH_MANUAL_MODE);
 
         $this->prepareMockConstructorArgs(GenerateCommand::class, [

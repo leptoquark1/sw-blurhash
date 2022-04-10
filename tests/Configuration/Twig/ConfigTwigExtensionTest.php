@@ -23,7 +23,6 @@ class ConfigTwigExtensionTest extends TestCase
     {
         parent::setUp();
 
-        $this->setUpSystemConfigService();
         $this->twigExtension = $this->getContainer()->get(ConfigTwigExtension::class);
     }
 
