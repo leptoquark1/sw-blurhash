@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 namespace Eyecook\Blurhash\Test\Hash\Adapter;
+
 use Eyecook\Blurhash\Hash\Adapter\GdHashImageAdapter;
 use Eyecook\Blurhash\Hash\Adapter\HashImageAdapterInterface;
 use PHPUnit\Framework\TestCase;
@@ -42,11 +43,7 @@ class GdHashImageAdapterTest extends TestCase
     {
         $image = static::$adapter->createImage(static::$resourceJpg);
 
-        static::assertIsResource($image);
-
-        if ((float) PHP_MAJOR_VERSION >= 8) {
-            static::assertInstanceOf(\GdImage::class, $image);
-        }
+        self::assertIsImageResource($image);
     }
 
     public function testGetImageColorAt(): void
@@ -122,5 +119,14 @@ class GdHashImageAdapterTest extends TestCase
 
         $image = static::$adapter->createImage(static::$resourceGif);
         static::assertFalse(static::$adapter->isTrueColor($image));
+    }
+
+    private static function assertIsImageResource($actual): void
+    {
+        if (PHP_VERSION_ID < 80000) {
+            static::assertIsResource($actual);
+        } else {
+            static::assertInstanceOf(\GdImage::class, $actual);
+        }
     }
 }

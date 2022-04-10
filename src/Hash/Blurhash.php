@@ -27,7 +27,7 @@ final class Blurhash
             throw new InvalidArgumentException("Component counts must be between 1 and 9 inclusive.");
         }
 
-        if (is_resource($resource) === false) {
+        if (is_string($resource)) {
             $resource = $adapter->createImage($resource);
         }
 

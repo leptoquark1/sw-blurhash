@@ -6,7 +6,9 @@ use Doctrine\DBAL\Connection;
 use Eyecook\Blurhash\Configuration\Config;
 use Eyecook\Blurhash\Migration\Migration1631297401CreateDefaultTag;
 use PHPUnit\Framework\TestCase;
-use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
+use Shopware\Core\Framework\Test\TestCaseBase\DatabaseTransactionBehaviour;
+use Shopware\Core\Framework\Test\TestCaseBase\KernelLifecycleManager;
+use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
 
 /**
  * @group Migration
@@ -17,24 +19,25 @@ use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
  */
 class Migration1631297401CreateDefaultTagTest extends TestCase
 {
-    use IntegrationTestBehaviour;
+    use KernelTestBehaviour, DatabaseTransactionBehaviour;
 
     protected ?Connection $connection;
     protected Migration1631297401CreateDefaultTag $migration;
 
-    /**
-     * @throws \Doctrine\DBAL\Exception
-     */
+    public static function setUpBeforeClass(): void
+    {
+        // Make sure that test database is in state where the migration did not run yet
+        KernelLifecycleManager::getKernel()
+            ->getContainer()
+            ->get(Connection::class)
+            ->executeStatement('SET FOREIGN_KEY_CHECKS=0; TRUNCATE tag; SET FOREIGN_KEY_CHECKS=1;');
+    }
+
     protected function setUp(): void
     {
-        parent::setUp();
-
         $this->connection = $this->getContainer()->get(Connection::class);
         $this->migration = new Migration1631297401CreateDefaultTag();
         $this->migration->setConnection($this->connection);
-
-        // Make sure that test database is in state where the migration did not run yet
-        $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS=0; TRUNCATE tag; SET FOREIGN_KEY_CHECKS=1;');
     }
 
     /**

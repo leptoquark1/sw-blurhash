@@ -13,8 +13,8 @@ namespace Eyecook\Blurhash\Hash\Adapter;
 interface HashImageAdapterInterface
 {
     /**
-     * @param string $data A string containing the image data
-     * @return resource|false Image resource for provided data or false on error
+     * @param string $data An input containing the image data
+     * @return object|resource|false Image resource for provided data or false on error
      */
     public function createImage(string &$data);
 

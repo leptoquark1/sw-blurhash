@@ -10,7 +10,7 @@ namespace Eyecook\Blurhash\Hash\Adapter;
  */
 class GdHashImageAdapter implements HashImageAdapterInterface
 {
-    public function createImage(&$data)
+    public function createImage(string &$data)
     {
         return imagecreatefromstring($data);
     }
