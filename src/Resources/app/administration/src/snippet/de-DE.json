@@ -45,7 +45,7 @@
       },
       "exclusion": {
         "exclude": "Ausschließen",
-        "include": "Inkludieren",
+        "include": "Brücksichtigen",
         "remove": "Nicht mehr ausschließen"
       },
       "preview": {

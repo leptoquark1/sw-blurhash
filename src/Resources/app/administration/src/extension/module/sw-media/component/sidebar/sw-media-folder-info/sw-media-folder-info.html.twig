@@ -40,6 +40,26 @@
                             text="ecBlurhash.general.removal.folder.label"
                             :disabled="isEcbLoading"
                         ></ecb-quick-action>
+
+                    {% endblock %}
+
+                    {% block sw_media_quickinfo_folder_quickactions_content_blurhash_action_exclude %}
+                        <ecb-quick-action
+                            v-if="canEcbGenerate"
+                            @click="onExcludeActionClick"
+                            icon="default-lock-closed"
+                            color="orange"
+                            text="ecBlurhash.general.exclusion.exclude"
+                            :disabled="isEcbLoading"
+                        ></ecb-quick-action>
+                        <ecb-quick-action
+                            v-if="canEcbGenerate === false"
+                            @click="onIncludeActionClick"
+                            icon="default-lock-open"
+                            color="orange"
+                            text="ecBlurhash.general.exclusion.include"
+                            :disabled="isEcbLoading"
+                        ></ecb-quick-action>
                     {% endblock %}
 
                 </template>

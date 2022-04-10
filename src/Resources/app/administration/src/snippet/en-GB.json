@@ -26,6 +26,14 @@
           "notificationOnRemove": "The Blurhash for '{mediaName}' was removed successfully"
         }
       },
+      "exclude": {
+        "folder": {
+          "labelAdd": "Exclude",
+          "helpAdd": "Ignore this folder",
+          "labelRemove": "Include",
+          "helpRemove": "Remove the exclusion of this folder"
+        }
+      },
       "generation": {
         "start": "Generate",
         "refresh": "Refresh",

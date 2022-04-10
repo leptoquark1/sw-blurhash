@@ -5,7 +5,7 @@ const { Component, Mixin } = Shopware;
 Component.override('sw-media-folder-info', {
   template,
 
-  inject: ['ecbValidationApiService', 'ecbGenerationApiService', 'ecbRemovalApiService'],
+  inject: ['ecbValidationApiService', 'ecbGenerationApiService', 'ecbRemovalApiService', 'systemConfigApiService'],
 
   mixins: [
     Mixin.getByName('notification'),
@@ -44,6 +44,44 @@ Component.override('sw-media-folder-info', {
       return this.ecbGenerate(true);
     },
 
+    async onExcludeActionClick() {
+      if (this.isEcbLoading) {
+        return;
+      }
+
+      const currentConfig = await this.systemConfigApiService.getValues('EyecookBlurhash.config');
+      const excluded = currentConfig['EyecookBlurhash.config.excludedFolders'] ?? [];
+
+      if (excluded.includes(this.mediaFolder.id) === false) {
+        excluded.push(this.mediaFolder.id);
+      }
+
+      await this.systemConfigApiService.saveValues({
+        'EyecookBlurhash.config.excludedFolders': excluded,
+      });
+
+      return this.ecbValidate(true);
+    },
+
+    async onIncludeActionClick() {
+      if (this.isEcbLoading) {
+        return;
+      }
+
+      const currentConfig = await this.systemConfigApiService.getValues('EyecookBlurhash.config');
+      const excluded = currentConfig['EyecookBlurhash.config.excludedFolders'] ?? [];
+
+      if (excluded.includes(this.mediaFolder.id)) {
+        excluded.splice(excluded.indexOf(this.mediaFolder.id), 1)
+      }
+
+      await this.systemConfigApiService.saveValues({
+        'EyecookBlurhash.config.excludedFolders': excluded,
+      });
+
+      return this.ecbValidate(true);
+    },
+
     async onRemoveAllActionClick() {
       if (this.isEcbLoading) {
         return;
@@ -73,8 +111,8 @@ Component.override('sw-media-folder-info', {
       this.isEcbGenerating = false;
     },
 
-    async ecbValidate() {
-      if (this.isEcbLoading || this.isEcbValid !== null) {
+    async ecbValidate(force = false) {
+      if (this.isEcbLoading || (force === false && this.isEcbValid !== null)) {
         return;
       }
 
