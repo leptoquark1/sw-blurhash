@@ -25,11 +25,12 @@ When a folder is selected you can generate Blurhashes for all containing images 
 
 Following actions are available:
 
-| Action        | Description                                                                       |
-|---------------|-----------------------------------------------------------------------------------|
-| `Generate`    | Generate missing Blurhashes for all suitable images in this folder                |
-| `Refresh all` | Generate and overwrite existing Blurhashes for all suitable images in this folder |
-| `Remove all`  | Remove all generated Blurhashes from images this folder                           |
+| Action              | Description                                                                                                                 |
+|---------------------|-----------------------------------------------------------------------------------------------------------------------------|
+| `Generate`          | Generate missing Blurhashes for all suitable images in this folder                                                          |
+| `Refresh all`       | Generate and overwrite existing Blurhashes for all suitable images in this folder                                           |
+| `Remove all`        | Remove all generated Blurhashes from images this folder                                                                     |
+| `Exclude / Include` | Ignore this folder in further generations. See [Inclusion / Exclusion configuration](configuration.md#inclusions-exclusion) |
 
 ##### Media Scope
 
