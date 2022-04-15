@@ -45,17 +45,17 @@
       },
       "exclusion": {
         "exclude": "Ausschließen",
-        "include": "Brücksichtigen",
+        "include": "Berücksichtigen",
         "remove": "Nicht mehr ausschließen"
       },
       "preview": {
-        "toggle": "Blurhash Vorschau"
+        "toggle": "Blurhash-Vorschau"
       }
     },
     "notification-center": {
       "worker-listener": {
         "hashGeneration": {
-          "title": "Blurhash generierung",
+          "title": "Blurhash-Generierung",
           "message": "Keine Hashes verbleibend. | Ein Hash verbleibend ... | {n} Hashes verbleibend ...",
           "success": "Alle Hashes wurden generiert."
         }
