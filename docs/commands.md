@@ -29,7 +29,7 @@ bin/console ec:blurhash:generate product --all --sync
 Remove (previously generated) Blurhashes from media entities.
 
 Usage:
-`ec:blurhash:generate [options] [<entities>...]`
+`ec:blurhash:remove [options] [<entities>...]`
 
 | Argument / Option | Description                                                          | -        | 
 |-------------------|----------------------------------------------------------------------|----------|
