@@ -1,3 +1,18 @@
+## 4.1.0
+
+### Features
+
+- Vorhandene Blurhashes über den Medienbrowser in der Administration entfernen
+- Bestimmte Ordner direkt über den Mediabrowser in der Administration ausschließen
+- CLI-Befehl `ec:blurhash:remove` zum Entfernen vorhandener Blurhashes
+- Wenn das Plugin deinstalliert wird, werden alle vorhandenen Blurhash-Metadaten entfernt
+- Admin-API-Ressource zum Entfernen vorhandener Blurhashes
+
+### Fehlerbehebungen
+
+- Rechtschreibfehler und Tippfehler in der deutschen Übersetzung (tinect)
+- Kompatibilitätsprobleme mit PHP 8.0
+
 ## 4.0.1
 
 Dieser Patch behebt einige wichtige Probleme in der emulierten Integration.
@@ -8,7 +23,6 @@ Dieser Patch behebt einige wichtige Probleme in der emulierten Integration.
 - Verzögertes Laden von Bildern mit gleichem Blurhash (z. B. Produkt-Detailseite)
 - Vorladen von Bilder in der richtigen Auflösung (Responsive)
 - Doppeltes laden des Lade-Spinner-Icons
-
 
 # 4.0.0
 

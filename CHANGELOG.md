@@ -1,3 +1,18 @@
+## 4.1.0
+
+### Features
+
+- Remove existing blurhashes via the media browser in the administration
+- Exclude certain folders directly via the media browser in the administration
+- CLI command `ec:blurhash:remove` to remove existing blurhashes
+- When the plugin is uninstalled, all existing blurhash metadata is removed
+- Admin-API resource to remove existing blurhashes
+
+### Bug Fixes
+
+- Misspelling and typo in german translation (tinect)
+- Compatibility issues with PHP 8.0
+
 ## 4.0.1
 
 This patch solves critical issues with the emulated integration.
@@ -8,7 +23,6 @@ This patch solves critical issues with the emulated integration.
 - Deferred loading on images with same blurhash (e.g. product-detail page)
 - Responsive image preload
 - Spinner icon was fetched twice
- 
 
 # 4.0.0
 

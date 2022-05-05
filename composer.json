@@ -2,7 +2,7 @@
   "name": "eyecook/sw-blurhash",
   "description": "Shopware 6 implementation of Blurhash",
   "type": "shopware-platform-plugin",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "license": "Apache-2.0",
   "authors": [
     {
