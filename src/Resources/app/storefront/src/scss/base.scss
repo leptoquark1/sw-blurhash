@@ -1,6 +1,6 @@
 img[data-blurhash] {
   &:not([data-ecb-bh]) {
-   background-repeat: no-repeat;
+    background-repeat: no-repeat;
     background-position: 50% 50%;
     background-origin: content-box;
     background-image: url('../../../bundles/eyecookblurhash/storefront/assets/images/ecb-spinner.svg');
