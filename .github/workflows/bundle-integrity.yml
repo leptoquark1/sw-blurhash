@@ -12,7 +12,6 @@ jobs:
   integrity:
     name: Validate bundle integrity
     runs-on: ubuntu-latest
-    container: shopware/development:7.4-composer-2
 
     steps:
       - name: Checkout
@@ -82,4 +81,4 @@ jobs:
         run: |
           cd "custom/plugins/sw-blurhash"
           composer dump-autoload -d "$(pwd)" --dev
-          php "../../../vendor/bin/phpunit"
+          php "$(pwd)../../../vendor/bin/phpunit"
