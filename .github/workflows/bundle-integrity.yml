@@ -81,6 +81,5 @@ jobs:
         env:
           PROJECT_ROOT: ${{ GITHUB.WORKSPACE }}/shopware
         run: |
-          php "$PROJECT_ROOT/vendor/bin/phpunit" \
-            --bootstrap "$PROJECT_ROOT/custom/plugins/sw-blurhash/tests/TestBootstrap.php" \
-            --configuration "$PROJECT_ROOT/custom/plugins/sw-blurhash/phpunit.xml.dist"
+          cd "$PROJECT_ROOT/custom/plugins/sw-blurhash"
+          php "$PROJECT_ROOT/vendor/bin/phpunit"
