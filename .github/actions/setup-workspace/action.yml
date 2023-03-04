@@ -3,18 +3,8 @@ description: 'Initialize Shopware and install plugin'
 runs:
   using: "composite"
   steps:
-    - name: Shopware Cache Directory
-      id: shopware-cache-dir
-      shell: bash
-      run: |
-        echo "dir=$($GITHUB_WORKSPACE/shopware)" >> $GITHUB_OUTPUT
-    - uses: actions/cache@v3
-      with:
-        path: ${{ steps.shopware-cache-dir.outputs.dir }}
-        key: ${{ runner.os }}-shopware-${{ hashFiles('shopware/**/PLATFORM_COMMIT_SHA') }}
     - id: checkout_shopware_template
       name: Checkout Shopware Template
-      if: steps.cache.outputs.cache-hit != 'true'
       uses: actions/checkout@v2
       with:
         repository: shopware/production
@@ -25,7 +15,6 @@ runs:
       run: |
         ln -sfn "$GITHUB_WORKSPACE/sw-blurhash" "$GITHUB_WORKSPACE/shopware/custom/plugins/sw-blurhash"
     - name: Get Composer Cache Directory
-      if: steps.cache.outputs.cache-hit != 'true'
       id: composer-cache
       shell: bash
       run: |
