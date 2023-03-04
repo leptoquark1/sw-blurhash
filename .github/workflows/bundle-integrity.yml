@@ -81,4 +81,4 @@ jobs:
         run: |
           cd "custom/plugins/sw-blurhash"
           composer dump-autoload -d "$(pwd)" --dev
-          php "$(pwd)../../../vendor/bin/phpunit"
+          php "$(pwd)/../../../vendor/bin/phpunit"
