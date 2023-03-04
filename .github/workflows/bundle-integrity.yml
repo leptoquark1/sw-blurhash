@@ -78,8 +78,8 @@ jobs:
           touch custom/plugins/sw-blurhash/vendor/composer/InstalledVersions.php
       - name: Execute PHPUnit tests
         shell: bash
-        env:
-          PROJECT_ROOT: ${{ GITHUB.WORKSPACE }}/shopware
+        working-directory: shopware
         run: |
-          cd "$PROJECT_ROOT/custom/plugins/sw-blurhash"
-          php "$PROJECT_ROOT/vendor/bin/phpunit"
+          cd "custom/plugins/sw-blurhash"
+          composer dump-autoload -d "$(pwd)" --dev
+          php "../../../vendor/bin/phpunit"
