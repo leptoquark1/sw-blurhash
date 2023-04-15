@@ -1,3 +1,13 @@
+## 5.0.0
+
+### Features
+
+- Maintain compatibility with Shopware 6.5
+
+### Bug Fixes
+
+- Final image jumps when placeholder is replaced (tinect)
+
 ## 4.1.0
 
 ### Features

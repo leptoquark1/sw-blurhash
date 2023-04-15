@@ -1,3 +1,13 @@
+## 5.0.0
+
+### Features
+
+- Gewährleistung der Kompatibilität mit Shopware 6.5
+
+### Fehlerbehebungen
+
+- Das fertige Bild springt, wenn der Platzhalter ersetzt wurde (tinect)
+
 ## 4.1.0
 
 ### Features

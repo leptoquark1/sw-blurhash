@@ -8,6 +8,7 @@
   <img src="https://img.shields.io/github/v/release/leptoquark1/sw-blurhash?include_prereleases&style=flat-square" alt="Current Release">
   <img src="https://img.shields.io/badge/license-Apache%202-green" alt="License">
   <img src="https://img.shields.io/static/v1?label=Shopware&message=%5E6.4.0&color=189EFF&logo=shopware" alt="Shopware Version">
+  <img src="https://img.shields.io/static/v1?label=Shopware&message=%5E6.5.0&color=189EFF&logo=shopware" alt="Shopware Version">
 </p>
 
 **A full integration of [Blurhash](https://blurha.sh/) for Shopware 6.**
@@ -39,19 +40,41 @@
 
 ---
 
-## What is Blurhash
+## About
 
-According to itself, it describes to be as follows
+### What is Blurhash
+
+According [to itself](https://blurha.sh/), it describes to be as follows
 
 > Blurhash is a compact representation of a placeholder for an image.
 
 However, this does not illustrate the enormous clout that this particular feature brings to bear!
 
+
+### What is Blurhash for Shopware
+
+- Optimized Performance & Resources - Generate as efficiently as possible using PHP and Shopware peer dependencies
+- Integration into the default Shopware "Theme System", providing the best possible coverage
+- Fast generation of the Blurhash Teaser Image (decoded Blurhash) in the client browser
+- Comfortable control the processing and integration in the Shopware Administration
+- Configuration of Performance and Quality parameters to fit your needs
+- Options to outsource the generation process to skirt 'PHP', 'Process' or even the 'System' bottlenecks
+
+## Installation
+
+Use one of the recommended ways to install this plugin in your Shopware Installation:
+
+- Directly from [Extension Store](https://store.shopware.com/en/eyeco82567775599f/blurhash-teaser-your-images.html) in your Shopware Administration
+- Clone this repository into the `custom/plugins` folder and install it using command line `bin/console plugin:install --refresh EyecookBlurhash`
+<!-- - 🎉 **New** -  Using composer: `composer require leptoquark1/sw-blurhash` and install it using command line `bin/console plugin:install --refresh EyecookBlurhash` --> 
+
+This plugin is free and open source. But if you like this plugin you can support me by buying a version with support using the [Official Extension Store](https://store.shopware.com/en/eyeco82567775599f/blurhash-teaser-your-images.html?number=eyeco82567775599s) 
+
 ## System Requirements
 
 ### PHP Extensions
 
-- PHP version >=7.4.3 | >=8.x
+- PHP version 8.1.* | 8.2.*
 - ext-gd (GD Graphics Library)
 - ext-json
 

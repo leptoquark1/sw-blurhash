@@ -2,7 +2,7 @@
   "name": "eyecook/sw-blurhash",
   "description": "Shopware 6 implementation of Blurhash",
   "type": "shopware-platform-plugin",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "license": "Apache-2.0",
   "authors": [
     {
@@ -28,22 +28,22 @@
     }
   },
   "require": {
-    "php": "^7.4 || ^8.0",
+    "php": "~8.1.0 || ~8.2.0",
     "ext-gd": "*",
     "ext-json": "*",
-    "shopware/core": "~6.4.0"
+    "shopware/core": "~6.5.0"
   },
   "suggest": {
     "shopware/storefront": "Require '*'. Blurhash Storefront integration",
     "shopware/administration": "Require '*'. Easy Blurhash set up and configuration"
   },
   "conflict": {
-    "shopware/storefront": "<6.4,>=7",
-    "shopware/administration": "<6.4,>=7"
+    "shopware/storefront": "<6.5,>=7",
+    "shopware/administration": "<6.5,>=7"
   },
   "extra": {
     "shopware-plugin-class": "Eyecook\\Blurhash\\EyecookBlurhash",
-    "copyright": "David Fecke (leptoquark)",
+    "copyright": "David Fecke (leptoquark1)",
     "manufacturerLink": {
       "de-DE": "https://eyecook.net",
       "en-GB": "https://eyecook.net"
