@@ -9,7 +9,7 @@ use Eyecook\Blurhash\Test\ConfigMockStub;
 use Eyecook\Blurhash\Test\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsFilter;
 use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
@@ -24,11 +24,11 @@ class HashMediaProviderTest extends TestCase
     use ConfigMockStub, IntegrationTestBehaviour, HashMediaFixtures;
 
     protected Context $context;
-    protected EntityRepositoryInterface $mediaRepository;
-    protected EntityRepositoryInterface $mediaFolderRepository;
-    protected HashMediaProvider $provider;
-    protected MediaValidator $validator;
-    protected EntityRepositoryInterface $tagRepository;
+    protected ?EntityRepository $mediaRepository;
+    protected ?EntityRepository $mediaFolderRepository;
+    protected ?HashMediaProvider $provider;
+    protected ?MediaValidator $validator;
+    protected ?EntityRepository $tagRepository;
 
     protected function setUp(): void
     {

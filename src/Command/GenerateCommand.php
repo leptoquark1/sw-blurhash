@@ -10,7 +10,7 @@ use Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaProvider;
 use Eyecook\Blurhash\Message\GenerateHashMessage;
 use Shopware\Core\Content\Media\MediaCollection;
 use Shopware\Core\Content\Media\MediaEntity;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
 use Symfony\Component\Console\Command\Command;
@@ -38,25 +38,13 @@ class GenerateCommand extends AbstractCommand
 {
     use AcceptEntitiesArgument;
 
-    protected MessageBusInterface $messageBus;
-    protected EntityRepositoryInterface $mediaRepository;
-    protected EntityRepositoryInterface $mediaFolderRepository;
-    protected HashMediaService $hashMediaService;
-    protected HashMediaProvider $hashMediaProvider;
-
     public function __construct(
-        MessageBusInterface $messageBus,
-        EntityRepositoryInterface $mediaRepository,
-        EntityRepositoryInterface $mediaFolderRepository,
-        HashMediaService $hashMediaService,
-        HashMediaProvider $hashMediaProvider
+        protected readonly MessageBusInterface $messageBus,
+        protected readonly EntityRepository $mediaRepository,
+        protected readonly EntityRepository $mediaFolderRepository,
+        protected readonly HashMediaService $hashMediaService,
+        protected readonly HashMediaProvider $hashMediaProvider
     ) {
-        $this->messageBus = $messageBus;
-        $this->mediaRepository = $mediaRepository;
-        $this->mediaFolderRepository = $mediaFolderRepository;
-        $this->hashMediaService = $hashMediaService;
-        $this->hashMediaProvider = $hashMediaProvider;
-
         parent::__construct('generate');
     }
 

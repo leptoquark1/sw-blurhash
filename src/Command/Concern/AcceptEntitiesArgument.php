@@ -4,7 +4,7 @@ namespace Eyecook\Blurhash\Command\Concern;
 
 use Eyecook\Blurhash\Command\AbstractCommand;
 use Shopware\Core\Content\Media\Aggregate\MediaFolder\MediaFolderEntity;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Aggregation\Bucket\TermsAggregation;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\AggregationResult\AggregationResult;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
@@ -116,7 +116,7 @@ trait AcceptEntitiesArgument
             ->addAssociations(['defaultFolder', 'media'])
             ->addAggregation(new TermsAggregation('media-in-folder-count', 'media.mediaFolderId'));
 
-        /** @var EntityRepositoryInterface $mediaFolderRepository */
+        /** @var EntityRepository $mediaFolderRepository */
         $mediaFolderRepository = $this->container->get('media_folder.repository');
 
         $result = $mediaFolderRepository->search($criteria, $this->context);

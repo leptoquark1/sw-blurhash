@@ -7,7 +7,7 @@ use Eyecook\Blurhash\Hash\Filter\HasHashFilter;
 use Eyecook\Blurhash\Hash\Filter\NoHashFilter;
 use Eyecook\Blurhash\Hash\Media\MediaTypesEnum;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\EntitySearchResult;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
@@ -23,19 +23,13 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\IdSearchResult;
  */
 class HashMediaProvider
 {
-    protected ConfigService $config;
-    protected EntityRepositoryInterface $mediaRepository;
-
-    public function __construct(ConfigService $config, EntityRepositoryInterface $mediaRepository)
-    {
-        $this->config = $config;
-        $this->mediaRepository = $mediaRepository;
+    public function __construct(
+        protected readonly ConfigService $config,
+        protected readonly EntityRepository $mediaRepository
+    ) {
     }
 
-    /**
-     * @param array|Criteria|null $paramsOrCriteria
-     */
-    public static function buildCriteria($paramsOrCriteria = []): Criteria
+    public static function buildCriteria(array|Criteria|null $paramsOrCriteria = []): Criteria
     {
         $criteria = $paramsOrCriteria instanceof Criteria
             ? $paramsOrCriteria
