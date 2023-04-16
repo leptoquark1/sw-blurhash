@@ -6,7 +6,7 @@ use Eyecook\Blurhash\Hash\Filter\HasHashFilter;
 use Eyecook\Blurhash\Test\ApiEndpointStub;
 use Eyecook\Blurhash\Test\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 
 /**
@@ -23,7 +23,7 @@ class RemovalControllerTest extends TestCase
 
     protected const REMOVE_BY_MEDIA_URL = '/api/_action/eyecook/blurhash/remove/media';
     protected const REMOVE_BY_FOLDER_URL = '/api/_action/eyecook/blurhash/remove/folder';
-    protected EntityRepositoryInterface $mediaRepository;
+    protected EntityRepository $mediaRepository;
 
     protected function setUp(): void
     {

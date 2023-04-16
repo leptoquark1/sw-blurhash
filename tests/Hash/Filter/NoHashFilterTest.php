@@ -6,7 +6,7 @@ use Eyecook\Blurhash\Hash\Filter\NoHashFilter;
 use Eyecook\Blurhash\Test\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
 
@@ -18,7 +18,7 @@ class NoHashFilterTest extends TestCase
 {
     use IntegrationTestBehaviour, HashMediaFixtures;
 
-    private EntityRepositoryInterface $mediaRepository;
+    private ?EntityRepository $mediaRepository;
     private Context $context;
 
     protected function setUp(): void

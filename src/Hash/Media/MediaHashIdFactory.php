@@ -5,7 +5,7 @@ namespace Eyecook\Blurhash\Hash\Media;
 use Eyecook\Blurhash\Configuration\ConfigService;
 use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Exception\EntityNotFoundException;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 
@@ -16,18 +16,11 @@ use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
  * @author David Fecke (+leptoquark1)
  */
 class MediaHashIdFactory {
-    protected ConfigService $config;
-    protected MediaValidator $mediaValidator;
-    protected EntityRepositoryInterface $mediaRepository;
-
     public function __construct(
-        ConfigService $config,
-        MediaValidator $mediaValidator,
-        EntityRepositoryInterface $mediaRepository
+        protected readonly ConfigService $config,
+        protected readonly MediaValidator $mediaValidator,
+        protected readonly EntityRepository $mediaRepository
     ) {
-        $this->config = $config;
-        $this->mediaValidator = $mediaValidator;
-        $this->mediaRepository = $mediaRepository;
     }
 
     public function fromMedia(MediaEntity $entity): ?MediaHashId

@@ -11,7 +11,7 @@ use Eyecook\Blurhash\Test\ConfigMockStub;
 use Eyecook\Blurhash\Test\HashMediaFixtures;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Content\Media\MediaEntity;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Command\Command;
@@ -157,7 +157,7 @@ class GenerateCommandTest extends TestCase
         $testEntityName = 'test_media';
 
         // Create a default folder for which entityName is used as command parameter
-        /** @var EntityRepositoryInterface $mediaDefaultFolderRepository */
+        /** @var EntityRepository $mediaDefaultFolderRepository */
         $mediaDefaultFolderId = Uuid::randomHex();
         self::getFixtureRepository('media_default_folder')->create([
             [

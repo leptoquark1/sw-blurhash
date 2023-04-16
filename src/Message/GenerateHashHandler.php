@@ -7,7 +7,7 @@ use Eyecook\Blurhash\Hash\HashMediaService;
 use Psr\Log\LoggerInterface;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
-use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
+use Shopware\Core\Framework\DataAbstractionLayer\EntityRepository;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -21,13 +21,13 @@ class GenerateHashHandler
 {
     protected ConfigService $config;
     protected HashMediaService $hashMediaService;
-    protected EntityRepositoryInterface $mediaRepository;
+    protected EntityRepository $mediaRepository;
     protected LoggerInterface $logger;
 
     public function __construct(
         ConfigService $config,
         HashMediaService $hashMediaService,
-        EntityRepositoryInterface $mediaRepository,
+        EntityRepository $mediaRepository,
         LoggerInterface $logger
     ) {
         $this->config = $config;
