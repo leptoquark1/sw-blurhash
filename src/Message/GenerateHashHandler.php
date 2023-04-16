@@ -10,13 +10,14 @@ use Shopware\Core\Framework\DataAbstractionLayer\EntityCollection;
 use Shopware\Core\Framework\DataAbstractionLayer\EntityRepositoryInterface;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Criteria;
 use Shopware\Core\Framework\DataAbstractionLayer\Search\Filter\EqualsAnyFilter;
-use Shopware\Core\Framework\MessageQueue\Handler\AbstractMessageHandler;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
  * @package Eyecook\Blurhash
  * @author David Fecke (+leptoquark1)
  */
-class GenerateHashHandler extends AbstractMessageHandler
+#[AsMessageHandler(handles: GenerateHashMessage::class)]
+class GenerateHashHandler
 {
     protected ConfigService $config;
     protected HashMediaService $hashMediaService;
@@ -35,9 +36,9 @@ class GenerateHashHandler extends AbstractMessageHandler
         $this->logger = $logger;
     }
 
-    public static function getHandledMessages(): iterable
+    public function __invoke(GenerateHashMessage $message): void
     {
-        return [GenerateHashMessage::class];
+        $this->handle($message);
     }
 
     public function handle($message): void
