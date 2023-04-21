@@ -6,7 +6,7 @@ use Eyecook\Blurhash\Configuration\ConfigService;
 use Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaUpdater;
 use Eyecook\Blurhash\Hash\Media\MediaHashId;
 use Eyecook\Blurhash\Hash\Media\MediaHashIdFactory;
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\FilesystemOperator;
 use Shopware\Core\Content\Media\Aggregate\MediaThumbnail\MediaThumbnailEntity;
 use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Content\Media\Pathname\UrlGeneratorInterface;
@@ -18,34 +18,19 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
  */
 class HashMediaService
 {
-    protected ConfigService $config;
-    protected MediaHashIdFactory $hashFactory;
-    protected HashGeneratorInterface $hashGenerator;
-    protected UrlGeneratorInterface $urlGenerator;
-    protected FilesystemInterface $filesystemPublic;
-    protected FilesystemInterface $filesystemPrivate;
-    protected HashMediaUpdater $hashMediaUpdater;
-
     public function __construct(
-        ConfigService $config,
-        MediaHashIdFactory $hashFactory,
-        HashGeneratorInterface $hashGenerator,
-        UrlGeneratorInterface $urlGenerator,
-        FilesystemInterface $filesystemPublic,
-        FilesystemInterface $filesystemPrivate,
-        HashMediaUpdater $hashMediaUpdater
+        protected readonly ConfigService $config,
+        protected readonly MediaHashIdFactory $hashFactory,
+        protected readonly HashGeneratorInterface $hashGenerator,
+        protected readonly UrlGeneratorInterface $urlGenerator,
+        protected readonly FilesystemOperator $filesystemPublic,
+        protected readonly FilesystemOperator $filesystemPrivate,
+        protected readonly HashMediaUpdater $hashMediaUpdater
     ) {
-        $this->config = $config;
-        $this->hashFactory = $hashFactory;
-        $this->hashGenerator = $hashGenerator;
-        $this->urlGenerator = $urlGenerator;
-        $this->filesystemPublic = $filesystemPublic;
-        $this->filesystemPrivate = $filesystemPrivate;
-        $this->hashMediaUpdater = $hashMediaUpdater;
     }
 
     /**
-     * @throws \League\Flysystem\FileNotFoundException
+     * @throws \League\Flysystem\FilesystemException
      * @throws \Doctrine\DBAL\Exception
      */
     public function processHashForMedia(MediaEntity $media): ?string
@@ -71,6 +56,7 @@ class HashMediaService
     }
 
     /**
+     * @throws \League\Flysystem\FilesystemException
      * @throws FileNotFoundException
      */
     protected function getPhysicalFilePath(MediaEntity $media, MediaHashId $mediaHashId): string
@@ -128,8 +114,10 @@ class HashMediaService
             || $width > $this->config->getThumbnailThresholdWidth();
     }
 
-    private function getFileSystem(MediaEntity $media): FilesystemInterface
+    private function getFileSystem(MediaEntity $media): FilesystemOperator
     {
-        return $media->isPrivate() ? $this->filesystemPrivate : $this->filesystemPublic;
+        return $media->isPrivate()
+            ? $this->filesystemPrivate
+            : $this->filesystemPublic;
     }
 }
