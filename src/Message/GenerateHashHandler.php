@@ -19,21 +19,12 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler(handles: GenerateHashMessage::class)]
 class GenerateHashHandler
 {
-    protected ConfigService $config;
-    protected HashMediaService $hashMediaService;
-    protected EntityRepository $mediaRepository;
-    protected LoggerInterface $logger;
-
     public function __construct(
-        ConfigService $config,
-        HashMediaService $hashMediaService,
-        EntityRepository $mediaRepository,
-        LoggerInterface $logger
+        protected readonly ConfigService $config,
+        protected readonly HashMediaService $hashMediaService,
+        protected readonly EntityRepository $mediaRepository,
+        protected readonly LoggerInterface $logger
     ) {
-        $this->config = $config;
-        $this->hashMediaService = $hashMediaService;
-        $this->mediaRepository = $mediaRepository;
-        $this->logger = $logger;
     }
 
     public function __invoke(GenerateHashMessage $message): void

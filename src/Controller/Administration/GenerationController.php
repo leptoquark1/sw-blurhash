@@ -30,15 +30,11 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class GenerationController extends AbstractApiController
 {
-    protected MessageBusInterface $messageBus;
-    protected MediaValidator $mediaValidator;
-    protected HashMediaProvider $hashMediaProvider;
-
-    public function __construct(MessageBusInterface $messageBus, MediaValidator $mediaValidator, HashMediaProvider $hashMediaProvider)
-    {
-        $this->messageBus = $messageBus;
-        $this->mediaValidator = $mediaValidator;
-        $this->hashMediaProvider = $hashMediaProvider;
+    public function __construct(
+        protected readonly MessageBusInterface $messageBus,
+        protected readonly MediaValidator $mediaValidator,
+        protected readonly HashMediaProvider $hashMediaProvider
+    ) {
     }
 
     /**
