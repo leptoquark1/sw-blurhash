@@ -12,14 +12,16 @@ class ConfigService
 {
     protected bool $isProductionMode = false;
     protected bool $isAdminWorkerEnabled = true;
-    protected SystemConfigService $systemConfig;
     protected array $config = [];
 
-    public function __construct(string $appEnv, bool $adminWorkerEnabled, SystemConfigService $systemConfig)
+    public function __construct(
+        string $appEnv,
+        bool $adminWorkerEnabled,
+        protected readonly SystemConfigService $systemConfig
+    )
     {
         $this->isProductionMode = $appEnv === 'prod';
         $this->isAdminWorkerEnabled = $adminWorkerEnabled;
-        $this->systemConfig = $systemConfig;
     }
 
     public function isPluginManualMode(): bool

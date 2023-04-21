@@ -25,13 +25,10 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class RemovalController extends AbstractApiController
 {
-    protected HashMediaProvider $hashMediaProvider;
-    protected HashMediaUpdater $hashMediaUpdater;
-
-    public function __construct(HashMediaProvider $hashMediaProvider, HashMediaUpdater $hashMediaUpdater)
-    {
-        $this->hashMediaProvider = $hashMediaProvider;
-        $this->hashMediaUpdater = $hashMediaUpdater;
+    public function __construct(
+        protected readonly HashMediaProvider $hashMediaProvider,
+        protected readonly HashMediaUpdater $hashMediaUpdater
+    ) {
     }
 
     /**

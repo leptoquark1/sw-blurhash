@@ -11,11 +11,8 @@ use Symfony\Component\Messenger\Stamp\DispatchAfterCurrentBusStamp;
 
 class DelegateMessagesSubscriber implements EventSubscriberInterface
 {
-    protected MessageBusInterface $messageBus;
-
-    public function __construct(MessageBusInterface $messageBus)
+    public function __construct(protected readonly MessageBusInterface $messageBus)
     {
-        $this->messageBus = $messageBus;
     }
 
     public static function getSubscribedEvents(): array

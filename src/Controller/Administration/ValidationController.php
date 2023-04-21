@@ -23,11 +23,8 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ValidationController extends AbstractApiController
 {
-    protected MediaValidator $mediaValidator;
-
-    public function __construct(MediaValidator $mediaValidator)
+    public function __construct(protected readonly MediaValidator $mediaValidator)
     {
-        $this->mediaValidator = $mediaValidator;
     }
 
     /**
