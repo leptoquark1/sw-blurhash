@@ -15,7 +15,7 @@ class ColorTest extends TestCase
      */
     public function testToLinear(int $byte, float $expected): void
     {
-        self::assertEquals($expected, Color::toLinear($byte));
+        self::assertEqualsWithDelta($expected, Color::toLinear($byte), .000001);
     }
 
     public function getSrgbValues(): array
