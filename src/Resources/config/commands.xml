@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+
+        <service id="Eyecook\Blurhash\Command\AbstractCommand" abstract="true">
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+
+            <call method="setConfigService">
+                <argument type="service" id="Eyecook\Blurhash\Configuration\ConfigService"/>
+            </call>
+        </service>
+
+        <service id="Eyecook\Blurhash\Command\GenerateCommand" parent="Eyecook\Blurhash\Command\AbstractCommand">
+            <argument type="service" id="messenger.bus.shopware"/>
+            <argument type="service" id="media.repository"/>
+            <argument type="service" id="media_folder.repository"/>
+            <argument type="service" id="Eyecook\Blurhash\Hash\HashMediaService"/>
+            <argument type="service" id="Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaProvider"/>
+
+            <tag name="console.command"/>
+        </service>
+
+        <service id="Eyecook\Blurhash\Command\RemoveCommand" parent="Eyecook\Blurhash\Command\AbstractCommand">
+            <argument type="service" id="Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaProvider"/>
+            <argument type="service" id="Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaUpdater"/>
+
+            <tag name="console.command"/>
+        </service>
+
+    </services>
+</container>

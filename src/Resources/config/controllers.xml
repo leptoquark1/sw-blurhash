@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <services>
+        <defaults public="true" />
+
+        <service id="Eyecook\Blurhash\Controller\Administration\GenerationController">
+            <argument type="service" id="messenger.bus.shopware"/>
+            <argument type="service" id="Eyecook\Blurhash\Hash\Media\MediaValidator"/>
+            <argument type="service" id="Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaProvider"/>
+
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
+        <service id="Eyecook\Blurhash\Controller\Administration\ValidationController">
+            <argument type="service" id="Eyecook\Blurhash\Hash\Media\MediaValidator"/>
+
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+
+        <service id="Eyecook\Blurhash\Controller\Administration\RemovalController" public="true">
+            <argument type="service" id="Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaProvider"/>
+            <argument type="service" id="Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaUpdater"/>
+
+            <call method="setContainer">
+                <argument type="service" id="service_container"/>
+            </call>
+        </service>
+    </services>
+</container>

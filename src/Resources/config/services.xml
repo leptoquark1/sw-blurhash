@@ -2,9 +2,17 @@
 <container xmlns="http://symfony.com/schema/dic/services"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+
+    <imports>
+        <import resource="commands.xml" />
+        <import resource="controllers.xml" />
+    </imports>
+
     <parameters>
         <parameter key="env(APP_ENV)">prod</parameter>
     </parameters>
+
     <services>
         <service id="Eyecook\Blurhash\Configuration\ConfigService" public="true">
             <argument>%env(APP_ENV)%</argument>
@@ -66,62 +74,11 @@
             <tag name="kernel.event_subscriber"/>
         </service>
 
-        <service id="Eyecook\Blurhash\Command\AbstractCommand" abstract="true">
-            <call method="setContainer">
-                <argument type="service" id="service_container"/>
-            </call>
-            <call method="setConfigService">
-                <argument type="service" id="Eyecook\Blurhash\Configuration\ConfigService"/>
-            </call>
-        </service>
-
-        <service id="Eyecook\Blurhash\Command\GenerateCommand" parent="Eyecook\Blurhash\Command\AbstractCommand">
-            <argument type="service" id="messenger.bus.shopware"/>
-            <argument type="service" id="media.repository"/>
-            <argument type="service" id="media_folder.repository"/>
-            <argument type="service" id="Eyecook\Blurhash\Hash\HashMediaService"/>
-            <argument type="service" id="Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaProvider"/>
-
-            <tag name="console.command"/>
-        </service>
-
-        <service id="Eyecook\Blurhash\Command\RemoveCommand" parent="Eyecook\Blurhash\Command\AbstractCommand">
-            <argument type="service" id="Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaProvider"/>
-            <argument type="service" id="Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaUpdater"/>
-
-            <tag name="console.command"/>
-        </service>
-
         <service id="Eyecook\Blurhash\Configuration\Twig\ConfigTwigExtension">
             <argument type="service" id="Eyecook\Blurhash\Configuration\ConfigService"/>
+
             <tag name="twig.extension"/>
         </service>
 
-        <service id="Eyecook\Blurhash\Controller\Administration\GenerationController" public="true">
-            <argument type="service" id="messenger.bus.shopware"/>
-            <argument type="service" id="Eyecook\Blurhash\Hash\Media\MediaValidator"/>
-            <argument type="service" id="Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaProvider"/>
-
-            <call method="setContainer">
-                <argument type="service" id="service_container"/>
-            </call>
-        </service>
-
-        <service id="Eyecook\Blurhash\Controller\Administration\ValidationController" public="true">
-            <argument type="service" id="Eyecook\Blurhash\Hash\Media\MediaValidator"/>
-
-            <call method="setContainer">
-                <argument type="service" id="service_container"/>
-            </call>
-        </service>
-
-        <service id="Eyecook\Blurhash\Controller\Administration\RemovalController" public="true">
-            <argument type="service" id="Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaProvider"/>
-            <argument type="service" id="Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaUpdater"/>
-
-            <call method="setContainer">
-                <argument type="service" id="service_container"/>
-            </call>
-        </service>
     </services>
 </container>
