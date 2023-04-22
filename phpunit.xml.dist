@@ -7,12 +7,14 @@
          executionOrder="depends,random">
 
     <php>
+        <ini name="memory_limit" value="512M" />
         <ini name="error_reporting" value="-1"/>
-        <server name="KERNEL_CLASS" value="Shopware\Production\Kernel"/>
+        <server name="KERNEL_CLASS" value="Shopware\Core\Kernel"/>
         <env name="APP_ENV" value="test"/>
         <env name="APP_DEBUG" value="1"/>
         <env name="APP_SECRET" value="s$cretf0rt3st"/>
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="disabled=1"/>
+        <env name="SHOPWARE_HTTP_CACHE_ENABLED" value="0" />
     </php>
 
     <testsuites>
