@@ -7,7 +7,6 @@ use Eyecook\Blurhash\Hash\Media\DataAbstractionLayer\HashMediaProvider;
 use Eyecook\Blurhash\Hash\Media\MediaValidator;
 use Shopware\Core\Framework\Context;
 use Shopware\Core\Framework\DataAbstractionLayer\Exception\EntityNotFoundException;
-use Shopware\Core\Framework\Routing\Annotation\RouteScope;
 use Shopware\Core\Framework\Routing\Exception\MissingRequestParameterException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,26 +14,17 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @RouteScope(scopes={"api"})
- *
  * @package Eyecook\Blurhash
  * @author David Fecke (+leptoquark1)
- * @
  */
+#[Route(defaults: ['_routeScope' => ['api']])]
 class ValidationController extends AbstractApiController
 {
     public function __construct(protected readonly MediaValidator $mediaValidator)
     {
     }
 
-    /**
-     * @Route(
-     *     "/api/_action/eyecook/blurhash/validator/media/{mediaId}",
-     *     name="api.action.eyecook.blurhash.validator.media-id",
-     *     defaults={"auth_required"=true},
-     *     methods={"GET"}
-     * )
-     */
+    #[Route(path: '/api/_action/eyecook/blurhash/validator/media/{mediaId}', name: 'api.action.eyecook.blurhash.validator.media-id', defaults: ['auth_required' => true], methods: ['GET'])]
     public function mediaIsValid(string $mediaId, Request $request, Context $context): JsonResponse
     {
         if (!$mediaId) {
@@ -65,14 +55,7 @@ class ValidationController extends AbstractApiController
         ], Response::HTTP_OK);
     }
 
-    /**
-     * @Route(
-     *     "/api/_action/eyecook/blurhash/validator/folder/{folderId}",
-     *     name="api.action.eyecook.blurhash.validator.folder-id",
-     *     defaults={"auth_required"=true},
-     *     methods={"GET"}
-     * )
-     */
+    #[Route(path: '/api/_action/eyecook/blurhash/validator/folder/{folderId}', name: 'api.action.eyecook.blurhash.validator.folder-id', defaults: ['auth_required' => true], methods: ['GET'])]
     public function folderIsValid(string $folderId, Request $request, Context $context): JsonResponse
     {
         if (!$folderId) {
