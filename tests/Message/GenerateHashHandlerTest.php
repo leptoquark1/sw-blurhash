@@ -81,7 +81,7 @@ class GenerateHashHandlerTest extends TestCase
     public function testIsMessageValidThrows($message): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->handler->handle($message);
+        $this->handler->__invoke($message);
     }
 
     public function invalidMessageProvider(): array
@@ -101,12 +101,12 @@ class GenerateHashHandlerTest extends TestCase
     {
         $mock = $this->getMockBuilder(GenerateHashHandler::class)
             ->setConstructorArgs($this->getMockConstructorArgs(GenerateHashHandler::class))
-            ->onlyMethods(['handleMessage'])->getMock();
+            ->onlyMethods(['handle'])->getMock();
 
-        $mock->expects($this->exactly(0))->method('handleMessage');
+        $mock->expects($this->exactly(0))->method('handler');
 
         $this->setSystemConfigMock(Config::PATH_MANUAL_MODE, $ignoreManualMode);
-        $mock->handle($message);
+        $mock->__invoke($message);
     }
 
     public function testHandleMethodNotCallsHandleMessageWhenMessageInvalid(): void
@@ -115,9 +115,9 @@ class GenerateHashHandlerTest extends TestCase
 
         // Expect not call to handleMessage when isValidMessage returns false
         $mock->method('isMessageValid')->willReturn(false);
-        $mock->expects($this->never())->method('handleMessage');
+        $mock->expects($this->never())->method('handler');
 
-        $mock->handle($this->createMessage([], false));
+        $mock->__invoke($this->createMessage([], false));
     }
 
     public function testHandleMethodCallsHandleMessageWhenMessageValid(): void
@@ -129,11 +129,11 @@ class GenerateHashHandlerTest extends TestCase
 
         $mock->method('isMessageValid')->willReturn(true);
         $mock->expects($this->atLeastOnce())
-            ->method('handleMessage')
+            ->method('handler')
             ->with($message->getMediaIds(), $message->readContext())
             ->willReturnCallback(ProviderUtils::generator());
 
-        $mock->handle($message);
+        $mock->__invoke($message);
     }
 
     /**
@@ -145,7 +145,7 @@ class GenerateHashHandlerTest extends TestCase
         $criteria->addFilter(new EqualsAnyFilter('media.id', $mediaIds));
 
         $searchResultMock = $this->createStub(EntitySearchResult::class);
-        $searchResultMock->method('getEntities')->willReturn(new EntityCollection([])); // We dont need to actually process
+        $searchResultMock->method('getEntities')->willReturn(new EntityCollection([])); // We don't need to actually process
 
         $mockMediaRepository = $this->createStub(EntityRepository::class);
         // Expect one call to search method
@@ -163,7 +163,7 @@ class GenerateHashHandlerTest extends TestCase
 
         $mockHandler->method('isMessageValid')->willReturn(true); // Make sure validation is not breaking this test
 
-        $mockHandler->handle($this->createMessage($mediaIds, true));
+        $mockHandler->__invoke($this->createMessage($mediaIds, true));
     }
 
     /**
@@ -217,7 +217,7 @@ class GenerateHashHandlerTest extends TestCase
         $handlerMock->expects($this->once())->method('isMessageValid')->willReturn(true);
         $handlerMock->expects($this->once())->method('getMediaByIds')->willReturn($collection);
 
-        $handlerMock->handle($this->createMessage($mediaIds, true));
+        $handlerMock->__invoke($this->createMessage($mediaIds, true));
     }
 
     private function createMessage(array $mediaIds, bool $ignoreManualMode): GenerateHashMessage

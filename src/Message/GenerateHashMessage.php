@@ -3,6 +3,7 @@
 namespace Eyecook\Blurhash\Message;
 
 use Shopware\Core\Framework\Context;
+use Shopware\Core\Framework\MessageQueue\AsyncMessageInterface;
 
 /**
  * Message that can be emitted to (re)generate Blurhash for specific media entities
@@ -10,7 +11,7 @@ use Shopware\Core\Framework\Context;
  * @package Eyecook\Blurhash
  * @author David Fecke (+leptoquark1)
  */
-class GenerateHashMessage
+class GenerateHashMessage implements AsyncMessageInterface
 {
     protected array $mediaIds = [];
     protected bool $ignoreManualMode = false;

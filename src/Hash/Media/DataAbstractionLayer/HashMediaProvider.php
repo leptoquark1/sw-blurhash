@@ -33,7 +33,7 @@ class HashMediaProvider
     {
         $criteria = $paramsOrCriteria instanceof Criteria
             ? $paramsOrCriteria
-            : new Criteria($paramsOrCriteria ?? []);
+            : new Criteria($paramsOrCriteria ?? null);
 
         self::addAssociations($criteria);
 
