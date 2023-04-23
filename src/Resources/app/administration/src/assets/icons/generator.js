@@ -11,7 +11,7 @@ export default (() => {
         const data = elementContext.data;
 
         return createElement('span', {
-          class: [data.staticClass, data.class],
+          class: [data.staticClass, data.class, 'ecb-icon'],
           style: data.style,
           attrs: data.attrs,
           on: data.on,

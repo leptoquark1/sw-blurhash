@@ -5,11 +5,24 @@
   flex-direction: column;
   padding-top: 16px;
   margin-top: 8px;
-  border-top: 1px dashed $color-gray-300;
+
+  &:not(.ecb-qa-disabled-title) {
+    border-top: 1px dashed $color-gray-300;
+  }
 
   .sw-media-quickinfo__quickactions-blurhash__header {
     display: flex;
     justify-content: space-between;
+  }
+
+  &.ecb-qa-disabled-title {
+    padding-top: 0;
+    margin-top: 0;
+
+    .sw-media-quickinfo__quickactions-blurhash__header {
+      justify-content: end;
+      padding-bottom: 8px
+    }
   }
 
   .ecb-validation--status-invalid {

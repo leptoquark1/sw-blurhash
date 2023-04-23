@@ -1,14 +1,14 @@
-<div class="sw-media-quickinfo__quickactions-blurhash">
+<div class="sw-media-quickinfo__quickactions-blurhash" :class="[disableTitle ? 'ecb-qa-disabled-title' : '']">
     {% block ecb_media_quickactions_content_blurhash_header %}
     <div class="sw-media-quickinfo__quickactions-blurhash__header">
         {% block ecb_media_quickactions_content_blurhash_header_inner %}
-            <h4 class="sw-media-collapse__title">
+            <h4 class="sw-media-collapse__title" v-if="!disableTitle">
                 {{ $t('ecBlurhash.general.blurhash') }}
             </h4>
 
             <sw-icon v-if="isValidating" small
                      class="sw-media-base-item__loader ecb-validation--status-loading"
-                     name="default-web-loading-star"
+                     name="regular-spinner-star"
             ></sw-icon>
             <template v-else>
                 <span v-if="isValid" class="ecb-validation--status-valid">

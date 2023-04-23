@@ -1,70 +1,75 @@
-{% block sw_media_quickinfo_folder_quickactions_content %}
+{% block sw_media_quickinfo_folder_quickactions %}
     {% parent %}
-
-    <template slot="content">
-
+    <sw-media-collapse
+        v-if="editable"
+        :title="$tc('ecBlurhash.general.blurhash')"
+        :expand-on-loading="true"
+    >
         {% block sw_media_quickinfo_folder_quickactions_content_blurhash_actions %}
-            <ecb-quick-actions
-                :isValid="isEcbValid"
-                :isValidating="isEcbValidating"
-                validationErrorText="ecBlurhash.general.validation.folder.notQualified"
-            >
-                <template slot="actions">
+            <template #content>
+                <ecb-quick-actions
+                    :disableTitle="true"
+                    :isValid="isEcbValid"
+                    :isValidating="isEcbValidating"
+                    validationErrorText="ecBlurhash.general.validation.folder.notQualified"
+                >
+                    <template slot="actions">
 
-                    {% block sw_media_quickinfo_folder_quickactions_content_blurhash_action_generate_missing %}
-                        <ecb-quick-action
-                            @click="onGenerateMissingActionClick"
-                            icon="default-object-paint"
-                            title="ecBlurhash.general.generation.folder.help"
-                            text="ecBlurhash.general.generation.start"
-                            :disabled="canEcbGenerate === false || isEcbLoading"
-                        ></ecb-quick-action>
-                    {% endblock %}
+                        {% block sw_media_quickinfo_folder_quickactions_content_blurhash_action_generate_missing %}
+                            <ecb-quick-action
+                                @click="onGenerateMissingActionClick"
+                                icon="regular-forklift"
+                                title="ecBlurhash.general.generation.folder.help"
+                                text="ecBlurhash.general.generation.start"
+                                :disabled="canEcbGenerate === false || isEcbLoading"
+                            ></ecb-quick-action>
+                        {% endblock %}
 
-                    {% block sw_media_quickinfo_folder_quickactions_content_blurhash_action_generate_all %}
-                        <ecb-quick-action
-                            @click="onGenerateAllActionClick"
-                            icon="default-object-paint"
-                            title="ecBlurhash.general.generation.folder.helpForce"
-                            text="ecBlurhash.general.generation.refreshAll"
-                            :disabled="canEcbGenerate === false || isEcbLoading"
-                        ></ecb-quick-action>
-                    {% endblock %}
+                        {% block sw_media_quickinfo_folder_quickactions_content_blurhash_action_generate_all %}
+                            <ecb-quick-action
+                                @click="onGenerateAllActionClick"
+                                icon="regular-forklift"
+                                title="ecBlurhash.general.generation.folder.helpForce"
+                                text="ecBlurhash.general.generation.refreshAll"
+                                :disabled="canEcbGenerate === false || isEcbLoading"
+                            ></ecb-quick-action>
+                        {% endblock %}
 
-                    {% block sw_media_quickinfo_folder_quickactions_content_blurhash_action_remove %}
-                        <ecb-quick-action
-                            @click="onRemoveAllActionClick"
-                            icon="default-action-trash"
-                            color="#fc427b"
-                            title="ecBlurhash.general.removal.folder.help"
-                            text="ecBlurhash.general.removal.folder.label"
-                            :disabled="isEcbLoading"
-                        ></ecb-quick-action>
+                        {% block sw_media_quickinfo_folder_quickactions_content_blurhash_action_remove %}
+                            <ecb-quick-action
+                                @click="onRemoveAllActionClick"
+                                icon="regular-trash"
+                                color="#fc427b"
+                                title="ecBlurhash.general.removal.folder.help"
+                                text="ecBlurhash.general.removal.folder.label"
+                                :disabled="isEcbLoading"
+                            ></ecb-quick-action>
 
-                    {% endblock %}
+                        {% endblock %}
 
-                    {% block sw_media_quickinfo_folder_quickactions_content_blurhash_action_exclude %}
-                        <ecb-quick-action
-                            v-if="canEcbGenerate"
-                            @click="onExcludeActionClick"
-                            icon="default-lock-closed"
-                            color="orange"
-                            text="ecBlurhash.general.exclusion.exclude"
-                            :disabled="isEcbLoading"
-                        ></ecb-quick-action>
-                        <ecb-quick-action
-                            v-if="canEcbGenerate === false"
-                            @click="onIncludeActionClick"
-                            icon="default-lock-open"
-                            color="orange"
-                            text="ecBlurhash.general.exclusion.include"
-                            :disabled="isEcbLoading"
-                        ></ecb-quick-action>
-                    {% endblock %}
+                        {% block sw_media_quickinfo_folder_quickactions_content_blurhash_action_exclude %}
+                            <ecb-quick-action
+                                v-if="canEcbGenerate"
+                                @click="onExcludeActionClick"
+                                icon="regular-lock"
+                                color="orange"
+                                text="ecBlurhash.general.exclusion.exclude"
+                                :disabled="isEcbLoading"
+                            ></ecb-quick-action>
+                            <ecb-quick-action
+                                v-if="canEcbGenerate === false"
+                                @click="onIncludeActionClick"
+                                icon="regular-lock-open"
+                                color="orange"
+                                text="ecBlurhash.general.exclusion.include"
+                                :disabled="isEcbLoading"
+                            ></ecb-quick-action>
+                        {% endblock %}
 
-                </template>
-            </ecb-quick-actions>
+                    </template>
+                </ecb-quick-actions>
+            </template>
         {% endblock %}
+    </sw-media-collapse>
 
-    </template>
 {% endblock %}
