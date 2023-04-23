@@ -12,7 +12,7 @@
                 {% block sw_media_quickinfo_quickactions_content_blurhash_actions_generate %}
                     <ecb-quick-action
                         @click="onEcbGenerateActionClick"
-                        icon="default-object-paint"
+                        icon="regular-forklift"
                         :title="generationHelpText"
                         :text="generationText"
                         :disabled="canEcbGenerate === false || isEcbLoading"
@@ -22,7 +22,7 @@
                 {% block sw_media_quickinfo_quickactions_content_blurhash_actions_remove %}
                     <ecb-quick-action
                         @click="onEcbRemoveActionClick"
-                        icon="default-action-trash"
+                        icon="regular-trash"
                         color="#fc427b"
                         title="ecBlurhash.general.removal.media.help"
                         text="ecBlurhash.general.removal.media.label"
@@ -43,10 +43,10 @@
             :label-name="$t('ecBlurhash.general.blurhash')"
         >
             <span :title="itemBlurhash" v-if="hasItemBlurhash">
-                <sw-icon color="green" name="small-default-checkmark-line-small"></sw-icon>
+                <sw-icon color="green" name="regular-checkmark-xs" small></sw-icon>
             </span>
             <span :title="itemBlurhash" v-else>
-                <sw-icon color="red" name="default-basic-x-line"></sw-icon>
+                <sw-icon color="red" name="regular-times-xs" small></sw-icon>
             </span>
         </sw-media-quickinfo-metadata-item>
     {% endblock %}

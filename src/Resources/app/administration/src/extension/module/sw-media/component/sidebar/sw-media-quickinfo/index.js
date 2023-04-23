@@ -48,14 +48,14 @@ Component.override('sw-media-quickinfo', {
 
     generationText() {
       return this.hasItemBlurhash
-        ? this.$t('ecBlurhash.general.generation.refresh')
-        : this.$t('ecBlurhash.general.generation.start');
+        ? 'ecBlurhash.general.generation.refresh'
+        : 'ecBlurhash.general.generation.start';
     },
 
     generationHelpText() {
       return this.hasItemBlurhash //
-        ? this.$t('ecBlurhash.general.generation.media.helpForce')
-        : this.$t('ecBlurhash.general.generation.media.help')
+        ? 'ecBlurhash.general.generation.media.helpForce'
+        : 'ecBlurhash.general.generation.media.help'
     }
 
 

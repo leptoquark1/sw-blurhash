@@ -24,6 +24,11 @@ Component.register('ecb-quick-actions', {
     validationError: {
       type: String,
       required: false,
+    },
+    disableTitle: {
+      type: Boolean,
+      required: false,
+      default: false,
     }
   },
 });
