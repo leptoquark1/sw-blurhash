@@ -195,12 +195,4 @@ class GenerateCommandTest extends TestCase
         $output = self::normalizeOutput($tester);
         static::assertStringContainsStringIgnoringCase($testEntityName, $output);
     }
-
-    /**
-     * @covers \Eyecook\Blurhash\Command\Concern\AcceptEntitiesArgument
-     */
-    public function testQuestionForEntities(): void
-    {
-        static::markTestIncomplete();
-    }
 }

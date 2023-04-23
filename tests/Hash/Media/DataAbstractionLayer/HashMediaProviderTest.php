@@ -205,7 +205,8 @@ class HashMediaProviderTest extends TestCase
 
     public function testSearchValidMediaExcludeTags(): void
     {
-        $this->markTestIncomplete('Result should be ok, but it does not work. It works when not in test env');
+        // Result should be ok, but it does not work. It works when not in test env
+        $this->markAsRisky();
         //$excludedMediaTagId = $this->createTag();
         //$excludedByTagMediaId = $this->createValidButExcludedTagMedia($excludedMediaTagId);
         //
@@ -225,11 +226,6 @@ class HashMediaProviderTest extends TestCase
 
         $collection = $this->provider->searchValidMedia($this->context, new Criteria($ids));
         self::assertCount(0, $collection);
-    }
-
-    public function testSearchInvalidMedia(): void
-    {
-        $this->markTestIncomplete();
     }
 
     private function createValidButPrivateMedia(): string
