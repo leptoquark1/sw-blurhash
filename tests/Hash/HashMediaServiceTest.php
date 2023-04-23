@@ -65,7 +65,7 @@ class HashMediaServiceTest extends TestCase
         /** @var MediaEntity $media */
         $media = $this->mediaRepository->search(new Criteria([$media->getId()]), $this->context)->get($media->getId());
 
-        $this->getPublicFilesystem()->putStream(
+        $this->getPublicFilesystem()->writeStream(
             $this->urlGenerator->getRelativeMediaUrl($media),
             fopen(__DIR__ . '/fixtures/shopware-logo.png', 'rb')
         );

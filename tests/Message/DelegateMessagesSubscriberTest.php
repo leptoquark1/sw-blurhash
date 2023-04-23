@@ -14,8 +14,10 @@ use Shopware\Core\Framework\Test\MessageQueue\fixtures\TestMessage;
 use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
 use Shopware\Core\Framework\Test\TestCaseBase\QueueTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Event\WorkerMessageHandledEvent;
+use Symfony\Component\Messenger\Transport\Receiver\ReceiverInterface;
 
 /**
  * @covers \Eyecook\Blurhash\Message\DelegateMessagesSubscriber
@@ -106,5 +108,13 @@ class DelegateMessagesSubscriberTest extends TestCase
         }
 
         return $message;
+    }
+
+    private function getReceiver(): ReceiverInterface
+    {
+        /** @var ServiceLocator $locator */
+        $locator = self::getContainer()->get('messenger.test_receiver_locator');
+
+        return $locator->get('async');
     }
 }
