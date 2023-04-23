@@ -33,11 +33,11 @@ class HashMediaProviderTest extends TestCase
     protected function setUp(): void
     {
         $this->context = $this->entityFixtureContext;
-        $this->mediaRepository = $this->getContainer()->get('media.repository');
-        $this->mediaFolderRepository = $this->getContainer()->get('media_folder.repository');
-        $this->tagRepository = $this->getContainer()->get('tag.repository');
-        $this->provider = $this->getContainer()->get(HashMediaProvider::class);
-        $this->validator = $this->getContainer()->get(MediaValidator::class);
+        $this->mediaRepository = self::getContainer()->get('media.repository');
+        $this->mediaFolderRepository = self::getContainer()->get('media_folder.repository');
+        $this->tagRepository = self::getContainer()->get('tag.repository');
+        $this->provider = self::getContainer()->get(HashMediaProvider::class);
+        $this->validator = self::getContainer()->get(MediaValidator::class);
 
         $this->setSystemConfigMock(Config::PATH_INCLUDE_PRIVATE, true);
         $this->setSystemConfigMock(Config::PATH_EXCLUDED_TAGS, []);

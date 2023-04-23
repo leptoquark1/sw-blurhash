@@ -36,7 +36,7 @@ class MediaValidatorTest extends TestCase
         parent::setUp();
 
         $this->context = $this->entityFixtureContext;
-        $this->mediaValidator = $this->getContainer()->get(MediaValidator::class);
+        $this->mediaValidator = self::getContainer()->get(MediaValidator::class);
     }
 
     public function testValidateWithInvalidInputs(): void

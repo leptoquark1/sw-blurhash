@@ -32,7 +32,7 @@ class HashMediaUpdaterTest extends TestCase
         $this->context = Context::createDefaultContext();
         $this->setFixtureContext($this->context);
 
-        $this->updater = $this->getContainer()->get(HashMediaUpdater::class);
+        $this->updater = self::getContainer()->get(HashMediaUpdater::class);
         $this->mediaRepository = self::getFixtureRepository('media');
     }
 

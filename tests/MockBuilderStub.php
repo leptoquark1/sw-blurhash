@@ -23,8 +23,12 @@ trait MockBuilderStub
 
     private function getMockConstructorArgs(string $className, array $mockArgs = []): array
     {
-        return array_map(function ($arg) use ($mockArgs) {
-            return is_string($arg) ? $mockArgs[$arg] ?? $this->getContainer()->get($arg) : $arg;
+        return array_map(static function ($arg) use ($mockArgs) {
+            if (is_string($arg)) {
+                return $mockArgs[$arg] ?? self::getContainer()->get($arg);
+            }
+
+            return $arg;
         }, $this->_mockConstructorArgs[$className] ?? []);
     }
 

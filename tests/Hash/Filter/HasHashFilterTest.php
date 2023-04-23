@@ -23,7 +23,7 @@ class HasHashFilterTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->mediaRepository = $this->getContainer()->get('media.repository');
+        $this->mediaRepository = self::getContainer()->get('media.repository');
         $this->context = Context::createDefaultContext();
     }
 

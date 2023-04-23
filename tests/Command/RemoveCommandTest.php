@@ -26,7 +26,7 @@ class RemoveCommandTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->command = $this->getContainer()->get(RemoveCommand::class);
+        $this->command = self::getContainer()->get(RemoveCommand::class);
 
         $this->prepareMockConstructorArgs(RemoveCommand::class, [
             HashMediaProvider::class,
@@ -36,7 +36,7 @@ class RemoveCommandTest extends TestCase
 
     public function testIsAvailableByCommand(): void
     {
-        $kernel = $this->getKernel();
+        $kernel = self::getKernel();
         $application = new Application($kernel);
 
         $exception = null;

@@ -20,8 +20,8 @@ class PluginHelperTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->connection = $this->getContainer()->get(Connection::class);
-        $this->plugin = $this->getContainer()->get(EyecookBlurhash::class);
+        $this->connection = self::getContainer()->get(Connection::class);
+        $this->plugin = self::getContainer()->get(EyecookBlurhash::class);
     }
 
     public function testRollbackAllMigrations(): void

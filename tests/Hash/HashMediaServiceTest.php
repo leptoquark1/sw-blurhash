@@ -6,6 +6,7 @@ use Eyecook\Blurhash\Configuration\Config;
 use Eyecook\Blurhash\Hash\HashMediaService;
 use Eyecook\Blurhash\Test\ConfigMockStub;
 use Eyecook\Blurhash\Test\HashMediaFixtures;
+use League\Flysystem\FilesystemException;
 use PHPUnit\Framework\TestCase;
 use Shopware\Core\Content\Media\MediaEntity;
 use Shopware\Core\Content\Media\Pathname\UrlGeneratorInterface;
@@ -38,9 +39,9 @@ class HashMediaServiceTest extends TestCase
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_X, 1);
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_Y, 1);
 
-        $this->hashMediaService = $this->getContainer()->get(HashMediaService::class);
-        $this->urlGenerator = $this->getContainer()->get(UrlGeneratorInterface::class);
-        $this->mediaRepository = $this->getContainer()->get('media.repository');
+        $this->hashMediaService = self::getContainer()->get(HashMediaService::class);
+        $this->urlGenerator = self::getContainer()->get(UrlGeneratorInterface::class);
+        $this->mediaRepository = self::getContainer()->get('media.repository');
     }
 
     protected function tearDown(): void
@@ -49,6 +50,9 @@ class HashMediaServiceTest extends TestCase
         $this->unsetSystemConfigMock(Config::PATH_COMPONENTS_Y);
     }
 
+    /**
+     * @throws FilesystemException
+     */
     public function testGeneratedHashForMediaIsPersisted(): void
     {
         $media = $this->getPngWithFolder();
