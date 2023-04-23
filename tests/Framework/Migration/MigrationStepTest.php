@@ -58,11 +58,6 @@ class MigrationStepTest extends TestCase
         $this->migrationMock->update($this->connection);
     }
 
-    public function testSetConnection(): void
-    {
-        $this->markTestIncomplete('Reflect property by setter');
-    }
-
     public function testGetCreationTimestampIsReturnTimestampFromClass(): void
     {
         self::assertEquals($this->mockClassDate, $this->migrationMock->getCreationTimestamp());

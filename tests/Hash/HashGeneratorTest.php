@@ -14,6 +14,7 @@ use Shopware\Core\Framework\Test\TestCaseBase\IntegrationTestBehaviour;
  * @covers \Eyecook\Blurhash\Hash\HashGenerator
  * @covers \Eyecook\Blurhash\Hash\Blurhash::encode
  * @large
+ * @group Processing
  *
  * @package Eyecook\Blurhash\Test
  * @author David Fecke (+leptoquark1)
