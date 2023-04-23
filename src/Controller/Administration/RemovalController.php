@@ -48,8 +48,8 @@ class RemovalController extends AbstractApiController
             throw new MissingRequestParameterException('mediaIds');
         }
 
-        $mediaIds = $request->request->get('mediaIds');
-        if (is_array($mediaIds) === false) {
+        $mediaIds = $request->request->all('mediaIds');
+        if (count($mediaIds) < 1) {
             throw new InvalidRequestParameterException('mediaIds');
         }
 
@@ -83,8 +83,8 @@ class RemovalController extends AbstractApiController
         }
 
         /** @var array $mediaFolderIds */
-        $mediaFolderIds = $request->request->get('folderIds');
-        if (is_array($mediaFolderIds) === false) {
+        $mediaFolderIds = $request->request->all('folderIds');
+        if (count($mediaFolderIds) < 1) {
             throw new InvalidRequestParameterException('folderIds');
         }
 

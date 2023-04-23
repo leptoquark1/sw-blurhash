@@ -235,7 +235,7 @@ class GenerationControllerTest extends TestCase
             ? $this->fetch('POST', static::GENERATE_BY_FOLDER_URL, ['folderIds' => [Uuid::randomHex()]])
             : $this->fetch('GET', static::GENERATE_BY_FOLDER_URL . '/' . Uuid::randomHex());
 
-        static::assertEquals(Response::HTTP_FAILED_DEPENDENCY, $response->getStatusCode(), 'Dependent fail code expected');
+        static::assertEquals(Response::HTTP_FAILED_DEPENDENCY, $response->getStatusCode(), 'Dependent fail code expected: ');
         static::assertIsArray($content, 'Error array in response body was expected');
         static::assertArrayHasKey('errors', $content, 'Error array in response body was expected');
         static::assertCount(1, $content['errors'], 'Exactly one error expected');
