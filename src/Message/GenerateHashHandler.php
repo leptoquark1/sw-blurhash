@@ -3,6 +3,7 @@
 namespace Eyecook\Blurhash\Message;
 
 use Eyecook\Blurhash\Configuration\ConfigService;
+use Eyecook\Blurhash\Exception\ProcessBlurhashRuntimeException;
 use Eyecook\Blurhash\Hash\HashMediaService;
 use Psr\Log\LoggerInterface;
 use Shopware\Core\Framework\Context;
@@ -27,46 +28,57 @@ class GenerateHashHandler
     ) {
     }
 
+    /**
+     * @throws ProcessBlurhashRuntimeException
+     */
     public function __invoke(GenerateHashMessage $message): void
-    {
-        $this->handle($message);
-    }
-
-    public function handle($message): void
     {
         if ($this->isMessageValid($message) === false) {
             return;
         }
 
-        $generator = $this->handleMessage($message->getMediaIds(), $message->readContext());
+        $generator = $this->handler($message->getMediaIds(), $message->readContext());
         while ($generator->valid()) {
             $generator->next();
         }
     }
 
-    protected function handleMessage(array $givenMediaIds, Context $context): \Generator
+    /**
+     * @throws ProcessBlurhashRuntimeException
+     */
+    protected function handler(array $givenMediaIds, Context $context): \Generator
     {
         $mediaEntities = $this->getMediaByIds($givenMediaIds, $context);
 
+        $missingIds = array_diff($mediaEntities->getIds(), $givenMediaIds);
+        if (count($missingIds)) {
+            $this->logger->warning(
+                'Blurhash generation cannot process missing media-entities.',
+                ['missingIds' => $missingIds]
+            );
+        }
+
         $failedIds = [];
         foreach ($mediaEntities as $media) {
+            // Exceptions during processing are to be expected and are forwarded
+            // to the exception-handler of the bus
             $hash = $this->hashMediaService->processHashForMedia($media);
-            $mediaId = $media->getId();
 
             if (!$hash) {
-                $failedIds[] = $mediaId;
+                $failedIds[] = $media->getId();
             }
 
-            $mediaEntities->remove($mediaId);
+            $mediaEntities->remove($media->getId());
             gc_collect_cycles();
 
-            yield ['id' => $mediaId];
+            yield ['id' => $media->getId()];
         }
 
         if (count($failedIds)) {
-            $this->logger->warning('Blurhash generation has been failed for ' . count($failedIds) . ' media entities!', [
-                'mediaIds' => $failedIds
-            ]);
+            $this->logger->warning(
+                'Some Blurhashes cannot be processed. Make sure to exclude unprocessable media-entities.',
+                ['mediaIds' => $failedIds]
+            );
         }
     }
 

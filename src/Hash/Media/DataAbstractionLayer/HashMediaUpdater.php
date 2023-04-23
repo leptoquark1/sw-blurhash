@@ -2,6 +2,7 @@
 
 namespace Eyecook\Blurhash\Hash\Media\DataAbstractionLayer;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Eyecook\Blurhash\Hash\Media\MediaHashId;
 use Eyecook\Blurhash\Hash\Media\MediaHashIdCollection;
@@ -56,10 +57,7 @@ class HashMediaUpdater
         ]));
     }
 
-    /**
-     * @param MediaHashId|MediaHashId[]|MediaHashIdCollection|string|string[]|MediaEntity|MediaEntity[] $input
-     */
-    public function removeMediaHash($input): void
+    public function removeMediaHash(array|MediaHashId|MediaEntity|string|MediaHashIdCollection $input): void
     {
         if ($input instanceof MediaHashIdCollection) {
             $ids = $input->getMediaIds();
@@ -81,12 +79,17 @@ class HashMediaUpdater
             }, $input);
         }
 
+        // tag v6.0 - naive faith in syntactical compliance it was once originally defined
+        //  When result of `getRemoveStatement` is modified somehow, this concat
+        //  statement might be missed during revision and most likely  not adapted
+        //  to changed conditions.
         $statement = self::getRemoveStatement() . ' WHERE `id` in (:ids)';
+
         RetryableQuery::retryable($this->connection, function () use ($statement, $ids) {
             $this->connection->executeStatement(
                 $statement,
                 ['ids' => Uuid::fromHexToBytesList($ids)],
-                ['ids' => Connection::PARAM_STR_ARRAY]
+                ['ids' => ArrayParameterType::STRING]
             );
         });
     }
