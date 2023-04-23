@@ -10,7 +10,7 @@ use Shopware\Core\Content\ImportExport\Message\DeleteFileMessage;
 use Shopware\Core\Content\Media\Message\GenerateThumbnailsMessage;
 use Shopware\Core\Content\Media\Message\UpdateThumbnailsMessage;
 use Shopware\Core\Framework\Context;
-use Shopware\Core\Framework\Test\MessageQueue\fixtures\TestMessage;
+use Shopware\Core\Framework\Test\MessageQueue\fixtures\FooMessage;
 use Shopware\Core\Framework\Test\TestCaseBase\KernelTestBehaviour;
 use Shopware\Core\Framework\Test\TestCaseBase\QueueTestBehaviour;
 use Shopware\Core\Framework\Uuid\Uuid;
@@ -80,7 +80,7 @@ class DelegateMessagesSubscriberTest extends TestCase
         return [
             [new CategoryIndexingMessage([])],
             [new DeleteFileMessage()],
-            [new TestMessage()]
+            [new FooMessage()]
         ];
     }
 
