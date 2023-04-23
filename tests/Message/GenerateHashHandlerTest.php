@@ -43,7 +43,7 @@ class GenerateHashHandlerTest extends TestCase
     {
         parent::setUp();
 
-        $this->handler = $this->getContainer()->get(GenerateHashHandler::class);
+        $this->handler = self::getContainer()->get(GenerateHashHandler::class);
 
         $this->prepareMockConstructorArgs(GenerateHashHandler::class, [
             ConfigService::class,
@@ -51,14 +51,6 @@ class GenerateHashHandlerTest extends TestCase
             'media.repository',
             'monolog.logger',
         ]);
-    }
-
-    public function testGetHandledMessages(): void
-    {
-        $handlesMessages = GenerateHashHandler::getHandledMessages();
-
-        self::assertCount(1, $handlesMessages);
-        self::assertContainsEquals(GenerateHashMessage::class, $handlesMessages);
     }
 
     public function throwableMessageProvider(): array
@@ -70,7 +62,6 @@ class GenerateHashHandlerTest extends TestCase
             ['abc'],
             [1],
             [[]],
-            [(object)new stdClass()],
             [new stdClass()],
         ];
     }

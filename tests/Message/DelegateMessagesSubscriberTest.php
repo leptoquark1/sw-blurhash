@@ -36,7 +36,7 @@ class DelegateMessagesSubscriberTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->subscriber = $this->getContainer()->get(DelegateMessagesSubscriber::class);
+        $this->subscriber = self::getContainer()->get(DelegateMessagesSubscriber::class);
         $this->context = Context::createDefaultContext();
     }
 

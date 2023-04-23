@@ -14,7 +14,6 @@ use Symfony\Component\Console\Tester\CommandTester;
  * @author David Fecke (+leptoquark1)
  *
  * @extends TestCase
- * @property-read AbstractCommand $command
  */
 trait CommandStub
 {
@@ -39,7 +38,7 @@ trait CommandStub
 
     private function createCommandTester(?AbstractCommand $command = null): CommandTester
     {
-        $application = new Application($this->getKernel());
+        $application = new Application(self::getKernel());
         $application->add($command ?? $this->command);
         $application->setAutoExit(true);
 
@@ -57,8 +56,8 @@ trait CommandStub
     {
         $command = $this->getPreparedClassInstance($class, $mockArgs);
 
-        $command->setContainer($this->getContainer());
-        $command->setConfigService($this->getContainer()->get(ConfigService::class));
+        $command->setContainer(self::getContainer());
+        $command->setConfigService(self::getContainer()->get(ConfigService::class));
 
         return $command;
     }

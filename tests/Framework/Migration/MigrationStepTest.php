@@ -20,12 +20,9 @@ class MigrationStepTest extends TestCase
     use MockBuilderStub;
 
     private int $mockClassDate;
-    private static $defaultInstallEnvValue = false;
+    private static string|bool|null $defaultInstallEnvValue = false;
     protected Connection $connection;
-    /**
-     * @var MigrationStep|MockObject
-     */
-    protected $migrationMock;
+    protected MigrationStep|MockObject $migrationMock;
 
     public static function setUpBeforeClass(): void
     {
@@ -41,7 +38,8 @@ class MigrationStepTest extends TestCase
     {
         $_ENV[OriginalMigrationStep::INSTALL_ENVIRONMENT_VARIABLE] = self::$defaultInstallEnvValue;
         $this->mockClassDate = time();
-        $this->connection = $this->getContainer()->get(Connection::class);
+        $this->connection = self::getContainer()->get(Connection::class);
+
         $this->migrationMock = $this->getMockForAbstractClass(
             MigrationStep::class,
             [],

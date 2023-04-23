@@ -34,7 +34,7 @@ class HashGeneratorTest extends TestCase
         $this->setSystemConfigMock(Config::PATH_COMPONENTS_Y, 1);
 
         /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-        $this->hashGenerator = $this->getContainer()->get(HashGenerator::class);
+        $this->hashGenerator = self::getContainer()->get(HashGenerator::class);
     }
 
     protected function tearDown(): void

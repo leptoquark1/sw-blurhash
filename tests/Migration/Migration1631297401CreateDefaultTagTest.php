@@ -35,7 +35,7 @@ class Migration1631297401CreateDefaultTagTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->connection = $this->getContainer()->get(Connection::class);
+        $this->connection = self::getContainer()->get(Connection::class);
         $this->migration = new Migration1631297401CreateDefaultTag();
         $this->migration->setConnection($this->connection);
     }

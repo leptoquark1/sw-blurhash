@@ -24,7 +24,7 @@ class HashFactoryTest extends TestCase
         parent::setUp();
 
         /** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-        $this->factoryInstance = $this->getContainer()->get(MediaHashIdFactory::class);
+        $this->factoryInstance = self::getContainer()->get(MediaHashIdFactory::class);
     }
 
     public function testCreateWithEmptyMedia(): void

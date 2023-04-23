@@ -26,7 +26,7 @@ class AbstractApiControllerTest extends TestCase
     {
         $this->unsetAdminWorkerEnabledMock();
 
-        $this->mock = new TestApiController($this->getContainer());
+        $this->mock = new TestApiController(self::getContainer());
     }
 
     public function testPreventManualModeLeverageMethodThrows(): void

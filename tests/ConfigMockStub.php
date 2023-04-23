@@ -18,14 +18,17 @@ trait ConfigMockStub
     private static ?bool $initialAdminWorkerEnabled = null;
     private static ?bool $initialProdModeValue = null;
 
-    public function getSystemConfigService(): SystemConfigService
+    /**
+     * @return SystemConfigService|null
+     */
+    public function getSystemConfigService(): ?SystemConfigService
     {
-        return $this->getContainer()->get(SystemConfigService::class);
+        return self::getContainer()->get(SystemConfigService::class);
     }
 
-    public function getConfigService(): ConfigService
+    public function getConfigService(): ?ConfigService
     {
-        return $this->getContainer()->get(ConfigService::class);
+        return self::getContainer()->get(ConfigService::class);
     }
 
     /**

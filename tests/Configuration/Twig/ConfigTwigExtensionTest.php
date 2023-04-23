@@ -23,7 +23,7 @@ class ConfigTwigExtensionTest extends TestCase
     {
         parent::setUp();
 
-        $this->twigExtension = $this->getContainer()->get(ConfigTwigExtension::class);
+        $this->twigExtension = self::getContainer()->get(ConfigTwigExtension::class);
     }
 
     protected function tearDown(): void
@@ -35,14 +35,14 @@ class ConfigTwigExtensionTest extends TestCase
     public function getTestsProvider(): array
     {
         return [
-            $this->getContainer()->get(ConfigTwigExtension::class)->getTests(),
+            self::getContainer()->get(ConfigTwigExtension::class)->getTests(),
         ];
     }
 
     public function getFunctionsProvider(): array
     {
         return [
-            $this->getContainer()->get(ConfigTwigExtension::class)->getFunctions(),
+            self::getContainer()->get(ConfigTwigExtension::class)->getFunctions(),
         ];
     }
 
