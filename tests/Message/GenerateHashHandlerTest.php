@@ -100,9 +100,9 @@ class GenerateHashHandlerTest extends TestCase
         $mock->__invoke($message);
     }
 
-    public function testHandleMethodNotCallsHandleMessageWhenMessageInvalid(): void
+    public function testInvokeMethodNotCallsHandlerWhenMessageInvalid(): void
     {
-        $mock = $this->getPreparedMock(GenerateHashHandler::class, ['handleMessage', 'isMessageValid']);
+        $mock = $this->getPreparedMock(GenerateHashHandler::class, ['handler', 'isMessageValid']);
 
         // Expect not call to handleMessage when isValidMessage returns false
         $mock->method('isMessageValid')->willReturn(false);
@@ -111,9 +111,9 @@ class GenerateHashHandlerTest extends TestCase
         $mock->__invoke($this->createMessage([], false));
     }
 
-    public function testHandleMethodCallsHandleMessageWhenMessageValid(): void
+    public function testInvokeMethodCallsHandlerWhenMessageValid(): void
     {
-        $mock = $this->getPreparedMock(GenerateHashHandler::class, ['handleMessage', 'isMessageValid']);
+        $mock = $this->getPreparedMock(GenerateHashHandler::class, ['handler', 'isMessageValid']);
 
         // Expect a call to handleMessage with respective arguments from message when isValidMessage returns true
         $message = $this->createMessage([Uuid::randomHex(), Uuid::randomHex()], false);
@@ -160,7 +160,7 @@ class GenerateHashHandlerTest extends TestCase
     /**
      * @dataProvider \Eyecook\Blurhash\Test\ProviderUtils::provideRandomIds()
      */
-    public function testHandleMessage(array $mediaIds): void
+    public function testHandlerGenerator(array $mediaIds): void
     {
         $mediaObjects = [];
         $mediaObjectsParams = [];
@@ -186,16 +186,14 @@ class GenerateHashHandlerTest extends TestCase
             ->expects($this->exactly(count($mediaIds)))
             ->method('processHashForMedia')
             ->withConsecutive(...$mediaObjectsParams)
-            ->willReturnCallback(static function (MediaEntity $media) {
-                return $media->getVersionId();
-            });
+            ->willReturnCallback(static fn(MediaEntity $media) =>$media->getVersionId());
 
         $mockLogger = $this->getMockForAbstractClass(LoggerInterface::class);
         $mockLogger
             ->expects($this->once())
             ->method('warning')
             ->with(
-                $this->stringContains('Blurhash generation has been failed'),
+                $this->stringContains('Some Blurhashes cannot be processed'),
                 ['mediaIds' => [$mediaIds[$failedIndex]]]
             );
 
