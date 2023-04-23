@@ -55,9 +55,9 @@ class GenerationController extends AbstractApiController
         }
 
         /** @var array $mediaIds */
-        $mediaIds = $request->request->get('mediaIds');
+        $mediaIds = $request->request->all('mediaIds');
 
-        if (is_array($mediaIds) === false) {
+        if (count($mediaIds) < 1) {
             throw new InvalidRequestParameterException('mediaIds');
         }
 
@@ -98,9 +98,8 @@ class GenerationController extends AbstractApiController
             throw new MissingRequestParameterException('folderIds');
         }
 
-        /** @var array $mediaFolderIds */
-        $mediaFolderIds = $request->request->get('folderIds');
-        if (is_array($mediaFolderIds) === false) {
+        $mediaFolderIds = $request->request->all('folderIds');
+        if (count($mediaFolderIds) < 1) {
             throw new InvalidRequestParameterException('folderIds');
         }
 

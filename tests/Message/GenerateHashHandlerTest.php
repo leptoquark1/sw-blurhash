@@ -71,7 +71,7 @@ class GenerateHashHandlerTest extends TestCase
      */
     public function testIsMessageValidThrows($message): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectError();
         $this->handler->__invoke($message);
     }
 
@@ -92,7 +92,7 @@ class GenerateHashHandlerTest extends TestCase
     {
         $mock = $this->getMockBuilder(GenerateHashHandler::class)
             ->setConstructorArgs($this->getMockConstructorArgs(GenerateHashHandler::class))
-            ->onlyMethods(['handle'])->getMock();
+            ->onlyMethods(['handler'])->getMock();
 
         $mock->expects($this->exactly(0))->method('handler');
 
