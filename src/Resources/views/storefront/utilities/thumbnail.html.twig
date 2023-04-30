@@ -1,3 +1,6 @@
+{% sw_extends '@Storefront/storefront/utilities/thumbnail.html.twig' %}
+
+{% block thumbnail_utility %}
 {% set noIntegration = ecbConfEqualsConst('integrationMode', 'VALUE_INTEGRATION_MODE_NONE') %}
 
 {% if not noIntegration and media.metaData.blurhash %}
@@ -14,6 +17,5 @@
     {% set load = false %} {# All images are handled lazy #}
 {% endif %}
 
-{% block thumbnail_utility %}
-    {{ parent() }}
+{{ parent() }}
 {% endblock %}
