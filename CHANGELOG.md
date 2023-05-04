@@ -1,3 +1,9 @@
+## 5.0.1
+
+### Bug Fixes
+
+- incorrect template inheritance prevents thumbnail extension in storefront
+
 ## 5.0.0
 
 ### Features

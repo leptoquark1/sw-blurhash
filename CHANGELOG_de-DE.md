@@ -1,3 +1,9 @@
+## 5.0.1
+
+### Bug Fixes
+
+- falsche Vorlagenvererbung verhindert die Erweiterung der Thumbnails für Storefront integration
+
 ## 5.0.0
 
 ### Features
