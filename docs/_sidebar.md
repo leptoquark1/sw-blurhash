@@ -1,3 +1,4 @@
+![EyecookBlurhash](./_images/intro.png)
 - Basic Usage
 
   - [Administration](guide.md#administration)

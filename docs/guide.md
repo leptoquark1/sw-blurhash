@@ -36,7 +36,7 @@ Following actions are available:
 
 Once a image has been selected, it will be verified whether it is suitable for Blurhash generation.
 
-> If the validation fails, a notice with the reason for the failure will be displayed.
+?> If the validation fails, a notice with the reason for the failure will be displayed.
 
 If the image is suitable, the following actions are available:
 
@@ -61,13 +61,13 @@ Following Messages are available:
 - While processing: the remaining items in the queue
 - The processing is finished
 
-> ❗ Some messages can be lost when handled in a short time period (Fast processing or errors)
+!>  Some messages can be lost when handled in a short time period (Fast processing or errors)
 
 #### Preview Teaser Images
 
 If a preview is available, you can toggle it by clicking the icon in the bottom right corner of the image.
 
-> � Preview requirement is that the image has a generated Blurhash.
+?> Preview requirement is that the image has a generated Blurhash.
 
 | <img src="_images/guide/admin-media-preview.png" alt="Administration Notifications" width="414"/> |
 |---------------------------------------------------------------------------------------------------|
@@ -79,7 +79,5 @@ If a preview is available, you can toggle it by clicking the icon in the bottom 
 
 A generation of Blurhash is triggered automatically when either a thumbnail is generated or updated.
 
-> ❗**Warning**
->
-> The automatic generation **does not work** when the [Admin Worker](https://docs.shopware.com/en/shopware-6-en/tutorials-und-faq/deactivate-the-admin-worker#what-is-the-admin-worker) is enabled.
+!> The automatic generation **does not work** when the [Admin Worker](https://docs.shopware.com/en/shopware-6-en/tutorials-und-faq/deactivate-the-admin-worker#what-is-the-admin-worker) is enabled.
 

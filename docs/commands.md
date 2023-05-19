@@ -37,9 +37,7 @@ Usage:
 | -a, --all         | All Blurhashes will be removed. Everywhere!                          | optional |
 | -d, --dryRun      | Just show how many media entities are affected                       | optional |
 
-> � **Please consider**
->
-> When providing the `--all` option, the entities' argument is ignored!
+?> **Please consider**: When providing the `--all` option, the entities' argument is ignored!
 
 
 Example:

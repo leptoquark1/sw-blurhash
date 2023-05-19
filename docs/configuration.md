@@ -18,10 +18,7 @@ When you intend to create use a custom integration you can disable the default S
 | `Custom`    | With this option only the basic functionality is provided which you may need for decoding. |
 | `Emulated`  | Full integration providing the best possible coverage                                      |
 
-> ❗ **Warning**
->
-> If you do not intend to use a custom integration, leave this setting on **Emulated**.
-> Otherwise, some images may no longer be displayed in the storefront!
+!> If you do not intend to use a custom integration, leave this setting on **Emulated**. <br>Otherwise, some images may no longer be displayed in the storefront!
 
 ### Inclusions / Exclusion
 
@@ -63,6 +60,4 @@ Whereby the principle applies: A **higher** value results in a **finer** spectru
 
 A Live-Demo can be found on [blurha.sh](https://blurha.sh)
 
-> � **Please consider**
->
-> The higher the spectrum is chosen, the longer the Blurhash and hence the time needed for processing (Encoding and Decoding)!
+?> **Please consider**: The higher the spectrum is chosen, the longer the Blurhash and hence the time needed for processing (Encoding and Decoding)!

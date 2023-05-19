@@ -3,8 +3,7 @@
 ![Release](https://img.shields.io/github/v/release/leptoquark1/sw-blurhash?include_prereleases&style=flat-square)
 ![Apache License](https://img.shields.io/badge/license-Apache%202-green)
 ![ShopwareVersion](https://img.shields.io/static/v1?label=Shopware&message=%5E6.4.0&color=189EFF&logo=shopware)
-
-> Not a _placeholder_, but a wholesome Teaser Image!
+![ShopwareVersion](https://img.shields.io/static/v1?label=Shopware&message=%5E6.5.0&color=189EFF&logo=shopware)
 
 ## Introduction
 

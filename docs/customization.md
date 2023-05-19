@@ -10,8 +10,7 @@ If you have the need to write your own 'Hash Generator' you can decorate the `\E
 
 ### Custom Integrations
 
-> Custom Integrations not yet fully supported. This is why there is a lack of documentation.
-> If you have problems setting up your own integration, you can create an issue and describe the problem in detail.
+!> Custom Integrations not yet fully supported. This is why there is a lack of documentation. <br>_If you have problems setting up your own integration, you can create an issue and describe the problem in detail._
 
 #### JS Bundles
 
